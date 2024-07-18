@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
@@ -13,7 +12,13 @@ const Tab = createBottomTabNavigator<RootTabsParamList>();
 
 const BottomTabNavigator = () => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarStyle: { height: 60 },
+        tabBarIcon: () => null,
+        tabBarLabelStyle: { fontSize: 18 },
+      }}
+    >
       <Tab.Screen
         name="SingleDay"
         component={SingleDayScreen}
@@ -44,17 +49,15 @@ const BottomTabNavigator = () => {
 export default function App() {
   return (
     <>
-      <SafeAreaView style={styles.container}>
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="Tabs"
-              component={BottomTabNavigator}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaView>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Tabs"
+            component={BottomTabNavigator}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </>
   );
 }

@@ -1,4 +1,8 @@
 export type RootStackParamList = {
+  Tabs: undefined;
+  Radar: undefined;
+};
+export type RootTabsParamList = {
   SingleDay: undefined;
-  Week: undefined;
+  FiveDays: undefined;
 };
