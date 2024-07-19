@@ -20,6 +20,7 @@ import {
   weatherBackgrounds,
   WeatherTypes,
 } from "../types/weatherBackdroundTypes";
+import colors from "../assets/colors";
 
 const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "SingleDay">
@@ -91,11 +92,11 @@ const SingleDayScreen: React.FC<
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <ImageBackground
-        source={changeBackgroundImageDependsOnWeather()}
-        style={styles.background}
-      >
+    <ImageBackground
+      source={changeBackgroundImageDependsOnWeather()}
+      style={styles.background}
+    >
+      <ScrollView style={styles.container}>
         <SafeAreaView style={styles.container}>
           <View></View>
           <View></View>
@@ -107,18 +108,19 @@ const SingleDayScreen: React.FC<
             <View></View>
           </View>
         </SafeAreaView>
-      </ImageBackground>
-    </ScrollView>
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: 1000,
   },
   background: {
     width: "100%",
-    height: 1000,
+    flex: 1,
     resizeMode: "cover",
   },
 });

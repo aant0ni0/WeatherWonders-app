@@ -1,36 +1,98 @@
 import { ImageSourcePropType } from "react-native";
 
-export type WeatherTypes = "clearsky" | "clouds" | "fewclouds" | "rain";
-//   | "Drizzle"
-//   | "Thunderstorm"
-//   | "Snow"
-//   | "Mist"
-//   | "Smoke"
-//   | "Haze"
-//   | "Dust"
-//   | "Fog"
-//   | "Sand"
-//   | "Ash"
-//   | "Squall"
-//   | "Tornado";
+export type WeatherTypes =
+  | "thunderstormwithlightrain"
+  | "thunderstormwithrain"
+  | "thunderstormwithheavyrain"
+  | "lightthunderstorm"
+  | "thunderstorm"
+  | "heavythunderstorm"
+  | "raggedthunderstorm"
+  | "thunderstormwithlightdrizzle"
+  | "thunderstormwithdrizzle"
+  | "thunderstormwithheavydrizzle"
+  | "lightintensitydrizzle"
+  | "drizzle"
+  | "heavyintensitydrizzle"
+  | "lightintensitydrizzlerain"
+  | "drizzlerain"
+  | "heavyintensitydrizzlerain"
+  | "showerrainanddrizzle"
+  | "heavyshowerrainanddrizzle"
+  | "showerdrizzle"
+  | "lightrain"
+  | "moderaterain"
+  | "heavyintensityrain"
+  | "veryheavyrain"
+  | "extremerain"
+  | "freezingrain"
+  | "lightintensityshowerrain"
+  | "showerrain"
+  | "heavyintensityshowerrain"
+  | "raggedshowerrain"
+  | "lightsnow"
+  | "snow"
+  | "heavysnow"
+  | "sleet"
+  | "lightshowersleet"
+  | "showersleet"
+  | "lightrainandsnow"
+  | "rainandsnow"
+  | "lightshowersnow"
+  | "showersnow"
+  | "heavyshowersnow"
+  | "clearsky"
+  | "fewclouds"
+  | "scatteredclouds"
+  | "brokenclouds"
+  | "overcastclouds";
 
 export const weatherBackgrounds: {
   [key in WeatherTypes]: ImageSourcePropType;
 } = {
+  thunderstormwithlightrain: require("../assets/images/stormy.png"),
+  thunderstormwithrain: require("../assets/images/stormy.png"),
+  thunderstormwithheavyrain: require("../assets/images/stormy.png"),
+  lightthunderstorm: require("../assets/images/stormy.png"),
+  thunderstorm: require("../assets/images/stormy.png"),
+  heavythunderstorm: require("../assets/images/stormy.png"),
+  raggedthunderstorm: require("../assets/images/stormy.png"),
+  thunderstormwithlightdrizzle: require("../assets/images/stormy.png"),
+  thunderstormwithdrizzle: require("../assets/images/stormy.png"),
+  thunderstormwithheavydrizzle: require("../assets/images/stormy.png"),
+  lightintensitydrizzle: require("../assets/images/rainy.png"),
+  drizzle: require("../assets/images/rainy.png"),
+  heavyintensitydrizzle: require("../assets/images/rainy.png"),
+  lightintensitydrizzlerain: require("../assets/images/rainy.png"),
+  drizzlerain: require("../assets/images/rainy.png"),
+  heavyintensitydrizzlerain: require("../assets/images/rainy.png"),
+  showerrainanddrizzle: require("../assets/images/rainy.png"),
+  heavyshowerrainanddrizzle: require("../assets/images/rainy.png"),
+  showerdrizzle: require("../assets/images/rainy.png"),
+  lightrain: require("../assets/images/rainy.png"),
+  moderaterain: require("../assets/images/rainy.png"),
+  heavyintensityrain: require("../assets/images/rainy.png"),
+  veryheavyrain: require("../assets/images/rainy.png"),
+  extremerain: require("../assets/images/rainy.png"),
+  freezingrain: require("../assets/images/rainy.png"),
+  lightintensityshowerrain: require("../assets/images/rainy.png"),
+  showerrain: require("../assets/images/rainy.png"),
+  heavyintensityshowerrain: require("../assets/images/rainy.png"),
+  raggedshowerrain: require("../assets/images/rainy.png"),
+  lightsnow: require("../assets/images/snowy.webp"),
+  snow: require("../assets/images/snowy.webp"),
+  heavysnow: require("../assets/images/snowy.webp"),
+  sleet: require("../assets/images/snowy.webp"),
+  lightshowersleet: require("../assets/images/snowy.webp"),
+  showersleet: require("../assets/images/snowy.webp"),
+  lightrainandsnow: require("../assets/images/snowy.webp"),
+  rainandsnow: require("../assets/images/snowy.webp"),
+  lightshowersnow: require("../assets/images/snowy.webp"),
+  showersnow: require("../assets/images/snowy.webp"),
+  heavyshowersnow: require("../assets/images/snowy.webp"),
   clearsky: require("../assets/images/sunny.jpg"),
-  clouds: require("../assets/images/cloudy.jpg"),
   fewclouds: require("../assets/images/cloudy.jpg"),
-  rain: require("../assets/images/rainy.png"),
-  //   Drizzle: require("../assets/images/drizzle.jpg"),
-  //   Thunderstorm: require("../assets/images/storm.jpg"),
-  //   Snow: require("../assets/images/snowy.jpg"),
-  //   Mist: require("../assets/images/mist.jpg"),
-  //   Smoke: require("../assets/images/smoke.jpg"),
-  //   Haze: require("../assets/images/haze.jpg"),
-  //   Dust: require("../assets/images/dust.jpg"),
-  //   Fog: require("../assets/images/fog.jpg"),
-  //   Sand: require("../assets/images/sand.jpg"),
-  //   Ash: require("../assets/images/ash.jpg"),
-  //   Squall: require("../assets/images/squall.jpg"),
-  //   Tornado: require("../assets/images/tornado.jpg"),
+  scatteredclouds: require("../assets/images/cloudy.jpg"),
+  brokenclouds: require("../assets/images/overcastClouds.jpg"),
+  overcastclouds: require("../assets/images/overcastClouds.jpg"),
 };
