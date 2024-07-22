@@ -6,6 +6,7 @@ import { RootStackParamList, RootTabsParamList } from "./types/navigation";
 import SingleDayScreen from "./screens/SingleDayScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
+import colors from "./assets/colors";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
@@ -14,9 +15,13 @@ const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarStyle: { height: 60 },
+        tabBarStyle: styles.tabBarStyle,
         tabBarIcon: () => null,
-        tabBarLabelStyle: { fontSize: 18 },
+        tabBarLabelStyle: styles.tabBarLabelStyle,
+        tabBarActiveBackgroundColor: colors.primaryButton,
+        tabBarInactiveBackgroundColor: colors.primaryText,
+        tabBarActiveTintColor: "black",
+        tabBarInactiveTintColor: "white",
       }}
     >
       <Tab.Screen
@@ -65,5 +70,14 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  tabBarStyle: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: "8%",
+  },
+  tabBarLabelStyle: {
+    paddingBottom: 10,
+    fontSize: 16,
   },
 });
