@@ -7,38 +7,46 @@ import SingleDayScreen from "./screens/SingleDayScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
 import colors from "./assets/colors";
+import { createStyleSheet, UnistylesRuntime } from "react-native-unistyles";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
+
+const height = UnistylesRuntime.screen.height;
+const insetsTop = UnistylesRuntime.insets.top;
+const insetsBottom = UnistylesRuntime.insets.bottom;
+const insetsLeft = UnistylesRuntime.insets.left;
+const insetsRight = UnistylesRuntime.insets.right;
 
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarStyle: styles.tabBarStyle,
         tabBarIcon: () => null,
         tabBarLabelStyle: styles.tabBarLabelStyle,
         tabBarActiveBackgroundColor: colors.primaryButton,
         tabBarInactiveBackgroundColor: colors.primaryText,
         tabBarActiveTintColor: "black",
         tabBarInactiveTintColor: "white",
+        tabBarLabelPosition: "beside-icon",
       }}
     >
       <Tab.Screen
-        name="SingleDay"
+        name="TodayScreen"
         component={SingleDayScreen}
         options={{
           title: "Today",
           headerShown: false,
         }}
       />
-      {/* <Tab.Screen
-        name="SingleDay"
+      <Tab.Screen
+        name="TommorowScreen"
         component={SingleDayScreen}
         options={{
           title: "Tommorow",
+          headerShown: false,
         }}
-      /> */}
+      />
       <Tab.Screen
         name="FiveDays"
         component={FiveDaysScreen}
@@ -67,17 +75,9 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  tabBarStyle: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: "8%",
-  },
+const styles = createStyleSheet({
   tabBarLabelStyle: {
-    paddingBottom: 10,
-    fontSize: 16,
+    fontSize: 18,
+    position: "absolute",
   },
 });

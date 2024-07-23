@@ -3,6 +3,7 @@ export type RootStackParamList = {
   Radar: undefined;
 };
 export type RootTabsParamList = {
-  SingleDay: undefined;
+  TodayScreen: undefined;
+  TommorowScreen: undefined;
   FiveDays: undefined;
 };

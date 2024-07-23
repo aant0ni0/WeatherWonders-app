@@ -24,9 +24,19 @@ import {
 import colors from "../assets/colors";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
+import { FlatList } from "react-native-gesture-handler";
+import { createStyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import { unistyles } from "react-native-unistyles/lib/typescript/src/core";
+
+const width = UnistylesRuntime.screen.width;
+const height = UnistylesRuntime.screen.height;
+const insetsTop = UnistylesRuntime.insets.top;
+const insetsBottom = UnistylesRuntime.insets.bottom;
+const insetsLeft = UnistylesRuntime.insets.left;
+const insetsRight = UnistylesRuntime.insets.right;
 
 const SingleDayScreen: React.FC<
-  NativeStackScreenProps<RootTabsParamList, "SingleDay">
+  NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TommorowScreen">
 > = ({ navigation }) => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [forecastData, setForecastData] = useState<ForecastData | null>(null);
@@ -120,42 +130,52 @@ const SingleDayScreen: React.FC<
       style={styles.background}
     >
       <ScrollView style={[styles.container]} bounces={false}>
-        <SafeAreaView style={styles.container}>
-          <View style={styles.header}></View>
-          <View style={styles.mainInfoBox}>
-            <Text style={styles.city}>{city}</Text>
-            <Text style={styles.mainTemp}>
-              {weatherData?.main.temp.toFixed() + "°C"}
-            </Text>
-            <Text style={styles.weatherDescription}>
-              {weatherData?.weather[0].description}
-            </Text>
-            <Text style={styles.minMax}>
-              from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
-            </Text>
+        <View style={styles.header}></View>
+        <View style={styles.mainInfoBox}>
+          <Text style={styles.city}>{city}</Text>
+          <Text style={styles.mainTemp}>
+            {weatherData
+              ? Math.ceil(weatherData.main.temp) + "°C"
+              : "cannot fetch weather data"}
+          </Text>
+          <Text style={styles.weatherDescription}>
+            {weatherData?.weather[0].description}
+          </Text>
+          <Text style={styles.minMax}>
+            from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
+          </Text>
+        </View>
+        <View style={styles.widgetsContainer}>
+          <View style={styles.hourlyWeather}>
+            <FlatList
+              data={hourlyForecast}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <View style={styles.hourlyWeatherColumns}>
+                  <Text>{new Date(item.dt_txt).getHours()}:00</Text>
+                  <Text>{item.main.temp.toFixed() + "°"}</Text>
+                </View>
+              )}
+              keyExtractor={(item) => item.dt.toString()}
+            />
           </View>
-          <View style={styles.widgetsContainer}>
-            <View style={styles.hourlyWeather}>
-              <ScrollView>
-                <View style={styles.hourlyWeatherColumns}></View>
-              </ScrollView>
-            </View>
-            <View style={styles.smallerWidgetsContainer}>
-              <View style={styles.widgets}></View>
-              <View style={styles.widgets}></View>
-              <View style={styles.widgets}></View>
-              <View style={styles.widgets}></View>
-            </View>
+          <View style={styles.smallerWidgetsContainer}>
+            <View style={styles.widgets}></View>
+            <View style={styles.widgets}></View>
+            <View style={styles.widgets}></View>
+            <View style={styles.widgets}></View>
           </View>
-        </SafeAreaView>
+        </View>
       </ScrollView>
     </ImageBackground>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = createStyleSheet({
   container: {
     flex: 1,
+    paddingTop: insetsTop,
   },
   background: {
     width: "100%",
@@ -163,9 +183,8 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   header: {
-    backgroundColor: "yellow",
     width: "100%",
-    height: 50,
+    height: height / 15,
   },
   mainInfoBox: {
     width: "100%",
@@ -195,36 +214,35 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: "7%",
     paddingTop: "10%",
-    backgroundColor: "red",
     justifyContent: "center",
+    marginBottom: 20,
   },
   hourlyWeather: {
-    width: "100%",
-    backgroundColor: "yellow",
-    height: 190,
+    backgroundColor: "#FAFAFA",
+    height: height / 5,
     marginBottom: 20,
-    borderRadius: 5,
+    borderRadius: 10,
   },
   hourlyWeatherColumns: {
-    height: 190,
-    width: "20%",
+    height: "100%",
+    width: 80,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 2,
+    borderRightWidth: 2,
   },
   smallerWidgetsContainer: {
-    backgroundColor: "blue",
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     flexWrap: "wrap",
-    marginBottom: 40,
+    marginBottom: 25,
   },
   widgets: {
     width: "43%",
-    backgroundColor: "green",
-    height: 140,
+    backgroundColor: "#FAFAFA",
+    height: width / 3,
     marginBottom: 20,
+    marginTop: 20,
     borderRadius: 5,
   },
 });
