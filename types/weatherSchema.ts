@@ -22,11 +22,18 @@ const WeatherDescriptionSchema = z.object({
   icon: z.string(),
 });
 
+const SysSchema = z.object({
+  country: z.string(),
+  sunrise: z.number(),
+  sunset: z.number(),
+});
+
 const WeatherSchema = z.object({
   visibility: z.number(),
   wind: WindSchema,
   main: MainSchema,
   weather: z.array(WeatherDescriptionSchema),
+  sys: SysSchema,
 });
 
 const CloudsSchema = z.object({
@@ -37,7 +44,7 @@ const RainSchema = z.object({
   "3h": z.number().optional(),
 });
 
-const SysSchema = z.object({
+const ForecastSysSchema = z.object({
   pod: z.string(),
 });
 
@@ -50,7 +57,7 @@ const ForecastItemSchema = z.object({
   visibility: z.number(),
   pop: z.number(),
   rain: RainSchema.optional(),
-  sys: SysSchema,
+  sys: ForecastSysSchema,
   dt_txt: z.string(),
 });
 

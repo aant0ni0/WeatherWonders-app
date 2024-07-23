@@ -7,6 +7,8 @@ import {
   ImageBackground,
   SafeAreaView,
   useWindowDimensions,
+  Image,
+  TextInput,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -17,6 +19,7 @@ import {
   ForecastItem,
   WeatherData,
 } from "../types/weatherSchema";
+import { Ionicons } from "@expo/vector-icons";
 import {
   weatherBackgrounds,
   WeatherTypes,
@@ -124,13 +127,27 @@ const SingleDayScreen: React.FC<
     return weatherBackgrounds[weatherType];
   };
 
+  const formatTimestampToTime = (timestamp: number): string => {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+  };
+
   return (
     <ImageBackground
       source={changeBackgroundImageDependsOnWeather()}
       style={styles.background}
     >
       <ScrollView style={[styles.container]} bounces={false}>
-        <View style={styles.header}></View>
+        <View style={styles.header}>
+          <View style={styles.radarButton}>
+            <Ionicons name="radio-outline" size={35} color="white" />
+          </View>
+          <TextInput style={styles.searchBar} placeholder="Search city..." />
+        </View>
         <View style={styles.mainInfoBox}>
           <Text style={styles.city}>{city}</Text>
           <Text style={styles.mainTemp}>
@@ -147,24 +164,72 @@ const SingleDayScreen: React.FC<
         </View>
         <View style={styles.widgetsContainer}>
           <View style={styles.hourlyWeather}>
+            <Text style={styles.hourlyWeatherTitle}>Hourly Weather</Text>
             <FlatList
               data={hourlyForecast}
               horizontal={true}
               showsHorizontalScrollIndicator={false}
               renderItem={({ item }) => (
                 <View style={styles.hourlyWeatherColumns}>
-                  <Text>{new Date(item.dt_txt).getHours()}:00</Text>
-                  <Text>{item.main.temp.toFixed() + "°"}</Text>
+                  <View style={{ marginHorizontal: 15 }}>
+                    <Text style={{ fontSize: 17, fontWeight: "bold" }}>
+                      {new Date(item.dt_txt).getHours()}:00
+                    </Text>
+                  </View>
+                  <Image
+                    source={{
+                      uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
+                    }}
+                    style={styles.weatherIcon}
+                  />
+
+                  <Text style={{ fontSize: 16 }}>
+                    {item.main.temp.toFixed() + "°"}
+                  </Text>
                 </View>
               )}
               keyExtractor={(item) => item.dt.toString()}
             />
           </View>
           <View style={styles.smallerWidgetsContainer}>
-            <View style={styles.widgets}></View>
-            <View style={styles.widgets}></View>
-            <View style={styles.widgets}></View>
-            <View style={styles.widgets}></View>
+            <View style={styles.widgets}>
+              <Text style={styles.widgetTitle}>Feels like:</Text>
+              <Text style={{ fontSize: 18, fontWeight: "500" }}>
+                {weatherData?.main.feels_like.toFixed() + "°C"}
+              </Text>
+            </View>
+            <View style={styles.widgets}>
+              <Text style={styles.widgetTitle}>Humidity:</Text>
+              <Text>{weatherData?.main.humidity}%</Text>
+            </View>
+            <View style={styles.widgets}>
+              <Text style={styles.widgetTitle}>Visibility:</Text>
+              <Text>
+                {weatherData?.visibility ? weatherData?.visibility / 1000 : ""}{" "}
+                km
+              </Text>
+            </View>
+            <View style={styles.widgets}>
+              <Text style={styles.widgetTitle}>Wind Speed:</Text>
+              <Text>{weatherData?.wind.speed}</Text>
+            </View>
+            <View style={styles.widgets}>
+              <Text style={styles.widgetTitle}>Pressure:</Text>
+              <Text>{weatherData?.main.pressure} hPa</Text>
+            </View>
+            <View style={styles.widgets}>
+              <Text style={styles.widgetTitle}>Sunrise and Sunset</Text>
+              <Text>
+                Sunrise:
+                {weatherData?.sys.sunrise
+                  ? formatTimestampToTime(weatherData.sys.sunrise)
+                  : "Loading..."}
+                , Sunset:{" "}
+                {weatherData?.sys.sunset
+                  ? formatTimestampToTime(weatherData.sys.sunset)
+                  : "Loading..."}
+              </Text>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -185,11 +250,13 @@ const styles = createStyleSheet({
   header: {
     width: "100%",
     height: height / 15,
+    flexDirection: "row",
+    marginTop: 10,
   },
   mainInfoBox: {
     width: "100%",
     alignItems: "center",
-    padding: "7%",
+    padding: "5%",
   },
   mainTemp: {
     fontSize: 75,
@@ -218,17 +285,24 @@ const styles = createStyleSheet({
     marginBottom: 20,
   },
   hourlyWeather: {
-    backgroundColor: "#FAFAFA",
-    height: height / 5,
+    height: height / 4,
     marginBottom: 20,
-    borderRadius: 10,
+    borderRadius: 5,
+  },
+  hourlyWeatherTitle: {
+    textAlign: "center",
+    fontSize: 23,
+    fontWeight: "bold",
+    color: colors.primaryText,
   },
   hourlyWeatherColumns: {
     height: "100%",
-    width: 80,
+    width: 84,
     justifyContent: "center",
     alignItems: "center",
-    borderRightWidth: 2,
+    borderRightWidth: 0.2,
+    borderRadius: 5,
+    backgroundColor: "#a5d2f0",
   },
   smallerWidgetsContainer: {
     width: "100%",
@@ -238,12 +312,47 @@ const styles = createStyleSheet({
     marginBottom: 25,
   },
   widgets: {
-    width: "43%",
-    backgroundColor: "#FAFAFA",
+    width: "45%",
+    backgroundColor: colors.primaryWidget,
     height: width / 3,
     marginBottom: 20,
     marginTop: 20,
     borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    elevation: 0.8,
+  },
+  widgetTitle: {
+    position: "absolute",
+    top: 4,
+    left: 4,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.primaryText,
+  },
+  weatherIcon: {
+    width: 60,
+    height: 60,
+  },
+  searchBar: {
+    height: "80%",
+    width: "70%",
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    fontSize: 16,
+  },
+  radarButton: {
+    width: "12%",
+    height: "80%",
+    backgroundColor: "#F39C12",
+    borderRadius: 5,
+    marginRight: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

@@ -12,12 +12,6 @@ import { createStyleSheet, UnistylesRuntime } from "react-native-unistyles";
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
 
-const height = UnistylesRuntime.screen.height;
-const insetsTop = UnistylesRuntime.insets.top;
-const insetsBottom = UnistylesRuntime.insets.bottom;
-const insetsLeft = UnistylesRuntime.insets.left;
-const insetsRight = UnistylesRuntime.insets.right;
-
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
@@ -45,6 +39,11 @@ const BottomTabNavigator = () => {
         options={{
           title: "Tommorow",
           headerShown: false,
+          tabBarItemStyle: {
+            borderRightWidth: 0.2,
+            borderLeftWidth: 0.2,
+            borderColor: "black",
+          },
         }}
       />
       <Tab.Screen

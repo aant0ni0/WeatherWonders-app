@@ -11,6 +11,7 @@ export const getWeatherByCity = async (city: string): Promise<WeatherData> => {
     const weatherResponse = await axios.get(
       `${BASE_URL_WEATHER}?q=${city}&appid=${API_KEY}&units=metric`
     );
+    console.log(weatherResponse.data);
     return weatherResponse.data;
   } catch (error) {
     console.error("Error fetching weather data:", error);
