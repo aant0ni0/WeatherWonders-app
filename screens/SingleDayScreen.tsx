@@ -9,6 +9,7 @@ import {
   useWindowDimensions,
   Image,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -30,6 +31,7 @@ import ErrorMessage from "../components/ErrorMessage";
 import { FlatList } from "react-native-gesture-handler";
 import { createStyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import { unistyles } from "react-native-unistyles/lib/typescript/src/core";
+import { SearchBar } from "react-native-screens";
 
 const width = UnistylesRuntime.screen.width;
 const height = UnistylesRuntime.screen.height;
@@ -40,12 +42,26 @@ const insetsRight = UnistylesRuntime.insets.right;
 
 const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TommorowScreen">
-> = ({ navigation }) => {
+> = ({ navigation, route }) => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [forecastData, setForecastData] = useState<ForecastData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [city, setCity] = useState("Warsaw");
+
+  const today = route.params["today"];
+  const now = new Date();
+  const todayMidnight = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+  const tomorrowMidnight = new Date(
+    todayMidnight.getTime() + 24 * 60 * 60 * 1000
+  );
+  const date = today
+    ? now
+    : new Date(tomorrowMidnight.getTime() + 7 * 60 * 60 * 1000);
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -143,10 +159,15 @@ const SingleDayScreen: React.FC<
     >
       <ScrollView style={[styles.container]} bounces={false}>
         <View style={styles.header}>
-          <View style={styles.radarButton}>
+          <TouchableOpacity style={styles.radarButton}>
             <Ionicons name="radio-outline" size={35} color="white" />
+          </TouchableOpacity>
+          <View style={styles.searchBarContainer}>
+            <TextInput style={styles.searchBar} placeholder="Search city..." />
+            <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
+              <Ionicons name="search" size={20} color={colors.primaryText} />
+            </TouchableOpacity>
           </View>
-          <TextInput style={styles.searchBar} placeholder="Search city..." />
         </View>
         <View style={styles.mainInfoBox}>
           <Text style={styles.city}>{city}</Text>
@@ -172,7 +193,12 @@ const SingleDayScreen: React.FC<
               renderItem={({ item }) => (
                 <View style={styles.hourlyWeatherColumns}>
                   <View style={{ marginHorizontal: 15 }}>
-                    <Text style={{ fontSize: 17, fontWeight: "bold" }}>
+                    <Text
+                      style={{
+                        fontSize: 17,
+                        fontWeight: "bold",
+                      }}
+                    >
                       {new Date(item.dt_txt).getHours()}:00
                     </Text>
                   </View>
@@ -194,17 +220,19 @@ const SingleDayScreen: React.FC<
           <View style={styles.smallerWidgetsContainer}>
             <View style={styles.widgets}>
               <Text style={styles.widgetTitle}>Feels like:</Text>
-              <Text style={{ fontSize: 18, fontWeight: "500" }}>
+              <Text style={styles.widgetContent}>
                 {weatherData?.main.feels_like.toFixed() + "°C"}
               </Text>
             </View>
             <View style={styles.widgets}>
               <Text style={styles.widgetTitle}>Humidity:</Text>
-              <Text>{weatherData?.main.humidity}%</Text>
+              <Text style={styles.widgetContent}>
+                {weatherData?.main.humidity}%
+              </Text>
             </View>
             <View style={styles.widgets}>
               <Text style={styles.widgetTitle}>Visibility:</Text>
-              <Text>
+              <Text style={styles.widgetContent}>
                 {weatherData?.visibility ? weatherData?.visibility / 1000 : ""}{" "}
                 km
               </Text>
@@ -215,7 +243,9 @@ const SingleDayScreen: React.FC<
             </View>
             <View style={styles.widgets}>
               <Text style={styles.widgetTitle}>Pressure:</Text>
-              <Text>{weatherData?.main.pressure} hPa</Text>
+              <Text style={styles.widgetContent}>
+                {weatherData?.main.pressure} hPa
+              </Text>
             </View>
             <View style={styles.widgets}>
               <Text style={styles.widgetTitle}>Sunrise and Sunset</Text>
@@ -294,6 +324,7 @@ const styles = createStyleSheet({
     fontSize: 23,
     fontWeight: "bold",
     color: colors.primaryText,
+    marginBottom: 10,
   },
   hourlyWeatherColumns: {
     height: "100%",
@@ -333,24 +364,39 @@ const styles = createStyleSheet({
     fontWeight: "bold",
     color: colors.primaryText,
   },
+  widgetContent: {
+    fontSize: 25,
+    fontWeight: "500",
+  },
   weatherIcon: {
     width: 60,
     height: 60,
   },
   searchBar: {
+    paddingLeft: 10,
+    fontSize: 16,
+    width: "88%",
+  },
+  searchBarContainer: {
     height: "80%",
     width: "70%",
-    backgroundColor: "#fff",
+    flexDirection: "row",
     borderRadius: 5,
-    paddingHorizontal: 10,
-    fontSize: 16,
+    backgroundColor: "white",
   },
+  searchButton: {
+    paddingVertical: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   radarButton: {
     width: "12%",
     height: "80%",
     backgroundColor: "#F39C12",
     borderRadius: 5,
     marginRight: 20,
+    marginLeft: 5,
     alignItems: "center",
     justifyContent: "center",
   },

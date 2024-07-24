@@ -28,6 +28,7 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="TodayScreen"
         component={SingleDayScreen}
+        initialParams={{ today: true }}
         options={{
           title: "Today",
           headerShown: false,
@@ -36,6 +37,7 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="TommorowScreen"
         component={SingleDayScreen}
+        initialParams={{ today: false }}
         options={{
           title: "Tommorow",
           headerShown: false,
