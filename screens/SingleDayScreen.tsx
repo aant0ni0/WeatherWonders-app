@@ -1,19 +1,16 @@
 import {
   View,
   Text,
-  ActivityIndicator,
   ScrollView,
   StyleSheet,
   ImageBackground,
-  SafeAreaView,
-  useWindowDimensions,
   Image,
   TextInput,
   TouchableOpacity,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList, RootTabsParamList } from "../types/navigation";
+import { RootTabsParamList } from "../types/navigation";
 import { getWeatherByCity, getForecastByCity } from "../services/api";
 import {
   ForecastData,
@@ -36,13 +33,12 @@ import SunriseSunsetChart from "../components/SunriseSunsetChart";
 const width = UnistylesRuntime.screen.width;
 const height = UnistylesRuntime.screen.height;
 const insetsTop = UnistylesRuntime.insets.top;
-const insetsBottom = UnistylesRuntime.insets.bottom;
-const insetsLeft = UnistylesRuntime.insets.left;
-const insetsRight = UnistylesRuntime.insets.right;
+
+console.log(width, height);
 
 const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TommorowScreen">
-> = ({ navigation, route }) => {
+> = ({ route }) => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [forecastData, setForecastData] = useState<ForecastData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -397,8 +393,9 @@ const SingleDayScreen: React.FC<
                 }}
               >
                 {today
-                  ? weatherData?.wind.speed?.toFixed(1) + " m/s"
-                  : avgWindSpeed?.toFixed(1) + " m/s"}
+                  ? weatherData?.wind.speed?.toFixed(1)
+                  : avgWindSpeed?.toFixed(1)}
+                <Text style={{ fontSize: 10 }}> m/s</Text>
               </Text>
               <Image
                 source={require("../assets/images/compas.png")}
@@ -433,21 +430,11 @@ const SingleDayScreen: React.FC<
                   : avgPressure?.toFixed() + " hPa"}
               </Text>
               <Text style={styles.widgetDescription}>
-                correct pressure is 1013,5 hPa
+                Correct pressure is 1013,5 hPa
               </Text>
             </View>
             <View style={styles.widgets}>
               <Text style={styles.widgetTitle}>Sunrise and Sunset</Text>
-              {/* <Text>
-                Sunrise:
-                {weatherData?.sys.sunrise
-                  ? formatTimestampToTime(weatherData.sys.sunrise)
-                  : "Loading..."}
-                , Sunset:{" "}
-                {weatherData?.sys.sunset
-                  ? formatTimestampToTime(weatherData.sys.sunset)
-                  : "Loading..."}
-              </Text> */}
               <SunriseSunsetChart
                 sunrise={sunrise}
                 sunset={sunset}
@@ -570,8 +557,8 @@ const styles = createStyleSheet({
     fontWeight: "500",
   },
   weatherIcon: {
-    width: 60,
-    height: 60,
+    width: "50%",
+    height: "37%",
   },
   widgetDescription: {
     position: "absolute",
@@ -607,14 +594,13 @@ const styles = createStyleSheet({
     justifyContent: "center",
   },
   compass: {
-    width: 200,
-    height: 200,
+    width: width / 2,
+    height: height / 4.5,
     position: "absolute",
-    right: -22,
   },
   compassNeedle: {
-    width: 107,
-    height: 107,
+    width: "82%",
+    height: "82%",
     position: "absolute",
     top: 10,
     shadowColor: "#000",

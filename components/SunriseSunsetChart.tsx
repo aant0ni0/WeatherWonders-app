@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text } from "react-native";
-import Svg, { Line, Circle, Path } from "react-native-svg";
+import Svg, { Line, Circle, Path, Image } from "react-native-svg";
 
 interface SunriseSunsetChartProps {
   sunrise: number;
@@ -37,10 +37,9 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
   const currentX = (currentMinutes / totalMinutesInDay) * svgWidth;
 
   const calculateY = (x: number): number => {
-    const controlX = svgWidth / 2;
-    const controlY = 10;
+    const controlY = 5;
     const t = (x - sunriseX) / (sunsetX - sunriseX);
-    return (1 - t) * (1 - t) * 25 + 2 * (1 - t) * t * controlY + t * t * 25;
+    return (1 - t) * (1 - t) * 30 + 2 * (1 - t) * t * controlY + t * t * 30;
   };
 
   const currentY = calculateY(currentX);
@@ -56,21 +55,21 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
       <Svg height="50" width={svgWidth + 20}>
         <Line
           x1="0"
-          y1="25"
+          y1="30"
           x2={svgWidth + 10}
-          y2="25"
+          y2="30"
           stroke="black"
           strokeWidth="1"
         />
 
         <Path
-          d={`M${sunriseX + 5},25 Q${svgWidth / 2},5 ${sunsetX + 5},25`}
+          d={`M${sunriseX - 15},35 Q${svgWidth / 2},1 ${sunsetX + 22},35`}
           stroke="orange"
           strokeWidth="2"
           fill="none"
         />
 
-        {today && <Circle cx={currentX + 5} cy={currentY} r="3" fill="red" />}
+        {today && <Circle cx={currentX + 5} cy={currentY} r="4" fill="red" />}
       </Svg>
 
       <View
