@@ -31,7 +31,7 @@ import ErrorMessage from "../components/ErrorMessage";
 import { FlatList } from "react-native-gesture-handler";
 import { createStyleSheet, UnistylesRuntime } from "react-native-unistyles";
 import { unistyles } from "react-native-unistyles/lib/typescript/src/core";
-import { SearchBar } from "react-native-screens";
+import SunriseSunsetChart from "../components/SunriseSunsetChart";
 
 const width = UnistylesRuntime.screen.width;
 const height = UnistylesRuntime.screen.height;
@@ -47,7 +47,7 @@ const SingleDayScreen: React.FC<
   const [forecastData, setForecastData] = useState<ForecastData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [city, setCity] = useState("Warsaw");
+  const [city, setCity] = useState("Krakow");
 
   const today = route.params["today"];
   const now = new Date();
@@ -81,27 +81,25 @@ const SingleDayScreen: React.FC<
     };
 
     fetchWeatherData();
-  }, []);
+  }, [city]);
 
-  const getHourlyForecastForNext48Hours = (): ForecastItem[] => {
+  const getHourlyForecastForNext24Hours = (): ForecastItem[] => {
     if (!forecastData) return [];
-    const now = new Date();
     return forecastData.list.filter((item: ForecastItem) => {
       const itemDate = new Date(item.dt * 1000);
       return (
-        itemDate > now &&
-        itemDate <= new Date(now.getTime() + 48 * 60 * 60 * 1000)
+        itemDate > date &&
+        itemDate <= new Date(date.getTime() + 27 * 60 * 60 * 1000)
       );
     });
   };
 
   const getMinMaxTempForToday = () => {
     if (!forecastData) return { minTemp: null, maxTemp: null };
-    const now = new Date();
     const todayMidnight = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
     );
     const tomorrowMidnight = new Date(
       todayMidnight.getTime() + 24 * 60 * 60 * 1000
@@ -130,17 +128,58 @@ const SingleDayScreen: React.FC<
     return <ErrorMessage>Error fetching weather data: {error}</ErrorMessage>;
   }
 
-  const hourlyForecast = getHourlyForecastForNext48Hours();
+  const hourlyForecast = getHourlyForecastForNext24Hours();
   const { minTemp, maxTemp } = getMinMaxTempForToday();
 
+  const chooseMainWeatherforTommorow = (): string | null => {
+    const startOfDay = new Date(
+      tomorrowMidnight.getTime() + 6 * 60 * 60 * 1000
+    );
+    const endOfDay = new Date(tomorrowMidnight.getTime() + 21 * 60 * 60 * 1000);
+
+    const weatherDataForTommorow = forecastData?.list.filter(
+      (item: ForecastItem) => {
+        const itemDate = new Date(item.dt * 1000);
+        return itemDate > startOfDay && itemDate <= endOfDay;
+      }
+    );
+
+    if (!weatherDataForTommorow || weatherDataForTommorow.length === 0) {
+      return null;
+    }
+
+    const weatherCounts: { [key: string]: number } = {};
+
+    weatherDataForTommorow.forEach((item: ForecastItem) => {
+      const weatherType = item.weather[0].description;
+      weatherCounts[weatherType] = (weatherCounts[weatherType] || 0) + 1;
+    });
+
+    const sortedWeatherTypes = Object.entries(weatherCounts).sort(
+      ([, a], [, b]) => b - a
+    );
+    const mostCommonWeather = sortedWeatherTypes[0]?.[0];
+
+    return mostCommonWeather || null;
+  };
+  console.log(weatherData?.sys.sunrise);
+
   const changeBackgroundImageDependsOnWeather = () => {
-    if (!weatherData) return;
-    const weatherType = weatherData.weather[0].description.replace(
-      /\s/g,
-      ""
-    ) as WeatherTypes;
-    console.log(weatherType);
-    return weatherBackgrounds[weatherType];
+    if (today) {
+      if (!weatherData) return;
+      const weatherType = weatherData.weather[0].description.replace(
+        /\s/g,
+        ""
+      ) as WeatherTypes;
+      console.log(weatherType);
+      return weatherBackgrounds[weatherType];
+    } else {
+      const weatherType = chooseMainWeatherforTommorow()?.replace(
+        /\s/g,
+        ""
+      ) as WeatherTypes;
+      return weatherBackgrounds[weatherType];
+    }
   };
 
   const formatTimestampToTime = (timestamp: number): string => {
@@ -152,11 +191,120 @@ const SingleDayScreen: React.FC<
     });
   };
 
+  const mainTempToday = weatherData
+    ? Math.ceil(weatherData.main.temp) + "°C"
+    : "cannot fetch weather data";
+
+  const mainTempTommorow = maxTemp
+    ? Math.ceil(maxTemp) + "°C"
+    : "cannot fetch weather data";
+
+  const getForecastForTomorrow = (): {
+    [key: string]: number | null;
+  } => {
+    if (!forecastData)
+      return {
+        avgFeelsLike: null,
+        avgHumidity: null,
+        avgVisibility: null,
+        avgWindSpeed: null,
+        avgPressure: null,
+      };
+
+    const startOfDay = new Date(
+      tomorrowMidnight.getTime() + 6 * 60 * 60 * 1000
+    );
+    const endOfDay = new Date(tomorrowMidnight.getTime() + 21 * 60 * 60 * 1000);
+
+    const weatherDataForTommorow = forecastData.list.filter(
+      (item: ForecastItem) => {
+        const itemDate = new Date(item.dt * 1000);
+        return itemDate > startOfDay && itemDate <= endOfDay;
+      }
+    );
+
+    if (weatherDataForTommorow.length === 0)
+      return {
+        maxFeelsLike: null,
+        avgHumidity: null,
+        avgVisibility: null,
+        avgWindSpeed: null,
+        avgPressure: null,
+      };
+
+    const maxFeelsLike = Math.max(
+      ...weatherDataForTommorow.map((item) => item.main.feels_like)
+    );
+    const avgHumidity =
+      weatherDataForTommorow.reduce(
+        (sum, item) => sum + item.main.humidity,
+        0
+      ) / weatherDataForTommorow.length;
+    const avgVisibility =
+      weatherDataForTommorow.reduce((sum, item) => sum + item.visibility, 0) /
+      weatherDataForTommorow.length;
+    const avgWindSpeed =
+      weatherDataForTommorow.reduce((sum, item) => sum + item.wind.speed, 0) /
+      weatherDataForTommorow.length;
+    const avgPressure =
+      weatherDataForTommorow.reduce(
+        (sum, item) => sum + item.main.pressure,
+        0
+      ) / weatherDataForTommorow.length;
+
+    return {
+      maxFeelsLike,
+      avgHumidity,
+      avgVisibility,
+      avgWindSpeed,
+      avgPressure,
+    };
+  };
+
+  const {
+    maxFeelsLike,
+    avgHumidity,
+    avgVisibility,
+    avgWindSpeed,
+    avgPressure,
+  } = getForecastForTomorrow();
+
+  const getfeelsLikeDescription = (): string => {
+    let feelsLike: number | null = null;
+    let mainTemp: string | null = null;
+
+    if (today) {
+      feelsLike = weatherData?.main.feels_like ?? null;
+      mainTemp = mainTempToday;
+    } else {
+      feelsLike = maxFeelsLike;
+      mainTemp = mainTempTommorow;
+    }
+
+    if (feelsLike !== null && mainTemp !== null) {
+      const mainTempValue = parseInt(mainTemp);
+
+      if (feelsLike > mainTempValue) {
+        return "The humidity makes it seem warmer";
+      } else if (feelsLike < mainTempValue) {
+        return "The wind makes it seem colder";
+      } else {
+        return "Similar to the actual temperature";
+      }
+    }
+
+    return "Data unavailable";
+  };
+
+  const sunrise = weatherData?.sys.sunrise ? weatherData?.sys.sunrise : 0;
+  const sunset = weatherData?.sys.sunset ? weatherData?.sys.sunset : 0;
+
   return (
     <ImageBackground
       source={changeBackgroundImageDependsOnWeather()}
       style={styles.background}
     >
+      <View style={styles.overlay} />
       <ScrollView style={[styles.container]} bounces={false}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.radarButton}>
@@ -172,12 +320,12 @@ const SingleDayScreen: React.FC<
         <View style={styles.mainInfoBox}>
           <Text style={styles.city}>{city}</Text>
           <Text style={styles.mainTemp}>
-            {weatherData
-              ? Math.ceil(weatherData.main.temp) + "°C"
-              : "cannot fetch weather data"}
+            {today ? mainTempToday : mainTempTommorow}
           </Text>
           <Text style={styles.weatherDescription}>
-            {weatherData?.weather[0].description}
+            {today
+              ? weatherData?.weather[0].description
+              : chooseMainWeatherforTommorow()}
           </Text>
           <Text style={styles.minMax}>
             from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
@@ -219,37 +367,78 @@ const SingleDayScreen: React.FC<
           </View>
           <View style={styles.smallerWidgetsContainer}>
             <View style={styles.widgets}>
-              <Text style={styles.widgetTitle}>Feels like:</Text>
+              <Text style={styles.widgetTitle}>Humidity:</Text>
               <Text style={styles.widgetContent}>
-                {weatherData?.main.feels_like.toFixed() + "°C"}
+                {today
+                  ? weatherData?.main.humidity + "%"
+                  : avgHumidity?.toFixed() + "%"}
               </Text>
             </View>
             <View style={styles.widgets}>
-              <Text style={styles.widgetTitle}>Humidity:</Text>
+              <Text style={styles.widgetTitle}>Feels like:</Text>
               <Text style={styles.widgetContent}>
-                {weatherData?.main.humidity}%
+                {today
+                  ? weatherData?.main.feels_like.toFixed() + "°C"
+                  : maxFeelsLike?.toFixed() + "°C"}
               </Text>
+              <Text style={styles.widgetDescription}>
+                {getfeelsLikeDescription()}
+              </Text>
+            </View>
+            <View style={styles.widgets}>
+              <Text style={styles.widgetTitle}>Wind:</Text>
+              <Text
+                style={{
+                  position: "absolute",
+                  bottom: 4,
+                  left: 6,
+                  fontSize: 18,
+                  fontWeight: 500,
+                }}
+              >
+                {today
+                  ? weatherData?.wind.speed?.toFixed(1) + " m/s"
+                  : avgWindSpeed?.toFixed(1) + " m/s"}
+              </Text>
+              <Image
+                source={require("../assets/images/compas.png")}
+                style={styles.compass}
+              />
+              <Image
+                source={require("../assets/images/compasNeedle.png")}
+                style={[
+                  styles.compassNeedle,
+                  { transform: [{ rotate: `${weatherData?.wind.deg}deg` }] },
+                ]}
+              />
             </View>
             <View style={styles.widgets}>
               <Text style={styles.widgetTitle}>Visibility:</Text>
               <Text style={styles.widgetContent}>
-                {weatherData?.visibility ? weatherData?.visibility / 1000 : ""}{" "}
-                km
+                {today
+                  ? weatherData?.visibility
+                    ? (weatherData?.visibility / 1000).toFixed(1) + " km"
+                    : ""
+                  : avgVisibility
+                  ? (avgVisibility / 1000).toFixed(1) + " km"
+                  : ""}
               </Text>
             </View>
-            <View style={styles.widgets}>
-              <Text style={styles.widgetTitle}>Wind Speed:</Text>
-              <Text>{weatherData?.wind.speed}</Text>
-            </View>
+
             <View style={styles.widgets}>
               <Text style={styles.widgetTitle}>Pressure:</Text>
               <Text style={styles.widgetContent}>
-                {weatherData?.main.pressure} hPa
+                {today
+                  ? weatherData?.main.pressure + " hPa"
+                  : avgPressure?.toFixed() + " hPa"}
+              </Text>
+              <Text style={styles.widgetDescription}>
+                correct pressure is 1013,5 hPa
               </Text>
             </View>
             <View style={styles.widgets}>
               <Text style={styles.widgetTitle}>Sunrise and Sunset</Text>
-              <Text>
+              {/* <Text>
                 Sunrise:
                 {weatherData?.sys.sunrise
                   ? formatTimestampToTime(weatherData.sys.sunrise)
@@ -258,7 +447,13 @@ const SingleDayScreen: React.FC<
                 {weatherData?.sys.sunset
                   ? formatTimestampToTime(weatherData.sys.sunset)
                   : "Loading..."}
-              </Text>
+              </Text> */}
+              <SunriseSunsetChart
+                sunrise={sunrise}
+                sunset={sunset}
+                currentTime={new Date().getTime()}
+                today={today}
+              />
             </View>
           </View>
         </View>
@@ -276,6 +471,10 @@ const styles = createStyleSheet({
     width: "100%",
     flex: 1,
     resizeMode: "cover",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255,255,255,0.3 . )",
   },
   header: {
     width: "100%",
@@ -355,6 +554,8 @@ const styles = createStyleSheet({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     elevation: 0.8,
+    opacity: 0.9,
+    overflow: "hidden",
   },
   widgetTitle: {
     position: "absolute",
@@ -372,6 +573,12 @@ const styles = createStyleSheet({
     width: 60,
     height: 60,
   },
+  widgetDescription: {
+    position: "absolute",
+    bottom: 2,
+    left: 4,
+    color: "#585858",
+  },
   searchBar: {
     paddingLeft: 10,
     fontSize: 16,
@@ -379,7 +586,7 @@ const styles = createStyleSheet({
   },
   searchBarContainer: {
     height: "80%",
-    width: "70%",
+    width: "73%",
     flexDirection: "row",
     borderRadius: 5,
     backgroundColor: "white",
@@ -389,16 +596,31 @@ const styles = createStyleSheet({
     alignItems: "center",
     justifyContent: "center",
   },
-
   radarButton: {
     width: "12%",
     height: "80%",
     backgroundColor: "#F39C12",
     borderRadius: 5,
     marginRight: 20,
-    marginLeft: 5,
+    marginLeft: 10,
     alignItems: "center",
     justifyContent: "center",
+  },
+  compass: {
+    width: 200,
+    height: 200,
+    position: "absolute",
+    right: -22,
+  },
+  compassNeedle: {
+    width: 107,
+    height: 107,
+    position: "absolute",
+    top: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    elevation: 0.8,
   },
 });
 
