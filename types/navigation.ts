@@ -1,5 +1,6 @@
 export type RootStackParamList = {
   Tabs: undefined;
+  LocationSelect: undefined;
   Radar: undefined;
 };
 export type RootTabsParamList = {

@@ -1,9 +1,9 @@
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { RootStackParamList, RootTabsParamList } from "./types/navigation";
 import SingleDayScreen from "./screens/SingleDayScreen";
+import LocationSelectScreen from "./screens/LocationSelectScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
 import colors from "./assets/colors";
@@ -65,6 +65,11 @@ export default function App() {
     <>
       <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen
+            name="LocationSelect"
+            component={LocationSelectScreen}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen
             name="Tabs"
             component={BottomTabNavigator}
