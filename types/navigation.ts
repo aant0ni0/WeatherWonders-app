@@ -4,6 +4,6 @@ export type RootStackParamList = {
 };
 export type RootTabsParamList = {
   TodayScreen: { today: boolean };
-  TommorowScreen: { today: boolean };
+  TomorrowScreen: { today: boolean };
   FiveDays: undefined;
 };

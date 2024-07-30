@@ -35,11 +35,11 @@ const BottomTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="TommorowScreen"
+        name="TomorrowScreen"
         component={SingleDayScreen}
         initialParams={{ today: false }}
         options={{
-          title: "Tommorow",
+          title: "Tomorrow",
           headerShown: false,
           tabBarItemStyle: {
             borderRightWidth: 0.2,
