@@ -7,7 +7,7 @@ import LocationSelectScreen from "./screens/LocationSelectScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
 import colors from "./assets/colors";
-import { createStyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
@@ -17,7 +17,10 @@ const BottomTabNavigator = () => {
     <Tab.Navigator
       screenOptions={{
         tabBarIcon: () => null,
-        tabBarLabelStyle: styles.tabBarLabelStyle,
+        tabBarLabelStyle: {
+          fontSize: 18,
+          position: "absolute",
+        },
         tabBarActiveBackgroundColor: colors.primaryButton,
         tabBarInactiveBackgroundColor: colors.primaryText,
         tabBarActiveTintColor: "black",
@@ -80,10 +83,3 @@ export default function App() {
     </>
   );
 }
-
-const styles = createStyleSheet({
-  tabBarLabelStyle: {
-    fontSize: 18,
-    position: "absolute",
-  },
-});

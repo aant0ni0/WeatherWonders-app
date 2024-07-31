@@ -1,5 +1,9 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import { createStyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import {
+  createStyleSheet,
+  UnistylesRuntime,
+  useStyles,
+} from "react-native-unistyles";
 import SearchBar from "../components/header/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../assets/colors";
@@ -9,6 +13,7 @@ const height = UnistylesRuntime.screen.height;
 const insetsTop = UnistylesRuntime.insets.top;
 
 const LocationSelectScreen = () => {
+  const { styles } = useStyles(stylesheet);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -25,7 +30,7 @@ const LocationSelectScreen = () => {
   );
 };
 
-const styles = createStyleSheet({
+const stylesheet = createStyleSheet({
   container: {
     flex: 1,
     alignItems: "center",
@@ -33,8 +38,7 @@ const styles = createStyleSheet({
     backgroundColor: "#BDE3FF",
   },
   searchContainer: {
-    height: "100%",
-    width: "100%",
+    flex: 1,
   },
   infoText: {
     marginTop: 20,
@@ -45,12 +49,13 @@ const styles = createStyleSheet({
   header: {
     flexDirection: "row",
     width: width * 0.99,
-    height: height / 14,
+    height: height / 16,
     marginTop: 30,
+    paddingRight: 30,
   },
   locateButton: {
     width: "10%",
-    height: "80%",
+    height: "100%",
     marginLeft: 10,
     marginRight: 5,
     alignItems: "center",
