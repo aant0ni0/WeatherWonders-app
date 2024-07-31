@@ -154,6 +154,7 @@ const stylesheet = createStyleSheet({
     width: "100%",
     alignItems: "center",
     padding: "5%",
+    zIndex: -1,
   },
   mainTemp: {
     fontSize: 75,

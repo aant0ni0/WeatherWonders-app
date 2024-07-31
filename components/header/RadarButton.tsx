@@ -14,8 +14,8 @@ const RadarButton = () => {
 
 const stylesheet = createStyleSheet({
   radarButton: {
-    height: "80%",
-    padding: 6,
+    height: "90%",
+    padding: 8,
     backgroundColor: "#F39C12",
     borderRadius: 5,
     marginRight: 20,

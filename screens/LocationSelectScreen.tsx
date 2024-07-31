@@ -45,13 +45,12 @@ const stylesheet = createStyleSheet({
     fontSize: 28,
     fontWeight: "bold",
     color: colors.primaryText,
+    zIndex: -1,
   },
   header: {
     flexDirection: "row",
-    width: width * 0.99,
     height: height / 16,
     marginTop: 30,
-    paddingRight: 30,
   },
   locateButton: {
     width: "10%",

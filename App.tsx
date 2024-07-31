@@ -1,15 +1,14 @@
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import { RootStackParamList, RootTabsParamList } from "./types/navigation";
 import SingleDayScreen from "./screens/SingleDayScreen";
 import LocationSelectScreen from "./screens/LocationSelectScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
 import colors from "./assets/colors";
-import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
 
 const BottomTabNavigator = () => {
