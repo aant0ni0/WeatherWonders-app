@@ -13,13 +13,20 @@ import { useWeatherData } from "../hooks/useWeatherData";
 import colors from "../assets/colors";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
-import { createStyleSheet, UnistylesRuntime } from "react-native-unistyles";
-import SunriseSunsetChart from "../components/SunriseSunsetChart";
+import {
+  createStyleSheet,
+  UnistylesRuntime,
+  useStyles,
+} from "react-native-unistyles";
 import HourlyForecast from "../components/HourlyForecast";
 import Header from "../components/header/Header";
+import HumidityWidget from "../components/widgets/HumidilityWidget";
+import FeelsLikeWidget from "../components/widgets/FeelsLikeWidget";
+import WindWidget from "../components/widgets/WindWidget";
+import VisibilityWidget from "../components/widgets/VisibilityWidget";
+import PressureWidget from "../components/widgets/PressureWidget";
+import SunriseSunsetWidget from "../components/widgets/SunriseSunsetWidget";
 
-const width = UnistylesRuntime.screen.width;
-const height = UnistylesRuntime.screen.height;
 const insetsTop = UnistylesRuntime.insets.top;
 
 const SingleDayScreen: React.FC<
@@ -27,10 +34,10 @@ const SingleDayScreen: React.FC<
 > = ({ route }) => {
   const city = "Krakow";
   const today = route.params["today"];
+  const { styles } = useStyles(stylesheet);
 
   const {
     weatherData,
-    forecastData,
     loading,
     error,
     getHourlyForecastForNext24Hours,
@@ -88,86 +95,39 @@ const SingleDayScreen: React.FC<
         <View style={styles.widgetsContainer}>
           <HourlyForecast hourlyForecast={hourlyForecast} />
           <View style={styles.smallerWidgetsContainer}>
-            <View style={styles.widgets}>
-              <Text style={styles.widgetTitle}>Humidity:</Text>
-              <Text style={styles.widgetContent}>
-                {today
-                  ? weatherData?.main.humidity + "%"
-                  : avgHumidity?.toFixed() + "%"}
-              </Text>
-            </View>
-            <View style={styles.widgets}>
-              <Text style={styles.widgetTitle}>Feels like:</Text>
-              <Text style={styles.widgetContent}>
-                {today
-                  ? weatherData?.main.feels_like.toFixed() + "°C"
-                  : maxFeelsLike?.toFixed() + "°C"}
-              </Text>
-              <Text style={styles.widgetDescription}>
-                {getfeelsLikeDescription()}
-              </Text>
-            </View>
-            <View style={styles.widgets}>
-              <Text style={styles.widgetTitle}>Wind:</Text>
-              <Text
-                style={{
-                  position: "absolute",
-                  bottom: 4,
-                  left: 6,
-                  fontSize: 18,
-                  fontWeight: 500,
-                }}
-              >
-                {today
-                  ? weatherData?.wind.speed?.toFixed(1)
-                  : avgWindSpeed?.toFixed(1)}
-                <Text style={{ fontSize: 10 }}> m/s</Text>
-              </Text>
-              <Image
-                source={require("../assets/images/compas.png")}
-                style={styles.compass}
-              />
-              <Image
-                source={require("../assets/images/compasNeedle.png")}
-                style={[
-                  styles.compassNeedle,
-                  { transform: [{ rotate: `${weatherData?.wind.deg}deg` }] },
-                ]}
-              />
-            </View>
-            <View style={styles.widgets}>
-              <Text style={styles.widgetTitle}>Visibility:</Text>
-              <Text style={styles.widgetContent}>
-                {today
-                  ? weatherData?.visibility
-                    ? (weatherData?.visibility / 1000).toFixed(1) + " km"
-                    : ""
-                  : avgVisibility
-                  ? (avgVisibility / 1000).toFixed(1) + " km"
-                  : ""}
-              </Text>
-            </View>
+            <HumidityWidget
+              today={today}
+              avgHumidity={avgHumidity}
+              weatherData={weatherData}
+            />
+            <FeelsLikeWidget
+              today={today}
+              weatherData={weatherData}
+              getfeelsLikeDescription={getfeelsLikeDescription}
+              maxFeelsLike={maxFeelsLike}
+            />
+            <WindWidget
+              today={today}
+              weatherData={weatherData}
+              avgWindSpeed={avgWindSpeed}
+            />
+            <VisibilityWidget
+              today={today}
+              weatherData={weatherData}
+              avgVisibility={avgVisibility}
+            />
 
-            <View style={styles.widgets}>
-              <Text style={styles.widgetTitle}>Pressure:</Text>
-              <Text style={styles.widgetContent}>
-                {today
-                  ? weatherData?.main.pressure + " hPa"
-                  : avgPressure?.toFixed() + " hPa"}
-              </Text>
-              <Text style={styles.widgetDescription}>
-                Correct pressure is 1013,5 hPa
-              </Text>
-            </View>
-            <View style={styles.widgets}>
-              <Text style={styles.widgetTitle}>Sunrise and Sunset</Text>
-              <SunriseSunsetChart
-                sunrise={sunrise}
-                sunset={sunset}
-                currentTime={new Date().getTime()}
-                today={today}
-              />
-            </View>
+            <PressureWidget
+              today={today}
+              weatherData={weatherData}
+              avgPressure={avgPressure}
+            />
+
+            <SunriseSunsetWidget
+              sunrise={sunrise}
+              sunset={sunset}
+              today={today}
+            />
           </View>
         </View>
       </ScrollView>
@@ -175,7 +135,7 @@ const SingleDayScreen: React.FC<
   );
 };
 
-const styles = createStyleSheet({
+const stylesheet = createStyleSheet({
   container: {
     flex: 1,
     paddingTop: insetsTop,
@@ -187,7 +147,7 @@ const styles = createStyleSheet({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255,255,255,0.3 . )",
+    backgroundColor: "rgba(255,255,255,0.15)",
   },
 
   mainInfoBox: {
@@ -227,55 +187,6 @@ const styles = createStyleSheet({
     justifyContent: "space-between",
     flexWrap: "wrap",
     marginBottom: 25,
-  },
-  widgets: {
-    width: "45%",
-    backgroundColor: colors.primaryWidget,
-    height: width / 3,
-    marginBottom: 20,
-    marginTop: 20,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    elevation: 0.8,
-    opacity: 0.9,
-    overflow: "hidden",
-  },
-  widgetTitle: {
-    position: "absolute",
-    top: 4,
-    left: 4,
-    fontSize: 20,
-    fontWeight: "bold",
-    color: colors.primaryText,
-  },
-  widgetContent: {
-    fontSize: 25,
-    fontWeight: "500",
-  },
-  widgetDescription: {
-    position: "absolute",
-    bottom: 2,
-    left: 4,
-    color: "#585858",
-  },
-  compass: {
-    width: width / 2,
-    height: height / 4.5,
-    position: "absolute",
-  },
-  compassNeedle: {
-    width: "83%",
-    height: "83%",
-    position: "absolute",
-    top: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    elevation: 0.8,
   },
 });
 

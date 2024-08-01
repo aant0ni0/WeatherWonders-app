@@ -1,11 +1,13 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { Children } from "react";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 interface ErrorMessageProps {
   children: string | string[];
 }
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ children }) => {
+  const { styles } = useStyles(stylesheet);
   return (
     <View>
       <Text>{children}</Text>
@@ -13,7 +15,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ children }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const stylesheet = createStyleSheet({
   container: {
     flex: 1,
     justifyContent: "center",

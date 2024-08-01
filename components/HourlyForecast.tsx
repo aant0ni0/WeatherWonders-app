@@ -2,12 +2,39 @@ import React from "react";
 import { View, Text, FlatList, Image, StyleSheet } from "react-native";
 import { ForecastItem } from "../types/weatherSchema";
 import colors from "../assets/colors";
+import {
+  createStyleSheet,
+  useStyles,
+  UnistylesRuntime,
+} from "react-native-unistyles";
 
 interface HourlyForecastProps {
   hourlyForecast: ForecastItem[];
 }
 
 const HourlyForecast: React.FC<HourlyForecastProps> = ({ hourlyForecast }) => {
+  const { styles } = useStyles(stylesheet);
+
+  const renderHourlyForecast = (item: ForecastItem) => {
+    return (
+      <View style={styles.hourlyWeatherColumns}>
+        <View style={styles.weatherInfoContainer}>
+          <Text style={styles.hourText}>
+            {new Date(item.dt_txt).getHours()}:00
+          </Text>
+        </View>
+        <Image
+          source={{
+            uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
+          }}
+          style={styles.weatherIcon}
+        />
+
+        <Text style={styles.hourTemp}>{item.main.temp.toFixed() + "°"}</Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.hourlyWeather}>
       <Text style={styles.hourlyWeatherTitle}>Hourly Weather</Text>
@@ -15,37 +42,14 @@ const HourlyForecast: React.FC<HourlyForecastProps> = ({ hourlyForecast }) => {
         data={hourlyForecast}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <View style={styles.hourlyWeatherColumns}>
-            <View style={{ marginHorizontal: 15 }}>
-              <Text
-                style={{
-                  fontSize: 17,
-                  fontWeight: "bold",
-                }}
-              >
-                {new Date(item.dt_txt).getHours()}:00
-              </Text>
-            </View>
-            <Image
-              source={{
-                uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
-              }}
-              style={styles.weatherIcon}
-            />
-
-            <Text style={{ fontSize: 16 }}>
-              {item.main.temp.toFixed() + "°"}
-            </Text>
-          </View>
-        )}
+        renderItem={({ item }) => renderHourlyForecast(item)}
         keyExtractor={(item) => item.dt.toString()}
       />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const stylesheet = createStyleSheet({
   hourlyWeather: {
     height: 200,
     marginBottom: 20,
@@ -70,6 +74,16 @@ const styles = StyleSheet.create({
   weatherIcon: {
     width: "50%",
     height: "37%",
+  },
+  weatherInfoContainer: {
+    marginHorizontal: 15,
+  },
+  hourText: {
+    fontSize: 17,
+    fontWeight: "bold",
+  },
+  hourTemp: {
+    fontSize: 16,
   },
 });
 
