@@ -7,6 +7,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
 import colors from "./assets/colors";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
@@ -65,20 +67,22 @@ const BottomTabNavigator = () => {
 export default function App() {
   return (
     <>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="LocationSelect"
-            component={LocationSelectScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Tabs"
-            component={BottomTabNavigator}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="LocationSelect"
+              component={LocationSelectScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Tabs"
+              component={BottomTabNavigator}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     </>
   );
 }

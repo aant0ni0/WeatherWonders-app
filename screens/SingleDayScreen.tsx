@@ -26,20 +26,25 @@ import WindWidget from "../components/widgets/WindWidget";
 import VisibilityWidget from "../components/widgets/VisibilityWidget";
 import PressureWidget from "../components/widgets/PressureWidget";
 import SunriseSunsetWidget from "../components/widgets/SunriseSunsetWidget";
+import { useSelector } from "react-redux";
+import { RootState } from "../types/navigation";
 
 const insetsTop = UnistylesRuntime.insets.top;
 
 const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
 > = ({ route }) => {
-  const city = "Krakow";
+  const city = useSelector((state: RootState) => state.city);
+
   const today = route.params["today"];
   const { styles } = useStyles(stylesheet);
 
   const {
     weatherData,
-    loading,
-    error,
+    weatherLoading,
+    weatherError,
+    forecastLoading,
+    forecastError,
     getHourlyForecastForNext24Hours,
     getMinMaxTemp,
     chooseMainWeatherforTomorrow,
@@ -52,12 +57,28 @@ const SingleDayScreen: React.FC<
     getfeelsLikeDescription,
   } = useWeatherData(city, today);
 
-  if (loading) {
+  if (weatherLoading) {
     return <Loader />;
   }
 
-  if (error) {
-    return <ErrorMessage>Error fetching weather data: {error}</ErrorMessage>;
+  if (weatherError) {
+    return (
+      <ErrorMessage>
+        Error fetching weather data: {weatherError as string}
+      </ErrorMessage>
+    );
+  }
+
+  if (forecastLoading) {
+    return <Loader />;
+  }
+
+  if (forecastError) {
+    return (
+      <ErrorMessage>
+        Error fetching weather data: {forecastError as string}
+      </ErrorMessage>
+    );
   }
 
   const hourlyForecast = getHourlyForecastForNext24Hours();

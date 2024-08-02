@@ -4,15 +4,30 @@ import {
   ForecastData,
   ForecastItem,
 } from "../types/weatherSchema";
-import { getWeatherByCity, getForecastByCity } from "../services/api";
+//import { getWeatherByCity, getForecastByCity } from "../services/api";
 import { weatherBackgrounds } from "../types/weatherBackdroundTypes";
 import { WeatherTypes } from "../types/weatherBackdroundTypes";
+import {
+  useGetWeatherByCityQuery,
+  useGetForecastByCityQuery,
+} from "../services/api";
 
 export const useWeatherData = (city: string, today: boolean) => {
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-  const [forecastData, setForecastData] = useState<ForecastData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  // const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  // const [forecastData, setForecastData] = useState<ForecastData | null>(null);
+  // const [loading, setLoading] = useState<boolean>(true);
+  //const [error, setError] = useState<string | null>(null);
+
+  const {
+    data: weatherData,
+    error: weatherError,
+    isLoading: weatherLoading,
+  } = useGetWeatherByCityQuery(city);
+  const {
+    data: forecastData,
+    error: forecastError,
+    isLoading: forecastLoading,
+  } = useGetForecastByCityQuery(city);
 
   const oneHourInMilliseconds = 60 * 60 * 1000;
 
@@ -29,25 +44,25 @@ export const useWeatherData = (city: string, today: boolean) => {
     ? now
     : new Date(tomorrowMidnight.getTime() + 6 * oneHourInMilliseconds);
 
-  useEffect(() => {
-    const fetchWeatherData = async () => {
-      try {
-        const [weather, forecast] = await Promise.all([
-          getWeatherByCity(city),
-          getForecastByCity(city),
-        ]);
-        setWeatherData(weather);
-        setForecastData(forecast);
-      } catch (err) {
-        console.log(err);
-        setError("Error fetching weather data");
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchWeatherData = async () => {
+  //     try {
+  //       const [weather, forecast] = await Promise.all([
+  //         getWeatherByCity(city),
+  //         getForecastByCity(city),
+  //       ]);
+  //       setWeatherData(weather);
+  //       setForecastData(forecast);
+  //     } catch (err) {
+  //       console.log(err);
+  //       setError("Error fetching weather data");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchWeatherData();
-  }, [city]);
+  //   fetchWeatherData();
+  // }, [city]);
 
   const getHourlyForecastForNext24Hours = (): ForecastItem[] => {
     if (!forecastData) return [];
@@ -74,11 +89,11 @@ export const useWeatherData = (city: string, today: boolean) => {
     }
 
     const temps = forecastData.list
-      .filter((item) => {
+      .filter((item: ForecastItem) => {
         const itemDate = new Date(item.dt * 1000);
         return itemDate >= start && itemDate < end;
       })
-      .map((item) => item.main.temp);
+      .map((item: ForecastItem) => item.main.temp);
 
     if (temps.length === 0) return { minTemp: null, maxTemp: null };
 
@@ -133,22 +148,28 @@ export const useWeatherData = (city: string, today: boolean) => {
       };
 
     const maxFeelsLike = Math.max(
-      ...weatherDataForTomorrow.map((item) => item.main.feels_like)
+      ...weatherDataForTomorrow.map(
+        (item: ForecastItem) => item.main.feels_like
+      )
     );
     const avgHumidity =
       weatherDataForTomorrow.reduce(
-        (sum, item) => sum + item.main.humidity,
+        (sum: number, item: ForecastItem) => sum + item.main.humidity,
         0
       ) / weatherDataForTomorrow.length;
     const avgVisibility =
-      weatherDataForTomorrow.reduce((sum, item) => sum + item.visibility, 0) /
-      weatherDataForTomorrow.length;
+      weatherDataForTomorrow.reduce(
+        (sum: number, item: ForecastItem) => sum + item.visibility,
+        0
+      ) / weatherDataForTomorrow.length;
     const avgWindSpeed =
-      weatherDataForTomorrow.reduce((sum, item) => sum + item.wind.speed, 0) /
-      weatherDataForTomorrow.length;
+      weatherDataForTomorrow.reduce(
+        (sum: number, item: ForecastItem) => sum + item.wind.speed,
+        0
+      ) / weatherDataForTomorrow.length;
     const avgPressure =
       weatherDataForTomorrow.reduce(
-        (sum, item) => sum + item.main.pressure,
+        (sum: number, item: ForecastItem) => sum + item.main.pressure,
         0
       ) / weatherDataForTomorrow.length;
 
@@ -224,8 +245,10 @@ export const useWeatherData = (city: string, today: boolean) => {
   return {
     weatherData,
     forecastData,
-    loading,
-    error,
+    weatherLoading,
+    weatherError,
+    forecastLoading,
+    forecastError,
     date,
     todayMidnight,
     tomorrowMidnight,

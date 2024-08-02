@@ -1,3 +1,5 @@
+import { weatherApi } from "../services/api";
+
 export type RootStackParamList = {
   Tabs: undefined;
   LocationSelect: undefined;
@@ -8,3 +10,7 @@ export type RootTabsParamList = {
   TomorrowScreen: { today: boolean };
   FiveDays: undefined;
 };
+
+export interface RootState {
+  city: string;
+}

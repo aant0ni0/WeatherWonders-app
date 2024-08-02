@@ -7,13 +7,15 @@ import {
 import SearchBar from "../components/header/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../assets/colors";
+import { useSelector } from "react-redux";
+import { RootState } from "../types/navigation";
 
-const width = UnistylesRuntime.screen.width;
 const height = UnistylesRuntime.screen.height;
 const insetsTop = UnistylesRuntime.insets.top;
 
 const LocationSelectScreen = () => {
   const { styles } = useStyles(stylesheet);
+  console.log("miasto: " + useSelector((state: RootState) => state.city));
   return (
     <View style={styles.container}>
       <View style={styles.header}>

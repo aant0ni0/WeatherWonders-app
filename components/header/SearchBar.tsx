@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   TextInput,
   TouchableOpacity,
   Text,
   FlatList,
-  StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 import colors from "../../assets/colors";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { setCity } from "../../slices/citySlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const GEO_NAMES_USERNAME = "antonimichalczak16";
-const BASE_URL_GEONAMES = "http://api.geonames.org/searchJSON";
+const BASE_URL_GEONAMES = "https://secure.geonames.org/searchJSON";
 
 interface GeoName {
   geonameId: number;
@@ -27,38 +30,69 @@ const SearchBar = () => {
   const [suggestions, setSuggestions] = useState<GeoName[]>([]);
   const { styles } = useStyles(stylesheet);
   const navigation: any = useNavigation();
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+
+  const debounce = (func: (text: string) => Promise<void>, delay: number) => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    return (...args: [string]) => {
+      clearTimeout(timeoutId);
+
+      timeoutId = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
 
   const fetchCities = async (text: string) => {
-    setQuery(text);
     if (text.length > 2) {
       try {
         const response = await axios.get(
-          `https://secure.geonames.org/searchJSON?name_startsWith=${text}&maxRows=5&username=${GEO_NAMES_USERNAME}`
+          `${BASE_URL_GEONAMES}?name_startsWith=${text}&maxRows=5&username=${GEO_NAMES_USERNAME}`
         );
         setSuggestions(response.data.geonames);
       } catch (error) {
         console.error("Error fetching cities:", JSON.stringify(error, null, 2));
         setSuggestions([]);
+      } finally {
+        setLoading(false);
       }
     } else {
       setSuggestions([]);
+      setLoading(false);
     }
   };
 
-  const handleCitySelection = (cityName: string) => {
+  const debouncedFetchCities = debounce(fetchCities, 500);
+
+  const handleSearch = (text: string) => {
+    setLoading(true);
+    setQuery(text);
+    debouncedFetchCities(text);
+  };
+
+  const handleCitySelection = async (cityName: string) => {
     setQuery(cityName);
     setSuggestions([]);
+    dispatch(setCity(cityName));
+    try {
+      await AsyncStorage.setItem("selectedCity", cityName);
+    } catch (error) {
+      console.error(error);
+    }
     navigation.navigate("Tabs");
   };
+
   return (
     <>
-      <View style={{ height: "90%" }}>
+      <View style={styles.container}>
         <View style={styles.searchBarContainer}>
           <TextInput
             style={styles.searchBar}
             placeholder="Search city..."
             value={query}
-            onChangeText={(text) => fetchCities(text)}
+            onChangeText={(text) => handleSearch(text)}
           />
           <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
             <Ionicons name="search" size={20} color={colors.primaryText} />
@@ -66,22 +100,28 @@ const SearchBar = () => {
         </View>
         {suggestions.length > 0 && (
           <View style={styles.typeSuggestionsContainer}>
-            <FlatList
-              data={suggestions}
-              keyExtractor={(item) => item.geonameId.toString()}
-              scrollEnabled={false}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => handleCitySelection(item.name)}
-                  style={styles.suggestionItem}
-                >
-                  <Text>
-                    {item.name}, {item.countryName}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              contentContainerStyle={styles.suggestionsList}
-            />
+            {loading ? (
+              <View style={styles.loader}>
+                <ActivityIndicator size="large" color={"white"} />
+              </View>
+            ) : (
+              <FlatList
+                data={suggestions}
+                keyExtractor={(item) => item.geonameId.toString()}
+                scrollEnabled={false}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => handleCitySelection(item.name)}
+                    style={styles.suggestionItem}
+                  >
+                    <Text>
+                      {item.name}, {item.countryName}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                contentContainerStyle={styles.suggestionsList}
+              />
+            )}
           </View>
         )}
       </View>
@@ -90,6 +130,9 @@ const SearchBar = () => {
 };
 
 const stylesheet = createStyleSheet({
+  container: {
+    height: "90%",
+  },
   searchBar: {
     paddingLeft: 10,
     fontSize: 16,
@@ -126,6 +169,11 @@ const stylesheet = createStyleSheet({
   typeSuggestionsContainer: {
     position: "absolute",
     top: 40,
+    width: "90%",
+  },
+  loader: {
+    position: "absolute",
+    top: 80,
     width: "90%",
   },
 });
