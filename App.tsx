@@ -7,8 +7,18 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
 import colors from "./assets/colors";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { store } from "./store/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState, useCallback } from "react";
+import { setCity } from "./slices/citySlice";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync()
+  .then((result) =>
+    console.log(`SplashScreen.preventAutoHideAsync() succeeded: ${result}`)
+  )
+  .catch(console.warn);
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
@@ -64,25 +74,66 @@ const BottomTabNavigator = () => {
   );
 };
 
-export default function App() {
+const App = () => {
+  const [isSelectedCity, setIsSelectedCity] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchSelectedCity = async () => {
+      try {
+        const selectedCity = await AsyncStorage.getItem("selectedCity");
+        if (selectedCity) {
+          dispatch(setCity(selectedCity));
+          setIsSelectedCity(true);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+        await SplashScreen.hideAsync();
+      }
+    };
+
+    fetchSelectedCity();
+  }, [dispatch]);
+
+  // if (isLoading) {
+  //   return null;
+  // }
+  const showLocationSelect = () => {
+    if (!isSelectedCity) {
+      if (!isLoading) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   return (
-    <>
-      <Provider store={store}>
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="LocationSelect"
-              component={LocationSelectScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Tabs"
-              component={BottomTabNavigator}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </Provider>
-    </>
+    <NavigationContainer>
+      <Stack.Navigator>
+        {showLocationSelect() && (
+          <Stack.Screen
+            name="LocationSelect"
+            component={LocationSelectScreen}
+            options={{ headerShown: false }}
+          />
+        )}
+        <Stack.Screen
+          name="Tabs"
+          component={BottomTabNavigator}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default function RootApp() {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
   );
 }

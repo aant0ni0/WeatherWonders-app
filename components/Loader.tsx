@@ -11,7 +11,7 @@ const Loader: React.FC = () => {
   const { styles } = useStyles(stylesheet);
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color={colors.primary} />
+      <ActivityIndicator size="large" color={"white"} />
     </View>
   );
 };

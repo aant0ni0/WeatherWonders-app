@@ -57,7 +57,7 @@ const SingleDayScreen: React.FC<
     getfeelsLikeDescription,
   } = useWeatherData(city, today);
 
-  if (weatherLoading) {
+  if (weatherLoading || forecastLoading) {
     return <Loader />;
   }
 
@@ -67,10 +67,6 @@ const SingleDayScreen: React.FC<
         Error fetching weather data: {weatherError as string}
       </ErrorMessage>
     );
-  }
-
-  if (forecastLoading) {
-    return <Loader />;
   }
 
   if (forecastError) {
