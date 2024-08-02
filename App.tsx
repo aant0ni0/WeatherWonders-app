@@ -76,8 +76,7 @@ const BottomTabNavigator = () => {
 };
 
 const App = () => {
-  const [isSelectedCity, setIsSelectedCity] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isSelectedCity, setIsSelectedCity] = useState<boolean | null>(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -87,11 +86,13 @@ const App = () => {
         if (selectedCity) {
           dispatch(setCity(selectedCity));
           setIsSelectedCity(true);
+        } else {
+          setIsSelectedCity(false);
         }
       } catch (error) {
         console.error(error);
+        setIsSelectedCity(false);
       } finally {
-        setIsLoading(false);
         await SplashScreen.hideAsync();
       }
     };
@@ -99,7 +100,7 @@ const App = () => {
     fetchSelectedCity();
   }, [dispatch]);
 
-  if (isLoading) {
+  if (isSelectedCity === null) {
     return <Loader />;
   }
 

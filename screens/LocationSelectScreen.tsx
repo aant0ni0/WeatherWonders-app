@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import {
   createStyleSheet,
   UnistylesRuntime,
@@ -23,8 +23,6 @@ import { useNavigation } from "@react-navigation/native";
 const height = UnistylesRuntime.screen.height;
 const insetsTop = UnistylesRuntime.insets.top;
 
-AsyncStorage.clear();
-
 const LocationSelectScreen = () => {
   const { styles } = useStyles(stylesheet);
   const dispatch = useDispatch();
@@ -33,6 +31,7 @@ const LocationSelectScreen = () => {
     useForegroundPermissions();
   const [pickedLocation, setPickedLocation] = useState({ lat: 0, lng: 0 });
   const [address, setAddress] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchAddress = async () => {
@@ -87,7 +86,9 @@ const LocationSelectScreen = () => {
   };
 
   const onPressLocationButton = async () => {
+    setIsLoading(true);
     await getLocationHandler();
+    setIsLoading(false);
   };
 
   return (
@@ -104,6 +105,7 @@ const LocationSelectScreen = () => {
           <SearchBar />
         </View>
       </View>
+      {isLoading && <ActivityIndicator size={"large"} />}
       <Text style={styles.infoText}>Enter City Name</Text>
     </View>
   );
