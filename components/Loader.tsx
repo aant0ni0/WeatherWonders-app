@@ -1,5 +1,10 @@
 import React from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
+import {
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  useWindowDimensions,
+} from "react-native";
 import colors from "../assets/colors";
 import {
   createStyleSheet,
@@ -9,8 +14,9 @@ import {
 
 const Loader: React.FC = () => {
   const { styles } = useStyles(stylesheet);
+  const { height, width } = useWindowDimensions();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { width: width, height: height }]}>
       <ActivityIndicator size="large" color={"white"} />
     </View>
   );
@@ -18,10 +24,11 @@ const Loader: React.FC = () => {
 
 const stylesheet = createStyleSheet({
   container: {
-    flex: 1,
+    position: "absolute",
+
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.primary,
+    backgroundColor: "#BDE3FF",
   },
 });
 

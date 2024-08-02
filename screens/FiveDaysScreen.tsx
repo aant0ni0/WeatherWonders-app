@@ -2,7 +2,6 @@ import { View, Text, ActivityIndicator } from "react-native";
 import { useState, useEffect } from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../types/navigation";
-import { getWeatherByCity, getForecastByCity } from "../services/api";
 import {
   ForecastData,
   ForecastItem,
@@ -14,27 +13,6 @@ const FiveDaysScreen = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchWeatherData = async () => {
-      try {
-        const city = "Warsaw";
-        const [weather, forecast] = await Promise.all([
-          getWeatherByCity(city),
-          getForecastByCity(city),
-        ]);
-        setWeatherData(weather);
-        setForecastData(forecast);
-      } catch (err) {
-        console.log(err);
-        setError("Error fetching weather data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWeatherData();
-  }, []);
 
   const getDailyForecastForNext5Days = (): ForecastItem[] => {
     if (!forecastData) return [];

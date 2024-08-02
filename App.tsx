@@ -13,6 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState, useCallback } from "react";
 import { setCity } from "./slices/citySlice";
 import * as SplashScreen from "expo-splash-screen";
+import Loader from "./components/Loader";
 
 SplashScreen.preventAutoHideAsync()
   .then((result) =>
@@ -98,22 +99,14 @@ const App = () => {
     fetchSelectedCity();
   }, [dispatch]);
 
-  // if (isLoading) {
-  //   return null;
-  // }
-  const showLocationSelect = () => {
-    if (!isSelectedCity) {
-      if (!isLoading) {
-        return true;
-      }
-    }
-    return false;
-  };
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {showLocationSelect() && (
+        {!isSelectedCity && (
           <Stack.Screen
             name="LocationSelect"
             component={LocationSelectScreen}

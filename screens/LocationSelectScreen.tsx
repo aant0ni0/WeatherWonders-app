@@ -7,19 +7,96 @@ import {
 import SearchBar from "../components/header/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../assets/colors";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { RootState } from "../types/navigation";
+import {
+  getCurrentPositionAsync,
+  useForegroundPermissions,
+  PermissionStatus,
+} from "expo-location";
+import { getAddress } from "../services/location";
+import { useState, useEffect } from "react";
+import { setCity } from "../slices/citySlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const height = UnistylesRuntime.screen.height;
 const insetsTop = UnistylesRuntime.insets.top;
 
+AsyncStorage.clear();
+
 const LocationSelectScreen = () => {
   const { styles } = useStyles(stylesheet);
-  console.log("miasto: " + useSelector((state: RootState) => state.city));
+  const dispatch = useDispatch();
+  const navigation: any = useNavigation();
+  const [locationPermissionInformation, requestPermission] =
+    useForegroundPermissions();
+  const [pickedLocation, setPickedLocation] = useState({ lat: 0, lng: 0 });
+  const [address, setAddress] = useState("");
+
+  useEffect(() => {
+    const fetchAddress = async () => {
+      if (pickedLocation.lat && pickedLocation.lng) {
+        const fetchedAddress = await getAddress(
+          pickedLocation.lat,
+          pickedLocation.lng
+        );
+        setAddress(fetchedAddress);
+        console.log("Address:", fetchedAddress);
+
+        dispatch(setCity(fetchedAddress));
+        try {
+          await AsyncStorage.setItem("selectedCity", fetchedAddress);
+        } catch (error) {
+          console.error(error);
+        }
+        navigation.navigate("Tabs");
+      }
+    };
+
+    fetchAddress();
+  }, [pickedLocation]);
+
+  const verifyPermissions = async () => {
+    console.log(locationPermissionInformation?.status);
+    if (
+      locationPermissionInformation?.status === PermissionStatus.UNDETERMINED
+    ) {
+      const permissionResponse = await requestPermission();
+
+      return permissionResponse.granted;
+    }
+    if (locationPermissionInformation?.status === PermissionStatus.DENIED) {
+      return false;
+    }
+    return true;
+  };
+
+  const getLocationHandler = async () => {
+    const hasPermission = await verifyPermissions();
+    console.log(hasPermission);
+    if (!hasPermission) {
+      return;
+    }
+    const location = await getCurrentPositionAsync();
+    console.log("Location:", location);
+    setPickedLocation({
+      lat: location.coords.latitude,
+      lng: location.coords.longitude,
+    });
+  };
+
+  const onPressLocationButton = async () => {
+    await getLocationHandler();
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.locateButton}>
+        <TouchableOpacity
+          style={styles.locateButton}
+          onPress={onPressLocationButton}
+        >
           <Ionicons name="locate-outline" size={35} color="white" />
         </TouchableOpacity>
 

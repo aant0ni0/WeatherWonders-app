@@ -21,30 +21,3 @@ export const weatherApi = createApi({
 
 export const { useGetWeatherByCityQuery, useGetForecastByCityQuery } =
   weatherApi;
-
-// export const getWeatherByCity = async (city: string): Promise<WeatherData> => {
-//   try {
-//     const weatherResponse = await axios.get(
-//       `${BASE_URL_WEATHER}?q=${city}&appid=${API_KEY}&units=metric`
-//     );
-//     return weatherResponse.data;
-//   } catch (error) {
-//     console.error("Error fetching weather data:", error);
-//     throw error;
-//   }
-// };
-
-// export const getForecastByCity = async (
-//   city: string
-// ): Promise<ForecastData> => {
-//   try {
-//     const forecastResponse = await axios.get(
-//       `${BASE_URL_FORECAST}?q=${city}&appid=${API_KEY}&units=metric`
-//     );
-
-//     return forecastResponse.data;
-//   } catch (error) {
-//     console.error("Error fetching forecast data:", error);
-//     throw error;
-//   }
-// };

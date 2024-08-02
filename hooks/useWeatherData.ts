@@ -4,7 +4,6 @@ import {
   ForecastData,
   ForecastItem,
 } from "../types/weatherSchema";
-//import { getWeatherByCity, getForecastByCity } from "../services/api";
 import { weatherBackgrounds } from "../types/weatherBackdroundTypes";
 import { WeatherTypes } from "../types/weatherBackdroundTypes";
 import {
@@ -13,11 +12,6 @@ import {
 } from "../services/api";
 
 export const useWeatherData = (city: string, today: boolean) => {
-  // const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-  // const [forecastData, setForecastData] = useState<ForecastData | null>(null);
-  // const [loading, setLoading] = useState<boolean>(true);
-  //const [error, setError] = useState<string | null>(null);
-
   const {
     data: weatherData,
     error: weatherError,
@@ -43,26 +37,6 @@ export const useWeatherData = (city: string, today: boolean) => {
   const date = today
     ? now
     : new Date(tomorrowMidnight.getTime() + 6 * oneHourInMilliseconds);
-
-  // useEffect(() => {
-  //   const fetchWeatherData = async () => {
-  //     try {
-  //       const [weather, forecast] = await Promise.all([
-  //         getWeatherByCity(city),
-  //         getForecastByCity(city),
-  //       ]);
-  //       setWeatherData(weather);
-  //       setForecastData(forecast);
-  //     } catch (err) {
-  //       console.log(err);
-  //       setError("Error fetching weather data");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchWeatherData();
-  // }, [city]);
 
   const getHourlyForecastForNext24Hours = (): ForecastItem[] => {
     if (!forecastData) return [];
