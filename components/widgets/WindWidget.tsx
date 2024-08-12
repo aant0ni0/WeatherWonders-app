@@ -8,24 +8,19 @@ import {
 } from "react-native-unistyles";
 
 interface WindWidgetProps {
-  today: boolean;
   weatherData: WeatherData | null;
-  avgWindSpeed: number | null;
+  windSpeed: number | null;
 }
 
 const width = UnistylesRuntime.screen.width;
 const height = UnistylesRuntime.screen.height;
 
-const WindWidget: React.FC<WindWidgetProps> = ({
-  today,
-  weatherData,
-  avgWindSpeed,
-}) => {
+const WindWidget: React.FC<WindWidgetProps> = ({ weatherData, windSpeed }) => {
   const { styles } = useStyles(stylesheet);
   return (
     <WeatherWidget title="Wind">
       <Text style={styles.widgetContent}>
-        {today ? weatherData?.wind.speed?.toFixed(1) : avgWindSpeed?.toFixed(1)}
+        {windSpeed?.toFixed(1)}
         <Text style={styles.speedUnit}> m/s</Text>
       </Text>
       <Image
@@ -63,7 +58,6 @@ const stylesheet = createStyleSheet({
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
-    elevation: 0.8,
     left: 15,
   },
   speedUnit: {},

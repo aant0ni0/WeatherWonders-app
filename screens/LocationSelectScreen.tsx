@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import {
   createStyleSheet,
   UnistylesRuntime,
@@ -8,7 +14,6 @@ import SearchBar from "../components/header/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
 import colors from "../assets/colors";
 import { useDispatch } from "react-redux";
-import { RootState } from "../types/navigation";
 import {
   getCurrentPositionAsync,
   useForegroundPermissions,
@@ -18,7 +23,8 @@ import { getAddress } from "../services/location";
 import { useState, useEffect } from "react";
 import { setCity } from "../slices/citySlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../types/navigation";
 
 const height = UnistylesRuntime.screen.height;
 const insetsTop = UnistylesRuntime.insets.top;
@@ -26,7 +32,7 @@ const insetsTop = UnistylesRuntime.insets.top;
 const LocationSelectScreen = () => {
   const { styles } = useStyles(stylesheet);
   const dispatch = useDispatch();
-  const navigation: any = useNavigation();
+  const navigation: NavigationProp<RootStackParamList> = useNavigation();
   const [locationPermissionInformation, requestPermission] =
     useForegroundPermissions();
   const [pickedLocation, setPickedLocation] = useState({ lat: 0, lng: 0 });
@@ -41,7 +47,6 @@ const LocationSelectScreen = () => {
           pickedLocation.lng
         );
         setAddress(fetchedAddress);
-        console.log("Address:", fetchedAddress);
 
         dispatch(setCity(fetchedAddress));
         try {
@@ -75,6 +80,11 @@ const LocationSelectScreen = () => {
     const hasPermission = await verifyPermissions();
     console.log(hasPermission);
     if (!hasPermission) {
+      Alert.alert(
+        "Permission Denied",
+        "Location permission is required to get your current position. Please enable it in your device settings.",
+        [{ text: "OK" }]
+      );
       return;
     }
     const location = await getCurrentPositionAsync();

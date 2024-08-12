@@ -6,26 +6,18 @@ import { createStyleSheet, useStyles } from "react-native-unistyles";
 import colors from "../../assets/colors";
 
 interface FeelsLikeWidgetProps {
-  today: boolean;
-  weatherData: WeatherData | null;
-  maxFeelsLike: number | null;
+  feelsLike: number | null;
   getfeelsLikeDescription: () => string;
 }
 
 const FeelsLikeWidget: React.FC<FeelsLikeWidgetProps> = ({
-  today,
-  weatherData,
-  maxFeelsLike,
+  feelsLike,
   getfeelsLikeDescription,
 }) => {
   const { styles } = useStyles(stylesheet);
   return (
     <WeatherWidget title="Feels like">
-      <Text style={styles.widgetContent}>
-        {today
-          ? weatherData?.main.feels_like.toFixed() + "°C"
-          : maxFeelsLike?.toFixed() + "°C"}
-      </Text>
+      <Text style={styles.widgetContent}>{feelsLike?.toFixed() + "°C"}</Text>
       <Text style={styles.widgetDescription}>{getfeelsLikeDescription()}</Text>
     </WeatherWidget>
   );

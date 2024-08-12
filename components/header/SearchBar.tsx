@@ -11,11 +11,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 import colors from "../../assets/colors";
 import axios from "axios";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setCity } from "../../slices/citySlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { RootStackParamList } from "../../types/navigation";
 const GEO_NAMES_USERNAME = "antonimichalczak16";
 const BASE_URL_GEONAMES = "https://secure.geonames.org/searchJSON";
 
@@ -29,7 +29,7 @@ const SearchBar = () => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<GeoName[]>([]);
   const { styles } = useStyles(stylesheet);
-  const navigation: any = useNavigation();
+  const navigation: NavigationProp<RootStackParamList> = useNavigation();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 

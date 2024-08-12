@@ -1,5 +1,3 @@
-import { weatherApi } from "../services/api";
-
 export type RootStackParamList = {
   Tabs: undefined;
   LocationSelect: undefined;

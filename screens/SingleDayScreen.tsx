@@ -5,7 +5,6 @@ import {
   ScrollView,
   StyleSheet,
   ImageBackground,
-  Image,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootTabsParamList } from "../types/navigation";
@@ -47,10 +46,9 @@ const SingleDayScreen: React.FC<
     forecastError,
     getHourlyForecastForNext24Hours,
     getMinMaxTemp,
-    chooseMainWeatherforTomorrow,
-    getForecastForTomorrow,
-    mainTempToday,
-    mainTempTomorrow,
+    mainWeather,
+    getForecast,
+    mainTemp,
     sunrise,
     sunset,
     changeBackgroundImageDependsOnWeather,
@@ -79,13 +77,8 @@ const SingleDayScreen: React.FC<
 
   const hourlyForecast = getHourlyForecastForNext24Hours();
   const { minTemp, maxTemp } = getMinMaxTemp();
-  const {
-    maxFeelsLike,
-    avgHumidity,
-    avgVisibility,
-    avgWindSpeed,
-    avgPressure,
-  } = getForecastForTomorrow();
+  const { feelsLike, humidity, visibility, windSpeed, pressure } =
+    getForecast();
 
   return (
     <ImageBackground
@@ -97,14 +90,8 @@ const SingleDayScreen: React.FC<
         <Header />
         <View style={styles.mainInfoBox}>
           <Text style={styles.city}>{city}</Text>
-          <Text style={styles.mainTemp}>
-            {today ? mainTempToday : mainTempTomorrow}
-          </Text>
-          <Text style={styles.weatherDescription}>
-            {today
-              ? weatherData?.weather[0].description
-              : chooseMainWeatherforTomorrow()}
-          </Text>
+          <Text style={styles.mainTemp}>{mainTemp}</Text>
+          <Text style={styles.weatherDescription}>{mainWeather}</Text>
           <Text style={styles.minMax}>
             from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
           </Text>
@@ -112,33 +99,15 @@ const SingleDayScreen: React.FC<
         <View style={styles.widgetsContainer}>
           <HourlyForecast hourlyForecast={hourlyForecast} />
           <View style={styles.smallerWidgetsContainer}>
-            <HumidityWidget
-              today={today}
-              avgHumidity={avgHumidity}
-              weatherData={weatherData}
-            />
+            <HumidityWidget humidity={humidity} />
             <FeelsLikeWidget
-              today={today}
-              weatherData={weatherData}
               getfeelsLikeDescription={getfeelsLikeDescription}
-              maxFeelsLike={maxFeelsLike}
+              feelsLike={feelsLike}
             />
-            <WindWidget
-              today={today}
-              weatherData={weatherData}
-              avgWindSpeed={avgWindSpeed}
-            />
-            <VisibilityWidget
-              today={today}
-              weatherData={weatherData}
-              avgVisibility={avgVisibility}
-            />
+            <WindWidget weatherData={weatherData} windSpeed={windSpeed} />
+            <VisibilityWidget visibility={visibility} />
 
-            <PressureWidget
-              today={today}
-              weatherData={weatherData}
-              avgPressure={avgPressure}
-            />
+            <PressureWidget pressure={pressure} />
 
             <SunriseSunsetWidget
               sunrise={sunrise}

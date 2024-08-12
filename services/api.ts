@@ -1,6 +1,3 @@
-import axios from "axios";
-import { WeatherData } from "../types/weatherSchema";
-import { ForecastData } from "../types/weatherSchema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const API_KEY = "3f6de936886f0b0bd368ed34bbd07eee";

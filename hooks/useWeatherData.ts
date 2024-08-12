@@ -1,9 +1,4 @@
-import { useState, useEffect } from "react";
-import {
-  WeatherData,
-  ForecastData,
-  ForecastItem,
-} from "../types/weatherSchema";
+import { ForecastItem } from "../types/weatherSchema";
 import { weatherBackgrounds } from "../types/weatherBackdroundTypes";
 import { WeatherTypes } from "../types/weatherBackdroundTypes";
 import {
@@ -146,7 +141,6 @@ export const useWeatherData = (city: string, today: boolean) => {
         (sum: number, item: ForecastItem) => sum + item.main.pressure,
         0
       ) / weatherDataForTomorrow.length;
-
     return {
       maxFeelsLike,
       avgHumidity,
@@ -157,14 +151,13 @@ export const useWeatherData = (city: string, today: boolean) => {
   };
 
   const { maxTemp } = getMinMaxTemp();
-  console.log(maxTemp);
 
   const mainTempToday = weatherData
-    ? Math.ceil(weatherData.main.temp) + "°C"
+    ? weatherData.main.temp.toFixed() + "°C"
     : "cannot fetch weather data";
 
   const mainTempTomorrow = maxTemp
-    ? Math.ceil(maxTemp) + "°C"
+    ? maxTemp.toFixed() + "°C"
     : "cannot fetch weather data";
 
   const sunrise = weatherData?.sys.sunrise ? weatherData?.sys.sunrise : 0;
@@ -216,6 +209,36 @@ export const useWeatherData = (city: string, today: boolean) => {
     }
   };
 
+  const mainTemp = today ? mainTempToday : mainTempTomorrow;
+  const mainWeather = today
+    ? weatherData?.weather[0].description
+    : chooseMainWeatherforTomorrow();
+
+  const getForecast = () => {
+    let feelsLike: number | null = null;
+    let humidity: number | null = null;
+    let visibility: number | null = null;
+    let windSpeed: number | null = null;
+    let pressure: number | null = null;
+
+    if (today) {
+      const forecast = getForecastForTomorrow();
+      feelsLike = forecast.maxFeelsLike;
+      humidity = forecast.avgHumidity;
+      visibility = forecast.avgVisibility;
+      windSpeed = forecast.avgWindSpeed;
+      pressure = forecast.avgPressure;
+    } else {
+      feelsLike = weatherData?.main.feels_like ?? null;
+      humidity = weatherData?.main.humidity ?? null;
+      visibility = weatherData?.visibility ?? null;
+      windSpeed = weatherData?.wind.speed ?? null;
+      pressure = weatherData?.main.pressure ?? null;
+    }
+
+    return { feelsLike, humidity, visibility, windSpeed, pressure };
+  };
+
   return {
     weatherData,
     forecastData,
@@ -223,16 +246,11 @@ export const useWeatherData = (city: string, today: boolean) => {
     weatherError,
     forecastLoading,
     forecastError,
-    date,
-    todayMidnight,
-    tomorrowMidnight,
     getHourlyForecastForNext24Hours,
     getMinMaxTemp,
-    weatherDataForTomorrow,
-    chooseMainWeatherforTomorrow,
-    getForecastForTomorrow,
-    mainTempToday,
-    mainTempTomorrow,
+    mainWeather,
+    getForecast,
+    mainTemp,
     sunrise,
     sunset,
     changeBackgroundImageDependsOnWeather,
