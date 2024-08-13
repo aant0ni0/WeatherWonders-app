@@ -13,9 +13,6 @@ interface WindWidgetProps {
   avgWindSpeed: number | null;
 }
 
-const width = UnistylesRuntime.screen.width;
-const height = UnistylesRuntime.screen.height;
-
 const WindWidget: React.FC<WindWidgetProps> = ({
   today,
   weatherData,
@@ -28,45 +25,52 @@ const WindWidget: React.FC<WindWidgetProps> = ({
         {today ? weatherData?.wind.speed?.toFixed(1) : avgWindSpeed?.toFixed(1)}
         <Text style={styles.speedUnit}> m/s</Text>
       </Text>
-      <Image
-        source={require("../../assets/images/compas.png")}
-        style={styles.compass}
-      />
-      <Image
-        source={require("../../assets/images/compasNeedle.png")}
-        style={[
-          styles.compassNeedle,
-          { transform: [{ rotate: `${weatherData?.wind.deg}deg` }] },
-        ]}
-      />
+      <View style={styles.compassContainer}>
+        <Image
+          source={require("../../assets/images/compas.png")}
+          style={styles.compass}
+        />
+        <Image
+          source={require("../../assets/images/compasNeedle.png")}
+          style={[
+            styles.compassNeedle,
+            { transform: [{ rotate: `${weatherData?.wind.deg}deg` }] },
+          ]}
+        />
+      </View>
     </WeatherWidget>
   );
 };
 
-const stylesheet = createStyleSheet({
+const stylesheet = createStyleSheet((theme, runtime) => ({
   widgetContent: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "500",
     position: "absolute",
     bottom: 4,
     left: 6,
   },
+  compassContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+  },
   compass: {
-    width: width / 2,
-    height: height / 4.5,
-    position: "absolute",
+    width: runtime.screen.width / 2,
+    height: runtime.screen.height / 4.5,
+    resizeMode: "contain",
+    right: 4,
   },
   compassNeedle: {
-    width: "83%",
-    height: "83%",
     position: "absolute",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    elevation: 0.8,
-    left: 15,
+    width: "70%",
+    height: "70%",
+    resizeMode: "contain",
   },
-  speedUnit: {},
-});
+  speedUnit: {
+    fontSize: 12,
+    fontWeight: "300",
+  },
+}));
 
 export default WindWidget;

@@ -5,13 +5,15 @@ import {
   useStyles,
   UnistylesRuntime,
 } from "react-native-unistyles";
-import colors from "../../assets/colors";
+import { StyleProp, ViewStyle, TextStyle } from "react-native";
 
 const width = UnistylesRuntime.screen.width;
 
 interface WeatherWidgetProps {
   title: string;
   children: React.ReactNode;
+  viewStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 const WeatherWidget: React.FC<WeatherWidgetProps> = (props) => {
@@ -24,10 +26,10 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = (props) => {
   );
 };
 
-const stylesheet = createStyleSheet({
+const stylesheet = createStyleSheet((theme) => ({
   widget: {
     width: "45%",
-    backgroundColor: colors.primaryWidget,
+    backgroundColor: theme.primaryWidget,
     height: width / 3,
     marginBottom: 20,
     marginTop: 20,
@@ -47,8 +49,8 @@ const stylesheet = createStyleSheet({
     left: 4,
     fontSize: 20,
     fontWeight: "bold",
-    color: colors.primaryText,
+    color: theme.primaryText,
   },
-});
+}));
 
 export default WeatherWidget;

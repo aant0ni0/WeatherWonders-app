@@ -2,7 +2,7 @@ import axios from "axios";
 import { WeatherData } from "../types/weatherSchema";
 import { ForecastData } from "../types/weatherSchema";
 
-const API_KEY = "3f6de936886f0b0bd368ed34bbd07eee";
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
 const BASE_URL_WEATHER = "https://api.openweathermap.org/data/2.5/weather";
 const BASE_URL_FORECAST = "https://api.openweathermap.org/data/2.5/forecast";
 

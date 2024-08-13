@@ -63,7 +63,7 @@ export const useWeatherData = (city: string, today: boolean) => {
   const getMinMaxTemp = () => {
     if (!forecastData) return { minTemp: null, maxTemp: null };
 
-    let start, end;
+    let start: Date, end: Date;
 
     if (today) {
       start = todayMidnight;

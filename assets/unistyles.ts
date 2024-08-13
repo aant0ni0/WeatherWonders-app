@@ -1,21 +1,27 @@
 import { UnistylesRegistry } from "react-native-unistyles";
 
-// Dodanie tematów
-UnistylesRegistry.addThemes({
-  theme: {
-    // 'theme' jako nadrzędny klucz dla tematów
-    colors: {
-      primary: "#87CEEB",
-      secondary: "#FAFAFA",
-      primaryText: "#2C3E50",
-      primaryButton: "#3498DB",
-      secondaryButton: "#F39C12",
-      primaryWidget: "#FAFAFA",
-    },
-  },
-});
+type AppThemes = {
+  colors: {
+    primary: string;
+    secondary: string;
+    primaryText: string;
+    primaryButton: string;
+    secondaryButton: string;
+    primaryWidget: string;
+  };
+};
 
-// Dodanie konfiguracji
-UnistylesRegistry.addConfig({
-  adaptiveThemes: true,
+declare module "react-native-unistyles" {
+  export interface UnistylesThemes extends AppThemes {}
+}
+
+UnistylesRegistry.addThemes({
+  colors: {
+    primary: "#87CEEB",
+    secondary: "#FAFAFA",
+    primaryText: "#2C3E50",
+    primaryButton: "#3498DB",
+    secondaryButton: "#F39C12",
+    primaryWidget: "#FAFAFA",
+  },
 });

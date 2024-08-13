@@ -3,7 +3,6 @@ import { View, Text } from "react-native";
 import { WeatherData } from "../../types/weatherSchema";
 import WeatherWidget from "./WeatherWidget";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
-import colors from "../../assets/colors";
 
 interface FeelsLikeWidgetProps {
   today: boolean;
@@ -39,7 +38,7 @@ const stylesheet = createStyleSheet({
   widgetDescription: {
     position: "absolute",
     bottom: 2,
-    left: 4,
+    start: 4,
     color: "#585858",
   },
 });

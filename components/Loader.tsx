@@ -1,28 +1,26 @@
 import React from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
-import colors from "../assets/colors";
-import {
-  createStyleSheet,
-  useStyles,
-  UnistylesRuntime,
-} from "react-native-unistyles";
+import { View, ActivityIndicator } from "react-native";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 const Loader: React.FC = () => {
   const { styles } = useStyles(stylesheet);
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color={colors.primary} />
+      <ActivityIndicator
+        size="large"
+        color={styles.container.backgroundColor}
+      />
     </View>
   );
 };
 
-const stylesheet = createStyleSheet({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.primary,
+    backgroundColor: theme.primary,
   },
-});
+}));
 
 export default Loader;

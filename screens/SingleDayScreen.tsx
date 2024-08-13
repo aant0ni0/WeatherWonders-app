@@ -9,7 +9,6 @@ import {
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootTabsParamList } from "../types/navigation";
 import { useWeatherData } from "../hooks/useWeatherData";
-import colors from "../assets/colors";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
 import {
@@ -25,8 +24,6 @@ import WindWidget from "../components/widgets/WindWidget";
 import VisibilityWidget from "../components/widgets/VisibilityWidget";
 import PressureWidget from "../components/widgets/PressureWidget";
 import SunriseSunsetWidget from "../components/widgets/SunriseSunsetWidget";
-
-const insetsTop = UnistylesRuntime.insets.top;
 
 const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
@@ -134,10 +131,10 @@ const SingleDayScreen: React.FC<
   );
 };
 
-const stylesheet = createStyleSheet((theme: any) => ({
+const stylesheet = createStyleSheet((theme, runtime) => ({
   container: {
     flex: 1,
-    paddingTop: insetsTop,
+    paddingTop: runtime.insets.top,
   },
   background: {
     width: "100%",
@@ -152,31 +149,31 @@ const stylesheet = createStyleSheet((theme: any) => ({
   mainInfoBox: {
     width: "100%",
     alignItems: "center",
-    padding: "5%",
+    padding: 20,
   },
   mainTemp: {
     fontSize: 75,
-    color: colors.primaryText,
+    color: theme.primaryText,
     fontWeight: "bold",
   },
   city: {
     fontSize: 30,
-    color: theme.colors.primaryText,
+    color: theme.primaryText,
     fontWeight: "bold",
   },
   weatherDescription: {
     fontSize: 30,
-    color: colors.primaryText,
+    color: theme.primaryText,
     marginBottom: 10,
   },
   minMax: {
     fontSize: 20,
-    color: colors.primaryText,
+    color: theme.primaryText,
   },
   widgetsContainer: {
     width: "100%",
-    padding: "7%",
-    paddingTop: "10%",
+    padding: 30,
+    paddingTop: 15,
     justifyContent: "center",
     marginBottom: 20,
   },

@@ -5,8 +5,7 @@ import { RootStackParamList, RootTabsParamList } from "./types/navigation";
 import SingleDayScreen from "./screens/SingleDayScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
-import colors from "./assets/colors";
-import { createStyleSheet, UnistylesRegistry } from "react-native-unistyles";
+import { createStyleSheet } from "react-native-unistyles";
 import "./assets/unistyles";
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -18,8 +17,8 @@ const BottomTabNavigator = () => {
       screenOptions={{
         tabBarIcon: () => null,
         tabBarLabelStyle: styles.tabBarLabelStyle,
-        tabBarActiveBackgroundColor: colors.primaryButton,
-        tabBarInactiveBackgroundColor: colors.primaryText,
+        tabBarActiveBackgroundColor: "#3498DB",
+        tabBarInactiveBackgroundColor: "#2C3E50",
         tabBarActiveTintColor: "black",
         tabBarInactiveTintColor: "white",
         tabBarLabelPosition: "beside-icon",
