@@ -105,7 +105,7 @@ export const useWeatherData = (city: string, today: boolean) => {
       return null;
     }
 
-    const weatherCounts: { [key: string]: number } = {};
+    const weatherCounts: Record<string, number> = {};
 
     weatherDataForTomorrow.forEach((item: ForecastItem) => {
       const weatherType = item.weather[0].description;
@@ -172,8 +172,8 @@ export const useWeatherData = (city: string, today: boolean) => {
     ? Math.ceil(maxTemp) + "°C"
     : "cannot fetch weather data";
 
-  const sunrise = weatherData?.sys.sunrise ? weatherData?.sys.sunrise : 0;
-  const sunset = weatherData?.sys.sunset ? weatherData?.sys.sunset : 0;
+  const sunrise = weatherData?.sys.sunrise ?? 0;
+  const sunset = weatherData?.sys.sunset ?? 0;
 
   const { maxFeelsLike } = getForecastForTomorrow();
 

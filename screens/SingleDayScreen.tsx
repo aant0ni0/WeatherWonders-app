@@ -5,7 +5,6 @@ import {
   ScrollView,
   StyleSheet,
   ImageBackground,
-  Image,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootTabsParamList } from "../types/navigation";
@@ -135,7 +134,7 @@ const SingleDayScreen: React.FC<
   );
 };
 
-const stylesheet = createStyleSheet({
+const stylesheet = createStyleSheet((theme: any) => ({
   container: {
     flex: 1,
     paddingTop: insetsTop,
@@ -162,7 +161,7 @@ const stylesheet = createStyleSheet({
   },
   city: {
     fontSize: 30,
-    color: colors.primaryText,
+    color: theme.colors.primaryText,
     fontWeight: "bold",
   },
   weatherDescription: {
@@ -188,6 +187,6 @@ const stylesheet = createStyleSheet({
     flexWrap: "wrap",
     marginBottom: 25,
   },
-});
+}));
 
 export default SingleDayScreen;

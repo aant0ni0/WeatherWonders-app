@@ -1,4 +1,3 @@
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -7,7 +6,8 @@ import SingleDayScreen from "./screens/SingleDayScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
 import colors from "./assets/colors";
-import { createStyleSheet, UnistylesRuntime } from "react-native-unistyles";
+import { createStyleSheet, UnistylesRegistry } from "react-native-unistyles";
+import "./assets/unistyles";
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
