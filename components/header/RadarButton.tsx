@@ -12,17 +12,17 @@ const RadarButton = () => {
   );
 };
 
-const stylesheet = createStyleSheet({
+const stylesheet = createStyleSheet((theme) => ({
   radarButton: {
-    height: "90%",
-    padding: 8,
-    backgroundColor: "#F39C12",
+    width: "12%",
+    height: "80%",
+    backgroundColor: theme.secondaryButton,
     borderRadius: 5,
     marginRight: 20,
     marginLeft: 10,
     alignItems: "center",
     justifyContent: "center",
   },
-});
+}));
 
 export default RadarButton;

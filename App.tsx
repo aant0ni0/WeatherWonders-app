@@ -5,7 +5,6 @@ import SingleDayScreen from "./screens/SingleDayScreen";
 import LocationSelectScreen from "./screens/LocationSelectScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
-import colors from "./assets/colors";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./store/store";
@@ -14,6 +13,8 @@ import { useEffect, useState, useCallback } from "react";
 import { setCity } from "./slices/citySlice";
 import * as SplashScreen from "expo-splash-screen";
 import Loader from "./components/Loader";
+import { createStyleSheet } from "react-native-unistyles";
+import "./assets/unistyles";
 
 SplashScreen.preventAutoHideAsync()
   .then((result) =>
@@ -33,8 +34,8 @@ const BottomTabNavigator = () => {
           fontSize: 18,
           position: "absolute",
         },
-        tabBarActiveBackgroundColor: colors.primaryButton,
-        tabBarInactiveBackgroundColor: colors.primaryText,
+        tabBarActiveBackgroundColor: "#3498DB",
+        tabBarInactiveBackgroundColor: "#2C3E50",
         tabBarActiveTintColor: "black",
         tabBarInactiveTintColor: "white",
         tabBarLabelPosition: "beside-icon",

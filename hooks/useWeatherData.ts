@@ -47,7 +47,7 @@ export const useWeatherData = (city: string, today: boolean) => {
   const getMinMaxTemp = () => {
     if (!forecastData) return { minTemp: null, maxTemp: null };
 
-    let start, end;
+    let start: Date, end: Date;
 
     if (today) {
       start = todayMidnight;
@@ -89,19 +89,21 @@ export const useWeatherData = (city: string, today: boolean) => {
       return null;
     }
 
-    const weatherCounts: { [key: string]: number } = {};
+    const weatherCounts: Record<string, number> = {};
 
     weatherDataForTomorrow.forEach((item: ForecastItem) => {
       const weatherType = item.weather[0].description;
       weatherCounts[weatherType] = (weatherCounts[weatherType] || 0) + 1;
     });
 
-    const sortedWeatherTypes = Object.entries(weatherCounts).sort(
-      ([, a], [, b]) => b - a
-    );
-    const mostCommonWeather = sortedWeatherTypes[0]?.[0];
+    const weatherType = Object.entries(weatherCounts).reduce(
+      (maxWeather, currentWeather) => {
+        return currentWeather[1] > maxWeather[1] ? currentWeather : maxWeather;
+      },
+      ["", 0]
+    )[0];
 
-    return mostCommonWeather || null;
+    return weatherType || null;
   };
 
   const getForecastForTomorrow = (): {
@@ -160,8 +162,8 @@ export const useWeatherData = (city: string, today: boolean) => {
     ? maxTemp.toFixed() + "°C"
     : "cannot fetch weather data";
 
-  const sunrise = weatherData?.sys.sunrise ? weatherData?.sys.sunrise : 0;
-  const sunset = weatherData?.sys.sunset ? weatherData?.sys.sunset : 0;
+  const sunrise = weatherData?.sys.sunrise ?? 0;
+  const sunset = weatherData?.sys.sunset ?? 0;
 
   const { maxFeelsLike } = getForecastForTomorrow();
 

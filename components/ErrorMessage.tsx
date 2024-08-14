@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet } from "react-native";
-import React, { Children } from "react";
+import { View, Text } from "react-native";
+import React from "react";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 interface ErrorMessageProps {

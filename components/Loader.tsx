@@ -1,16 +1,6 @@
 import React from "react";
-import {
-  View,
-  ActivityIndicator,
-  StyleSheet,
-  useWindowDimensions,
-} from "react-native";
-import colors from "../assets/colors";
-import {
-  createStyleSheet,
-  useStyles,
-  UnistylesRuntime,
-} from "react-native-unistyles";
+import { View, ActivityIndicator, useWindowDimensions } from "react-native";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 const Loader: React.FC = () => {
   const { styles } = useStyles(stylesheet);
@@ -22,14 +12,14 @@ const Loader: React.FC = () => {
   );
 };
 
-const stylesheet = createStyleSheet({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     position: "absolute",
 
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#BDE3FF",
+    backgroundColor: theme.primary,
   },
-});
+}));
 
 export default Loader;

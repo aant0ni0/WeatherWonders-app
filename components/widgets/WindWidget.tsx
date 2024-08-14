@@ -1,19 +1,12 @@
 import { View, Text, Image } from "react-native";
 import { WeatherData } from "../../types/weatherSchema";
 import WeatherWidget from "./WeatherWidget";
-import {
-  createStyleSheet,
-  useStyles,
-  UnistylesRuntime,
-} from "react-native-unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 interface WindWidgetProps {
   weatherData: WeatherData | null;
   windSpeed: number | null;
 }
-
-const width = UnistylesRuntime.screen.width;
-const height = UnistylesRuntime.screen.height;
 
 const WindWidget: React.FC<WindWidgetProps> = ({ weatherData, windSpeed }) => {
   const { styles } = useStyles(stylesheet);
@@ -23,44 +16,54 @@ const WindWidget: React.FC<WindWidgetProps> = ({ weatherData, windSpeed }) => {
         {windSpeed?.toFixed(1)}
         <Text style={styles.speedUnit}> m/s</Text>
       </Text>
-      <Image
-        source={require("../../assets/images/compas.png")}
-        style={styles.compass}
-      />
-      <Image
-        source={require("../../assets/images/compasNeedle.png")}
-        style={[
-          styles.compassNeedle,
-          { transform: [{ rotate: `${weatherData?.wind.deg}deg` }] },
-        ]}
-      />
+      <View style={styles.compassContainer}>
+        <Image
+          source={require("../../assets/images/compas.png")}
+          style={styles.compass}
+        />
+        <Image
+          source={require("../../assets/images/compasNeedle.png")}
+          style={[
+            styles.compassNeedle,
+            { transform: [{ rotate: `${weatherData?.wind.deg}deg` }] },
+          ]}
+        />
+      </View>
     </WeatherWidget>
   );
 };
 
-const stylesheet = createStyleSheet({
+const stylesheet = createStyleSheet((theme, runtime) => ({
   widgetContent: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "500",
     position: "absolute",
     bottom: 4,
     left: 6,
   },
+  compassContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    marginTop: 10,
+    marginLeft: 5,
+  },
   compass: {
-    width: width / 2,
-    height: height / 4.5,
-    position: "absolute",
+    width: runtime.screen.width / 2.5,
+    height: runtime.screen.height / 5,
+    resizeMode: "contain",
+    right: 4,
   },
   compassNeedle: {
-    width: "83%",
-    height: "83%",
     position: "absolute",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    left: 15,
+    width: "65%",
+    height: "65%",
+    resizeMode: "contain",
   },
-  speedUnit: {},
-});
+  speedUnit: {
+    fontSize: 12,
+    fontWeight: "300",
+  },
+}));
 
 export default WindWidget;

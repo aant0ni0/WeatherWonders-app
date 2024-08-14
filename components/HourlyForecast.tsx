@@ -1,12 +1,7 @@
 import React from "react";
-import { View, Text, FlatList, Image, StyleSheet } from "react-native";
+import { View, Text, FlatList, Image } from "react-native";
 import { ForecastItem } from "../types/weatherSchema";
-import colors from "../assets/colors";
-import {
-  createStyleSheet,
-  useStyles,
-  UnistylesRuntime,
-} from "react-native-unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 interface HourlyForecastProps {
   hourlyForecast: ForecastItem[];
@@ -49,17 +44,19 @@ const HourlyForecast: React.FC<HourlyForecastProps> = ({ hourlyForecast }) => {
   );
 };
 
-const stylesheet = createStyleSheet({
+const borderRadius = 5;
+
+const stylesheet = createStyleSheet((theme) => ({
   hourlyWeather: {
     height: 200,
     marginBottom: 20,
-    borderRadius: 5,
+    borderRadius: borderRadius,
   },
   hourlyWeatherTitle: {
     textAlign: "center",
     fontSize: 23,
     fontWeight: "bold",
-    color: colors.primaryText,
+    color: theme.primaryText,
     marginBottom: 10,
   },
   hourlyWeatherColumns: {
@@ -68,12 +65,13 @@ const stylesheet = createStyleSheet({
     justifyContent: "center",
     alignItems: "center",
     borderRightWidth: 0.2,
-    borderRadius: 5,
+    borderRadius: borderRadius,
     backgroundColor: "#a5d2f0",
   },
   weatherIcon: {
-    width: "50%",
-    height: "37%",
+    aspectRatio: 1,
+    width: "70%",
+    resizeMode: "contain",
   },
   weatherInfoContainer: {
     marginHorizontal: 15,
@@ -85,6 +83,6 @@ const stylesheet = createStyleSheet({
   hourTemp: {
     fontSize: 16,
   },
-});
+}));
 
 export default HourlyForecast;

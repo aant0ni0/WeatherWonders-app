@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
-import colors from "../../assets/colors";
 import axios from "axios";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
@@ -129,14 +128,14 @@ const SearchBar = () => {
   );
 };
 
-const stylesheet = createStyleSheet({
+const stylesheet = createStyleSheet((theme) => ({
   container: {
     height: "90%",
   },
   searchBar: {
     paddingLeft: 10,
     fontSize: 16,
-    width: "88%",
+    width: "90%",
   },
   searchBarContainer: {
     flex: 1,
@@ -149,6 +148,7 @@ const stylesheet = createStyleSheet({
     paddingVertical: 5,
     alignItems: "center",
     justifyContent: "center",
+    color: theme.primaryText,
   },
   suggestionsList: {
     backgroundColor: "#fff",
@@ -176,6 +176,6 @@ const stylesheet = createStyleSheet({
     top: 80,
     width: "90%",
   },
-});
+}));
 
 export default SearchBar;
