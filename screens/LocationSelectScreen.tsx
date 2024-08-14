@@ -5,14 +5,9 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import {
-  createStyleSheet,
-  UnistylesRuntime,
-  useStyles,
-} from "react-native-unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 import SearchBar from "../components/header/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
-import colors from "../assets/colors";
 import { useDispatch } from "react-redux";
 import {
   getCurrentPositionAsync,
@@ -25,9 +20,6 @@ import { setCity } from "../slices/citySlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/navigation";
-
-const height = UnistylesRuntime.screen.height;
-const insetsTop = UnistylesRuntime.insets.top;
 
 const LocationSelectScreen = () => {
   const { styles } = useStyles(stylesheet);
@@ -121,11 +113,11 @@ const LocationSelectScreen = () => {
   );
 };
 
-const stylesheet = createStyleSheet({
+const stylesheet = createStyleSheet((theme, runtime) => ({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: insetsTop,
+    paddingTop: runtime.insets.top,
     backgroundColor: "#BDE3FF",
   },
   searchContainer: {
@@ -135,12 +127,12 @@ const stylesheet = createStyleSheet({
     marginTop: 20,
     fontSize: 28,
     fontWeight: "bold",
-    color: colors.primaryText,
+    color: theme.primaryText,
     zIndex: -1,
   },
   header: {
     flexDirection: "row",
-    height: height / 16,
+    height: runtime.screen.height / 16,
     marginTop: 30,
   },
   locateButton: {
@@ -151,6 +143,6 @@ const stylesheet = createStyleSheet({
     alignItems: "center",
     justifyContent: "center",
   },
-});
+}));
 
 export default LocationSelectScreen;

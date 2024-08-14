@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   View,
   TextInput,
@@ -15,7 +15,6 @@ import { useDispatch } from "react-redux";
 import { setCity } from "../../slices/citySlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackParamList } from "../../types/navigation";
-const GEO_NAMES_USERNAME = "antonimichalczak16";
 const BASE_URL_GEONAMES = "https://secure.geonames.org/searchJSON";
 
 interface GeoName {
@@ -48,7 +47,7 @@ const SearchBar = () => {
     if (text.length > 2) {
       try {
         const response = await axios.get(
-          `${BASE_URL_GEONAMES}?name_startsWith=${text}&maxRows=5&username=${GEO_NAMES_USERNAME}`
+          `${BASE_URL_GEONAMES}?name_startsWith=${text}&maxRows=5&username=${process.env.EXPO_PUBLIC_USERNAME}`
         );
         setSuggestions(response.data.geonames);
       } catch (error) {
@@ -63,7 +62,7 @@ const SearchBar = () => {
     }
   };
 
-  const debouncedFetchCities = debounce(fetchCities, 500);
+  const debouncedFetchCities = debounce(fetchCities, 400);
 
   const handleSearch = (text: string) => {
     setLoading(true);
@@ -94,7 +93,7 @@ const SearchBar = () => {
             onChangeText={(text) => handleSearch(text)}
           />
           <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
-            <Ionicons name="search" size={20} color={colors.primaryText} />
+            <Ionicons name="search" size={20} color="#2C3E50" />
           </TouchableOpacity>
         </View>
         {suggestions.length > 0 && (
@@ -135,14 +134,14 @@ const stylesheet = createStyleSheet((theme) => ({
   searchBar: {
     paddingLeft: 10,
     fontSize: 16,
-    width: "90%",
+    width: "88%",
   },
   searchBarContainer: {
     flex: 1,
     flexDirection: "row",
     borderRadius: 5,
     backgroundColor: "white",
-    width: "90%",
+    width: "92%",
   },
   searchButton: {
     paddingVertical: 5,

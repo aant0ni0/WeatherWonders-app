@@ -9,11 +9,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./store/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { setCity } from "./slices/citySlice";
 import * as SplashScreen from "expo-splash-screen";
 import Loader from "./components/Loader";
-import { createStyleSheet } from "react-native-unistyles";
 import "./assets/unistyles";
 
 SplashScreen.preventAutoHideAsync()
