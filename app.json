@@ -13,7 +13,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.aant0ni0.WeatherWonders"
+      "bundleIdentifier": "com.aant0ni0.WeatherWonders",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Twoja aplikacja wymaga dostępu do lokalizacji, aby zapewnić lepsze wrażenia użytkownika.",
+        "NSLocationAlwaysUsageDescription": "Twoja aplikacja wymaga dostępu do lokalizacji, aby działać poprawnie w tle."
+      }
     },
     "android": {
       "adaptiveIcon": {

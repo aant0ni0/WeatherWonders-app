@@ -118,7 +118,7 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     flex: 1,
     alignItems: "center",
     paddingTop: runtime.insets.top,
-    backgroundColor: "#BDE3FF",
+    backgroundColor: theme.primaryBackgroud,
   },
   searchContainer: {
     flex: 1,

@@ -1,65 +1,33 @@
-import { View, Text, ActivityIndicator } from "react-native";
-import { useState, useEffect } from "react";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../types/navigation";
+import { View, Text } from "react-native";
+import { useState } from "react";
 import {
   ForecastData,
   ForecastItem,
   WeatherData,
 } from "../types/weatherSchema";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootTabsParamList } from "../types/navigation";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
+import Header from "../components/header/Header";
 
-const FiveDaysScreen = () => {
-  const [forecastData, setForecastData] = useState<ForecastData | null>(null);
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const getDailyForecastForNext5Days = (): ForecastItem[] => {
-    if (!forecastData) return [];
-
-    const dailyForecasts: { [date: string]: ForecastItem } = {};
-
-    forecastData.list.forEach((item: ForecastItem) => {
-      const date = new Date(item.dt * 1000).toLocaleDateString();
-
-      if (
-        !dailyForecasts[date] ||
-        item.main.temp > dailyForecasts[date].main.temp
-      ) {
-        dailyForecasts[date] = item;
-      }
-    });
-
-    const sortedForecasts = Object.values(dailyForecasts).sort(
-      (a, b) => a.dt - b.dt
-    );
-
-    return sortedForecasts.slice(0, 5);
-  };
-
-  const dailyForecast = getDailyForecastForNext5Days();
-
-  if (loading) {
-    return (
-      <View>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View>
-        <Text>Error fetching weather data: {error}</Text>
-      </View>
-    );
-  }
+const FiveDaysScreen: React.FC<
+  NativeStackScreenProps<RootTabsParamList, "FiveDays">
+> = () => {
+  const { styles } = useStyles(stylesheet);
 
   return (
-    <View>
-      <Text>FiveDaysScreen</Text>
+    <View style={styles.container}>
+      <Header />
     </View>
   );
 };
+
+const stylesheet = createStyleSheet((theme, runtime) => ({
+  container: {
+    flex: 1,
+    paddingTop: runtime.insets.top,
+    backgroundColor: theme.primaryBackgroud,
+  },
+}));
 
 export default FiveDaysScreen;

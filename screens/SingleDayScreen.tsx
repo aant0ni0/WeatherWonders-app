@@ -153,7 +153,7 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
   },
   widgetsContainer: {
     width: "100%",
-    padding: 30,
+    padding: 25,
     paddingTop: 15,
     justifyContent: "center",
     marginBottom: 20,

@@ -8,6 +8,7 @@ type AppThemes = {
     primaryButton: string;
     secondaryButton: string;
     primaryWidget: string;
+    primaryBackgroud: string;
   };
 };
 
@@ -23,5 +24,6 @@ UnistylesRegistry.addThemes({
     primaryButton: "#3498DB",
     secondaryButton: "#F39C12",
     primaryWidget: "#FAFAFA",
+    primaryBackgroud: "#BDE3FF",
   },
 });
