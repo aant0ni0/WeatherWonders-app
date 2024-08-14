@@ -1,7 +1,5 @@
 import { View, Text, ActivityIndicator } from "react-native";
 import { useState, useEffect } from "react";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../types/navigation";
 import { getWeatherByCity, getForecastByCity } from "../services/api";
 import {
   ForecastData,

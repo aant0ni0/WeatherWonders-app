@@ -112,12 +112,14 @@ export const useWeatherData = (city: string, today: boolean) => {
       weatherCounts[weatherType] = (weatherCounts[weatherType] || 0) + 1;
     });
 
-    const sortedWeatherTypes = Object.entries(weatherCounts).sort(
-      ([, a], [, b]) => b - a
-    );
-    const mostCommonWeather = sortedWeatherTypes[0]?.[0];
+    const weatherType = Object.entries(weatherCounts).reduce(
+      (maxWeather, currentWeather) => {
+        return currentWeather[1] > maxWeather[1] ? currentWeather : maxWeather;
+      },
+      ["", 0]
+    )[0];
 
-    return mostCommonWeather || null;
+    return weatherType || null;
   };
 
   const getForecastForTomorrow = (): {
@@ -162,7 +164,6 @@ export const useWeatherData = (city: string, today: boolean) => {
   };
 
   const { maxTemp } = getMinMaxTemp();
-  console.log(maxTemp);
 
   const mainTempToday = weatherData
     ? Math.ceil(weatherData.main.temp) + "°C"

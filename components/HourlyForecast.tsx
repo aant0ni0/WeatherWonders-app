@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, FlatList, Image, StyleSheet } from "react-native";
+import { View, Text, FlatList, Image } from "react-native";
 import { ForecastItem } from "../types/weatherSchema";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 

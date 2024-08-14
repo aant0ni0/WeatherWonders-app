@@ -1,11 +1,7 @@
 import { View, Text, Image } from "react-native";
 import { WeatherData } from "../../types/weatherSchema";
 import WeatherWidget from "./WeatherWidget";
-import {
-  createStyleSheet,
-  useStyles,
-  UnistylesRuntime,
-} from "react-native-unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 interface WindWidgetProps {
   today: boolean;
@@ -54,17 +50,19 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
+    marginTop: 10,
+    marginLeft: 5,
   },
   compass: {
-    width: runtime.screen.width / 2,
-    height: runtime.screen.height / 4.5,
+    width: runtime.screen.width / 2.5,
+    height: runtime.screen.height / 5,
     resizeMode: "contain",
     right: 4,
   },
   compassNeedle: {
     position: "absolute",
-    width: "70%",
-    height: "70%",
+    width: "65%",
+    height: "65%",
     resizeMode: "contain",
   },
   speedUnit: {

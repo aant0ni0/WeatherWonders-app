@@ -11,11 +11,7 @@ import { RootTabsParamList } from "../types/navigation";
 import { useWeatherData } from "../hooks/useWeatherData";
 import Loader from "../components/Loader";
 import ErrorMessage from "../components/ErrorMessage";
-import {
-  createStyleSheet,
-  UnistylesRuntime,
-  useStyles,
-} from "react-native-unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 import HourlyForecast from "../components/HourlyForecast";
 import Header from "../components/header/Header";
 import HumidityWidget from "../components/widgets/HumidilityWidget";

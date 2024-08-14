@@ -10,7 +10,7 @@ interface SunriseSunsetChartProps {
 }
 
 const TOTAL_MINUTES_IN_DAY = 24 * 60;
-const SVG_WIDTH = 180;
+const SVG_WIDTH = 200;
 const BASELINE_Y = 30;
 const CONTROL_Y = 5;
 const CIRCLE_RADIUS = 4;
@@ -72,7 +72,7 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
         <Line
           x1="0"
           y1={BASELINE_Y}
-          x2={SVG_WIDTH + 10}
+          x2={SVG_WIDTH}
           y2={BASELINE_Y}
           stroke="black"
           strokeWidth="1"
@@ -88,12 +88,7 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
         />
 
         {today && (
-          <Circle
-            cx={currentX + 5}
-            cy={currentY}
-            r={CIRCLE_RADIUS}
-            fill="red"
-          />
+          <Circle cx={currentX} cy={currentY} r={CIRCLE_RADIUS} fill="red" />
         )}
       </Svg>
 
@@ -108,6 +103,7 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
           style={{
             fontSize: 12,
             fontWeight: "500",
+            left: 10,
           }}
         >
           {new Date(sunrise * 1000).toLocaleTimeString([], {
@@ -120,6 +116,7 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
           style={{
             fontSize: 12,
             fontWeight: "500",
+            right: 10,
           }}
         >
           {new Date(sunset * 1000).toLocaleTimeString([], {
