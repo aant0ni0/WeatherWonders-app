@@ -150,7 +150,7 @@ export const useWeatherData = (city: string, today: boolean) => {
     };
   };
 
-  const { maxTemp } = getMinMaxTemp();
+  const { minTemp, maxTemp } = getMinMaxTemp();
 
   const mainTempToday = weatherData
     ? weatherData.main.temp.toFixed() + "°C"
@@ -239,6 +239,9 @@ export const useWeatherData = (city: string, today: boolean) => {
     return { feelsLike, humidity, visibility, windSpeed, pressure };
   };
 
+  const weatherBackground = changeBackgroundImageDependsOnWeather();
+  const feelsLikeDescription = getfeelsLikeDescription();
+
   return {
     weatherData,
     forecastData,
@@ -246,14 +249,15 @@ export const useWeatherData = (city: string, today: boolean) => {
     weatherError,
     forecastLoading,
     forecastError,
-    getHourlyForecastForNext24Hours,
-    getMinMaxTemp,
+    minTemp,
+    maxTemp,
     mainWeather,
-    getForecast,
     mainTemp,
     sunrise,
     sunset,
-    changeBackgroundImageDependsOnWeather,
-    getfeelsLikeDescription,
+    weatherBackground,
+    feelsLikeDescription,
+    getForecast,
+    getHourlyForecastForNext24Hours,
   };
 };

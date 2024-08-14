@@ -7,18 +7,18 @@ import colors from "../../assets/colors";
 
 interface FeelsLikeWidgetProps {
   feelsLike: number | null;
-  getfeelsLikeDescription: () => string;
+  feelsLikeDescription: string;
 }
 
 const FeelsLikeWidget: React.FC<FeelsLikeWidgetProps> = ({
   feelsLike,
-  getfeelsLikeDescription,
+  feelsLikeDescription,
 }) => {
   const { styles } = useStyles(stylesheet);
   return (
     <WeatherWidget title="Feels like">
       <Text style={styles.widgetContent}>{feelsLike?.toFixed() + "°C"}</Text>
-      <Text style={styles.widgetDescription}>{getfeelsLikeDescription()}</Text>
+      <Text style={styles.widgetDescription}>{feelsLikeDescription}</Text>
     </WeatherWidget>
   );
 };

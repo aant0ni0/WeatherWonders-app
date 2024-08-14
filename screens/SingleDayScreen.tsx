@@ -44,15 +44,16 @@ const SingleDayScreen: React.FC<
     weatherError,
     forecastLoading,
     forecastError,
-    getHourlyForecastForNext24Hours,
-    getMinMaxTemp,
+    minTemp,
+    maxTemp,
     mainWeather,
-    getForecast,
     mainTemp,
     sunrise,
     sunset,
-    changeBackgroundImageDependsOnWeather,
-    getfeelsLikeDescription,
+    weatherBackground,
+    feelsLikeDescription,
+    getHourlyForecastForNext24Hours,
+    getForecast,
   } = useWeatherData(city, today);
 
   if (weatherLoading || forecastLoading) {
@@ -76,15 +77,11 @@ const SingleDayScreen: React.FC<
   }
 
   const hourlyForecast = getHourlyForecastForNext24Hours();
-  const { minTemp, maxTemp } = getMinMaxTemp();
   const { feelsLike, humidity, visibility, windSpeed, pressure } =
     getForecast();
 
   return (
-    <ImageBackground
-      source={changeBackgroundImageDependsOnWeather()}
-      style={styles.background}
-    >
+    <ImageBackground source={weatherBackground} style={styles.background}>
       <View style={styles.overlay} />
       <ScrollView style={[styles.container]} bounces={false}>
         <Header />
@@ -101,7 +98,7 @@ const SingleDayScreen: React.FC<
           <View style={styles.smallerWidgetsContainer}>
             <HumidityWidget humidity={humidity} />
             <FeelsLikeWidget
-              getfeelsLikeDescription={getfeelsLikeDescription}
+              feelsLikeDescription={feelsLikeDescription}
               feelsLike={feelsLike}
             />
             <WindWidget weatherData={weatherData} windSpeed={windSpeed} />
