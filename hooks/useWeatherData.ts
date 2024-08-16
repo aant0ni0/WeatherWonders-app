@@ -6,7 +6,7 @@ import {
   useGetForecastByCityQuery,
 } from "../services/api";
 
-export const useWeatherData = (city: string, today: boolean) => {
+export const useWeatherData = (city: string, today?: boolean) => {
   const {
     data: weatherData,
     error: weatherError,
@@ -223,7 +223,7 @@ export const useWeatherData = (city: string, today: boolean) => {
     let windSpeed: number | null = null;
     let pressure: number | null = null;
 
-    if (today) {
+    if (!today) {
       const forecast = getForecastForTomorrow();
       feelsLike = forecast.maxFeelsLike;
       humidity = forecast.avgHumidity;

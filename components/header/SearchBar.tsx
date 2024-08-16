@@ -80,6 +80,7 @@ const SearchBar = () => {
       console.error(error);
     }
     navigation.navigate("Tabs");
+    setQuery("");
   };
 
   return (

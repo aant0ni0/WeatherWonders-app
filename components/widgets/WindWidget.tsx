@@ -52,7 +52,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     width: runtime.screen.width / 2.5,
     height: runtime.screen.height / 5,
     resizeMode: "contain",
-    right: 4,
   },
   compassNeedle: {
     position: "absolute",
