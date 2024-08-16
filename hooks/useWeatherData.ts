@@ -259,6 +259,7 @@ export const useWeatherData = (city: string, today?: boolean) => {
     sunset,
     weatherBackground,
     feelsLikeDescription,
+    tomorrowMidnight,
     getForecast,
     getHourlyForecastForNext24Hours,
   };
