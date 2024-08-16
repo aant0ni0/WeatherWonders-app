@@ -58,6 +58,10 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     marginBottom: 25,
     paddingVertical: 2,
     paddingLeft: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    elevation: 0.2,
   },
   weatherIcon: {
     width: 65,

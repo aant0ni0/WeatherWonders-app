@@ -1,10 +1,6 @@
 import { View, Text, ScrollView } from "react-native";
 import { useState } from "react";
-import {
-  ForecastData,
-  ForecastItem,
-  WeatherData,
-} from "../types/weatherSchema";
+import { ForecastItem } from "../types/weatherSchema";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootTabsParamList } from "../types/navigation";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
@@ -167,12 +163,14 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     padding: 15,
     fontWeight: "bold",
     textAlign: "center",
+    zIndex: -1,
   },
   fiveDaysWeatherContainer: {
     width: "100%",
     padding: 25,
     paddingRight: 35,
     flexWrap: "wrap",
+    zIndex: -1,
   },
 }));
 

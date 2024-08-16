@@ -11,7 +11,7 @@ interface SunriseSunsetChartProps {
 }
 
 const TOTAL_MINUTES_IN_DAY = 24 * 60;
-const SVG_WIDTH = 200;
+const SVG_WIDTH = 207;
 const BASELINE_Y = 30;
 const CONTROL_Y = 5;
 const CIRCLE_RADIUS = 4;
@@ -132,11 +132,11 @@ const stylesheet = createStyleSheet({
   sunriseHour: {
     fontSize: 12,
     fontWeight: "500",
-    left: 10,
+    left: 12,
   },
   sunsetHour: {
     fontSize: 12,
     fontWeight: "500",
-    right: 10,
+    right: 12,
   },
 });
