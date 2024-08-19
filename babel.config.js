@@ -14,6 +14,7 @@ module.exports = function (api) {
           allowUndefined: true,
           verbose: false,
         },
+        'react-native-reanimated/plugin',
       ],
     ],
   };
