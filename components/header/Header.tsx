@@ -20,7 +20,7 @@ const Header = () => {
   );
 };
 
-const stylesheet = createStyleSheet({
+const stylesheet = createStyleSheet((theme, runtime) => ({
   header: {
     width: "100%",
     height: height / 15,
@@ -28,5 +28,5 @@ const stylesheet = createStyleSheet({
     marginTop: 10,
     paddingRight: 25,
   },
-});
+}));
 export default Header;

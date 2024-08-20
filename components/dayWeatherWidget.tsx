@@ -68,7 +68,7 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     height: 65,
   },
   dateBox: {
-    width: "27%",
+    width: "33%",
     marginRight: 10,
   },
   date: {
@@ -78,12 +78,12 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
   },
   weekDay: {
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 16,
     margin: 5,
     marginBottom: 15,
   },
   imageBox: {
-    width: "13%",
+    width: "7%",
     justifyContent: "center",
     alignItems: "center",
     paddingTop: 5,
