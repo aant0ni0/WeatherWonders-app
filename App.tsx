@@ -14,6 +14,8 @@ import { setCity } from "./slices/citySlice";
 import * as SplashScreen from "expo-splash-screen";
 import Loader from "./components/Loader";
 import "./assets/unistyles";
+import { useStyles, createStyleSheet } from "react-native-unistyles";
+import AnimatedTabBar from "./components/AnimatedTabBar";
 
 SplashScreen.preventAutoHideAsync()
   .then((result) =>
@@ -26,20 +28,7 @@ const Tab = createBottomTabNavigator<RootTabsParamList>();
 
 const BottomTabNavigator = () => {
   return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarIcon: () => null,
-        tabBarLabelStyle: {
-          fontSize: 18,
-          position: "absolute",
-        },
-        tabBarActiveBackgroundColor: "#3498DB",
-        tabBarInactiveBackgroundColor: "#2C3E50",
-        tabBarActiveTintColor: "black",
-        tabBarInactiveTintColor: "white",
-        tabBarLabelPosition: "beside-icon",
-      }}
-    >
+    <Tab.Navigator tabBar={(props) => <AnimatedTabBar {...props} />}>
       <Tab.Screen
         name="TodayScreen"
         component={SingleDayScreen}
@@ -56,11 +45,6 @@ const BottomTabNavigator = () => {
         options={{
           title: "Tomorrow",
           headerShown: false,
-          tabBarItemStyle: {
-            borderRightWidth: 0.2,
-            borderLeftWidth: 0.2,
-            borderColor: "black",
-          },
         }}
       />
       <Tab.Screen

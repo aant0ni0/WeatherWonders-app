@@ -18,8 +18,8 @@ declare module "react-native-unistyles" {
 
 UnistylesRegistry.addThemes({
   colors: {
-    primary: "#87CEEB",
-    secondary: "#FAFAFA",
+    primary: "#a5d2f0",
+    secondary: "#86bee3",
     primaryText: "#2C3E50",
     primaryButton: "#3498DB",
     secondaryButton: "#F39C12",

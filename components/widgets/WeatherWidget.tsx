@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { Platform, View, Text } from "react-native";
 import React from "react";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 import { StyleProp, ViewStyle, TextStyle } from "react-native";
@@ -32,13 +32,11 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
-    backgroundColor: "white",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
   },
   widget: {
     width: "100%",
     height: runtime.screen.width / 3,
-    backgroundColor: theme.primaryWidget,
     borderRadius: 5,
     overflow: "hidden",
     justifyContent: "center",

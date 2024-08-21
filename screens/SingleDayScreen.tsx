@@ -36,6 +36,7 @@ import Animated, {
   SlideOutUp,
   StretchOutY,
 } from "react-native-reanimated";
+import AnimatedHeader from "../components/header/AnimatedHeader";
 
 const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
@@ -83,53 +84,6 @@ const SingleDayScreen: React.FC<
     }
   }, [scrollY]);
 
-  const AnimatedHeader: React.FC<{ isRunning: boolean }> = ({ isRunning }) => {
-    if (!isRunning) {
-      return (
-        <Animated.View
-          style={styles.mainInfoBox}
-          entering={FadeIn}
-          exiting={FadeOut}
-        >
-          <Text style={styles.city}>{city}</Text>
-          <Text style={styles.mainTemp}>{mainTemp}</Text>
-          <Text style={styles.weatherDescription}>{mainWeather}</Text>
-          <Text style={styles.minMax}>
-            from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
-          </Text>
-        </Animated.View>
-      );
-    } else {
-      return (
-        <View style={styles.animationBox}>
-          <Animated.View
-            entering={SlideInUp}
-            exiting={SlideOutUp}
-            style={styles.animatedMainInfoBox}
-          >
-            <View style={styles.animatedWeatherInfo}>
-              <View style={styles.animatedCityBox}>
-                <Text style={styles.animatedCity}>{city}</Text>
-              </View>
-              <View style={styles.animatedMainWeatherBox}>
-                <Text style={styles.animatedMainTemp}>{mainTemp}</Text>
-                {/* <Text style={styles.animatedWeatherDescription}>
-                {mainWeather}
-              </Text> */}
-                <Image
-                  source={{
-                    uri: `https://openweathermap.org/img/wn/${forecastData.list[0].weather[0].icon}@2x.png`,
-                  }}
-                  style={styles.weatherIcon}
-                />
-              </View>
-            </View>
-          </Animated.View>
-        </View>
-      );
-    }
-  };
-
   if (weatherLoading || forecastLoading) {
     return <Loader />;
   }
@@ -165,7 +119,11 @@ const SingleDayScreen: React.FC<
         stickyHeaderIndices={isAnimationRunning ? [1] : []}
       >
         <Header />
-        <AnimatedHeader isRunning={isAnimationRunning} />
+        <AnimatedHeader
+          isRunning={isAnimationRunning}
+          today={today}
+          city={city}
+        />
         <View style={styles.widgetsContainer}>
           <HourlyForecast hourlyForecast={hourlyForecast} />
           <View style={styles.smallerWidgetsContainer}>

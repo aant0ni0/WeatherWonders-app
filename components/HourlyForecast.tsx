@@ -66,7 +66,8 @@ const stylesheet = createStyleSheet((theme) => ({
     alignItems: "center",
     borderRightWidth: 0.2,
     borderRadius: borderRadius,
-    backgroundColor: "#a5d2f0",
+    backgroundColor: theme.primary,
+    opacity: 0.8,
   },
   weatherIcon: {
     aspectRatio: 1,
