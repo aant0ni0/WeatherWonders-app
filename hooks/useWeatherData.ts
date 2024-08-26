@@ -1,4 +1,10 @@
-import { ForecastItem } from "../types/weatherSchema";
+import {
+  WeatherData,
+  ForecastData,
+  ForecastItem,
+  ForecastDataSchema,
+  WeatherSchema,
+} from "../types/weatherSchema";
 import { weatherBackgrounds } from "../types/weatherBackdroundTypes";
 import { WeatherTypes } from "../types/weatherBackdroundTypes";
 import {
@@ -18,6 +24,9 @@ export const useWeatherData = (city: string, today: boolean) => {
     isLoading: forecastLoading,
   } = useGetForecastByCityQuery(city);
 
+  const isLoading = weatherLoading || forecastLoading;
+  const error = weatherError || forecastError;
+
   const oneHourInMilliseconds = 60 * 60 * 1000;
 
   const now = new Date();
@@ -27,15 +36,22 @@ export const useWeatherData = (city: string, today: boolean) => {
     now.getDate()
   );
   const tomorrowMidnight = new Date(
-    todayMidnight.getTime() + 24 * oneHourInMilliseconds
+    new Date(todayMidnight).setHours(24, 0, 0, 0)
   );
   const date = today
     ? now
     : new Date(tomorrowMidnight.getTime() + 6 * oneHourInMilliseconds);
 
+  const parsedForecastData = forecastData
+    ? ForecastDataSchema.parse(forecastData)
+    : null;
+  const parsedWeatherData = weatherData
+    ? WeatherSchema.parse(weatherData)
+    : null;
+
   const getHourlyForecastForNext24Hours = (): ForecastItem[] => {
-    if (!forecastData) return [];
-    return forecastData.list.filter((item: ForecastItem) => {
+    if (!parsedForecastData) return [];
+    return parsedForecastData.list.filter((item: ForecastItem) => {
       const itemDate = new Date(item.dt * 1000);
       return (
         itemDate > date &&
@@ -45,7 +61,7 @@ export const useWeatherData = (city: string, today: boolean) => {
   };
 
   const getMinMaxTemp = () => {
-    if (!forecastData) return { minTemp: null, maxTemp: null };
+    if (!parsedForecastData) return { minTemp: null, maxTemp: null };
 
     let start: Date, end: Date;
 
@@ -57,7 +73,7 @@ export const useWeatherData = (city: string, today: boolean) => {
       end = new Date(tomorrowMidnight.getTime() + 24 * oneHourInMilliseconds);
     }
 
-    const temps = forecastData.list
+    const temps = parsedForecastData.list
       .filter((item: ForecastItem) => {
         const itemDate = new Date(item.dt * 1000);
         return itemDate >= start && itemDate < end;
@@ -72,7 +88,7 @@ export const useWeatherData = (city: string, today: boolean) => {
     return { minTemp, maxTemp };
   };
 
-  const weatherDataForTomorrow = forecastData?.list.filter(
+  const weatherDataForTomorrow = parsedForecastData?.list.filter(
     (item: ForecastItem) => {
       const itemDate = new Date(item.dt * 1000);
       return (
@@ -109,7 +125,7 @@ export const useWeatherData = (city: string, today: boolean) => {
   const getForecastForTomorrow = (): {
     [key: string]: number | null;
   } => {
-    if (!forecastData || !weatherDataForTomorrow)
+    if (!parsedForecastData || !weatherDataForTomorrow)
       return {
         avgFeelsLike: null,
         avgHumidity: null,
@@ -154,16 +170,16 @@ export const useWeatherData = (city: string, today: boolean) => {
 
   const { minTemp, maxTemp } = getMinMaxTemp();
 
-  const mainTempToday = weatherData
-    ? weatherData.main.temp.toFixed() + "°C"
+  const mainTempToday = parsedWeatherData
+    ? parsedWeatherData.main.temp.toFixed() + "°C"
     : "cannot fetch weather data";
 
   const mainTempTomorrow = maxTemp
     ? maxTemp.toFixed() + "°C"
     : "cannot fetch weather data";
 
-  const sunrise = weatherData?.sys.sunrise ?? 0;
-  const sunset = weatherData?.sys.sunset ?? 0;
+  const sunrise = parsedWeatherData?.sys.sunrise ?? 0;
+  const sunset = parsedWeatherData?.sys.sunset ?? 0;
 
   const { maxFeelsLike } = getForecastForTomorrow();
 
@@ -172,7 +188,7 @@ export const useWeatherData = (city: string, today: boolean) => {
     let mainTemp: string | null = null;
 
     if (today) {
-      feelsLike = weatherData?.main.feels_like ?? null;
+      feelsLike = parsedWeatherData?.main.feels_like ?? null;
       mainTemp = mainTempToday;
     } else {
       feelsLike = maxFeelsLike ? Math.ceil(maxFeelsLike) : null;
@@ -196,8 +212,8 @@ export const useWeatherData = (city: string, today: boolean) => {
 
   const changeBackgroundImageDependsOnWeather = () => {
     if (today) {
-      if (!weatherData) return;
-      const weatherType = weatherData.weather[0].description.replace(
+      if (!parsedWeatherData) return;
+      const weatherType = parsedWeatherData.weather[0].description.replace(
         /\s/g,
         ""
       ) as WeatherTypes;
@@ -213,7 +229,7 @@ export const useWeatherData = (city: string, today: boolean) => {
 
   const mainTemp = today ? mainTempToday : mainTempTomorrow;
   const mainWeather = today
-    ? weatherData?.weather[0].description
+    ? parsedWeatherData?.weather[0].description
     : chooseMainWeatherforTomorrow();
 
   const getForecast = () => {
@@ -231,11 +247,11 @@ export const useWeatherData = (city: string, today: boolean) => {
       windSpeed = forecast.avgWindSpeed;
       pressure = forecast.avgPressure;
     } else {
-      feelsLike = weatherData?.main.feels_like ?? null;
-      humidity = weatherData?.main.humidity ?? null;
-      visibility = weatherData?.visibility ?? null;
-      windSpeed = weatherData?.wind.speed ?? null;
-      pressure = weatherData?.main.pressure ?? null;
+      feelsLike = parsedWeatherData?.main.feels_like ?? null;
+      humidity = parsedWeatherData?.main.humidity ?? null;
+      visibility = parsedWeatherData?.visibility ?? null;
+      windSpeed = parsedWeatherData?.wind.speed ?? null;
+      pressure = parsedWeatherData?.main.pressure ?? null;
     }
 
     return { feelsLike, humidity, visibility, windSpeed, pressure };
@@ -244,13 +260,14 @@ export const useWeatherData = (city: string, today: boolean) => {
   const weatherBackground = changeBackgroundImageDependsOnWeather();
   const feelsLikeDescription = getfeelsLikeDescription();
 
+  const timezoneOffset = parsedWeatherData?.timezone ?? 0;
+  console.log(parsedWeatherData);
+
   return {
-    weatherData,
-    forecastData,
-    weatherLoading,
-    weatherError,
-    forecastLoading,
-    forecastError,
+    weatherData: parsedWeatherData,
+    forecastData: parsedForecastData,
+    isLoading,
+    error,
     minTemp,
     maxTemp,
     mainWeather,
@@ -259,6 +276,7 @@ export const useWeatherData = (city: string, today: boolean) => {
     sunset,
     weatherBackground,
     feelsLikeDescription,
+    timezoneOffset,
     getForecast,
     getHourlyForecastForNext24Hours,
   };

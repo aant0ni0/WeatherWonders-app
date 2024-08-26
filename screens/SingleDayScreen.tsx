@@ -27,16 +27,15 @@ const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
 > = ({ route }) => {
   const city = useSelector((state: RootState) => state.city);
+  console.log(city);
 
   const today = route.params["today"];
   const { styles } = useStyles(stylesheet);
 
   const {
     weatherData,
-    weatherLoading,
-    weatherError,
-    forecastLoading,
-    forecastError,
+    isLoading,
+    error,
     minTemp,
     maxTemp,
     mainWeather,
@@ -45,26 +44,20 @@ const SingleDayScreen: React.FC<
     sunset,
     weatherBackground,
     feelsLikeDescription,
+    timezoneOffset,
     getHourlyForecastForNext24Hours,
     getForecast,
   } = useWeatherData(city, today);
 
-  if (weatherLoading || forecastLoading) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  if (weatherError) {
+  if (error) {
     return (
       <ErrorMessage>
-        Error fetching weather data: {weatherError as string}
-      </ErrorMessage>
-    );
-  }
-
-  if (forecastError) {
-    return (
-      <ErrorMessage>
-        Error fetching weather data: {forecastError as string}
+        Error fetching weather data:{" "}
+        {typeof error === "string" ? error : JSON.stringify(error)}
       </ErrorMessage>
     );
   }
@@ -87,7 +80,10 @@ const SingleDayScreen: React.FC<
           </Text>
         </View>
         <View style={styles.widgetsContainer}>
-          <HourlyForecast hourlyForecast={hourlyForecast} />
+          <HourlyForecast
+            hourlyForecast={hourlyForecast}
+            timezone={timezoneOffset}
+          />
           <View style={styles.smallerWidgetsContainer}>
             <HumidityWidget humidity={humidity} />
             <FeelsLikeWidget
@@ -103,6 +99,7 @@ const SingleDayScreen: React.FC<
               sunrise={sunrise}
               sunset={sunset}
               today={today}
+              timezone={timezoneOffset}
             />
           </View>
         </View>

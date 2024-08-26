@@ -7,19 +7,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider, useDispatch } from "react-redux";
-import { store } from "./store/store";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useEffect, useState } from "react";
-import { setCity } from "./slices/citySlice";
-import * as SplashScreen from "expo-splash-screen";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./store/store";
 import Loader from "./components/Loader";
 import "./assets/unistyles";
-
-SplashScreen.preventAutoHideAsync()
-  .then((result) =>
-    console.log(`SplashScreen.preventAutoHideAsync() succeeded: ${result}`)
-  )
-  .catch(console.warn);
+import { useSelector } from "react-redux";
+import { RootState } from "./types/navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
@@ -76,44 +69,19 @@ const BottomTabNavigator = () => {
 };
 
 const App = () => {
-  const [isSelectedCity, setIsSelectedCity] = useState<boolean | null>(null);
-  const dispatch = useDispatch();
+  const city = useSelector((state: RootState) => state.city);
+  console.log(city);
 
-  useEffect(() => {
-    const fetchSelectedCity = async () => {
-      try {
-        const selectedCity = await AsyncStorage.getItem("selectedCity");
-        if (selectedCity) {
-          dispatch(setCity(selectedCity));
-          setIsSelectedCity(true);
-        } else {
-          setIsSelectedCity(false);
-        }
-      } catch (error) {
-        console.error(error);
-        setIsSelectedCity(false);
-      } finally {
-        await SplashScreen.hideAsync();
-      }
-    };
-
-    fetchSelectedCity();
-  }, [dispatch]);
-
-  if (isSelectedCity === null) {
-    return <Loader />;
-  }
+  const initialRouteName = city ? "Tabs" : "LocationSelect";
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        {!isSelectedCity && (
-          <Stack.Screen
-            name="LocationSelect"
-            component={LocationSelectScreen}
-            options={{ headerShown: false }}
-          />
-        )}
+      <Stack.Navigator initialRouteName={initialRouteName}>
+        <Stack.Screen
+          name="LocationSelect"
+          component={LocationSelectScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Tabs"
           component={BottomTabNavigator}
@@ -127,7 +95,9 @@ const App = () => {
 export default function RootApp() {
   return (
     <Provider store={store}>
-      <App />
+      <PersistGate loading={<Loader />} persistor={persistor}>
+        <App />
+      </PersistGate>
     </Provider>
   );
 }

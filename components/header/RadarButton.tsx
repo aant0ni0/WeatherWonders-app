@@ -14,8 +14,8 @@ const RadarButton = () => {
 
 const stylesheet = createStyleSheet((theme) => ({
   radarButton: {
-    width: "12%",
-    height: "80%",
+    aspectRatio: 1,
+    height: "91%",
     backgroundColor: theme.secondaryButton,
     borderRadius: 5,
     marginRight: 20,

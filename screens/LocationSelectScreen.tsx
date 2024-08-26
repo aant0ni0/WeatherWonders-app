@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Linking,
 } from "react-native";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 import SearchBar from "../components/header/SearchBar";
@@ -28,7 +29,6 @@ const LocationSelectScreen = () => {
   const [locationPermissionInformation, requestPermission] =
     useForegroundPermissions();
   const [pickedLocation, setPickedLocation] = useState({ lat: 0, lng: 0 });
-  const [address, setAddress] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -38,14 +38,8 @@ const LocationSelectScreen = () => {
           pickedLocation.lat,
           pickedLocation.lng
         );
-        setAddress(fetchedAddress);
 
         dispatch(setCity(fetchedAddress));
-        try {
-          await AsyncStorage.setItem("selectedCity", fetchedAddress);
-        } catch (error) {
-          console.error(error);
-        }
         navigation.navigate("Tabs");
       }
     };
@@ -62,10 +56,7 @@ const LocationSelectScreen = () => {
 
       return permissionResponse.granted;
     }
-    if (locationPermissionInformation?.status === PermissionStatus.DENIED) {
-      return false;
-    }
-    return true;
+    return locationPermissionInformation?.status !== PermissionStatus.DENIED;
   };
 
   const getLocationHandler = async () => {
@@ -75,7 +66,10 @@ const LocationSelectScreen = () => {
       Alert.alert(
         "Permission Denied",
         "Location permission is required to get your current position. Please enable it in your device settings.",
-        [{ text: "OK" }]
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Open Settings", onPress: () => Linking.openSettings() },
+        ]
       );
       return;
     }
@@ -138,7 +132,7 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
   locateButton: {
     width: "10%",
     height: "100%",
-    marginLeft: 10,
+    marginLeft: 25,
     marginRight: 5,
     alignItems: "center",
     justifyContent: "center",

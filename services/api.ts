@@ -18,3 +18,18 @@ export const weatherApi = createApi({
 
 export const { useGetWeatherByCityQuery, useGetForecastByCityQuery } =
   weatherApi;
+
+const BASE_URL_GEONAMES = "https://secure.geonames.org/searchJSON";
+
+export const geonamesApi = createApi({
+  reducerPath: "geonamesApi",
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL_GEONAMES }),
+  endpoints: (builder) => ({
+    searchCity: builder.query({
+      query: (text) =>
+        `?name_startsWith=${text}&maxRows=5&username=${process.env.EXPO_PUBLIC_USERNAME}`,
+    }),
+  }),
+});
+
+export const { useSearchCityQuery, useLazySearchCityQuery } = geonamesApi;
