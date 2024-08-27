@@ -14,8 +14,8 @@ import { setCity } from "./slices/citySlice";
 import * as SplashScreen from "expo-splash-screen";
 import Loader from "./components/Loader";
 import "./assets/unistyles";
-import { useStyles, createStyleSheet } from "react-native-unistyles";
 import AnimatedTabBar from "./components/AnimatedTabBar";
+import RadarScreen from "./screens/RadarScreen";
 
 SplashScreen.preventAutoHideAsync()
   .then((result) =>
@@ -102,6 +102,11 @@ const App = () => {
           name="Tabs"
           component={BottomTabNavigator}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Radar"
+          component={RadarScreen}
+          options={{ headerBackTitle: "Weather" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
