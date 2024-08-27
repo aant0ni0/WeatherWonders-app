@@ -1,31 +1,65 @@
-import { View, Text, Image } from "react-native";
 import React from "react";
+import { View, Text, Image } from "react-native";
 import Animated, {
-  FadeIn,
-  FadeOut,
-  SlideInUp,
-  SlideOutUp,
+  useAnimatedStyle,
+  interpolate,
+  Extrapolation,
 } from "react-native-reanimated";
-import { createStyleSheet, useStyles } from "react-native-unistyles";
+import {
+  UnistylesRuntime,
+  createStyleSheet,
+  useStyles,
+} from "react-native-unistyles";
 import { useWeatherData } from "../../hooks/useWeatherData";
-import { BlurView } from "@react-native-community/blur";
+import { SharedValue } from "react-native-reanimated";
 
 const AnimatedHeader: React.FC<{
-  isRunning: boolean;
   city: string;
   today: boolean;
-}> = ({ isRunning, city, today }) => {
+  scrollY: SharedValue<number>;
+  headerHeight: number;
+}> = ({ city, today, scrollY, headerHeight }) => {
   const { styles } = useStyles(stylesheet);
-  const { minTemp, maxTemp, mainWeather, mainTemp, forecastData } =
-    useWeatherData(city, today);
+  const {
+    minTemp,
+    maxTemp,
+    mainWeather,
+    mainTemp,
+    forecastData,
+    getDayWeatherSummary,
+  } = useWeatherData(city, today);
+  const insets = UnistylesRuntime.insets;
 
-  if (!isRunning) {
-    return (
-      <Animated.View
-        style={styles.mainInfoBox}
-        entering={FadeIn}
-        exiting={FadeOut}
-      >
+  const animatedStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      scrollY.value,
+      [0, headerHeight],
+      [-headerHeight, -insets.top],
+      Extrapolation.CLAMP
+    );
+
+    return {
+      transform: [{ translateY }],
+    };
+  });
+
+  const mainInfoBoxAnimatedStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      scrollY.value,
+      [0, headerHeight / 2],
+      [1, 0],
+      Extrapolation.CLAMP
+    );
+    return { opacity };
+  });
+
+  const { mainIcon } = getDayWeatherSummary(0);
+  const weatherIcon =
+    today && forecastData ? forecastData.list[0].weather[0].icon : mainIcon;
+
+  return (
+    <>
+      <Animated.View style={[styles.mainInfoBox, mainInfoBoxAnimatedStyle]}>
         <Text style={styles.city}>{city}</Text>
         <Text style={styles.mainTemp}>{mainTemp}</Text>
         <Text style={styles.weatherDescription}>{mainWeather}</Text>
@@ -33,34 +67,27 @@ const AnimatedHeader: React.FC<{
           from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
         </Text>
       </Animated.View>
-    );
-  } else {
-    return (
-      <BlurView style={styles.animationBox}>
-        <Animated.View
-          entering={SlideInUp}
-          exiting={SlideOutUp}
-          style={styles.animatedMainInfoBox}
-        >
+
+      <Animated.View style={[styles.animationBox, animatedStyle]}>
+        <View style={styles.animatedMainInfoBox}>
           <View style={styles.animatedWeatherInfo}>
             <View style={styles.animatedCityBox}>
               <Text style={styles.animatedCity}>{city}</Text>
             </View>
             <View style={styles.animatedMainWeatherBox}>
               <Text style={styles.animatedMainTemp}>{mainTemp}</Text>
-
               <Image
                 source={{
-                  uri: `https://openweathermap.org/img/wn/${forecastData.list[0].weather[0].icon}@2x.png`,
+                  uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
                 }}
                 style={styles.weatherIcon}
               />
             </View>
           </View>
-        </Animated.View>
-      </BlurView>
-    );
-  }
+        </View>
+      </Animated.View>
+    </>
+  );
 };
 
 const stylesheet = createStyleSheet((theme, runtime) => ({
@@ -69,6 +96,7 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     alignItems: "center",
     padding: 20,
     zIndex: -1,
+    top: 0,
   },
   mainTemp: {
     fontSize: 75,
@@ -89,7 +117,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     fontSize: 20,
     color: theme.primaryText,
   },
-
   animatedMainInfoBox: {
     width: "100%",
     alignItems: "center",
@@ -97,9 +124,8 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     zIndex: 1,
     backgroundColor: "white",
     opacity: 0.95,
-    position: "absolute",
-    top: -runtime.insets.top - 70,
-    paddingTop: runtime.insets.top + 70,
+    paddingTop: runtime.insets.top + 5,
+    paddingBottom: 10,
   },
   animatedWeatherInfo: {
     flexDirection: "row",
@@ -115,14 +141,11 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     color: theme.primaryText,
     fontWeight: "bold",
   },
-  animatedWeatherDescription: {
-    fontSize: 20,
-    color: theme.primaryText,
-    marginBottom: 5,
-  },
   animationBox: {
     width: "100%",
-    height: 230,
+    position: "absolute",
+    top: 0,
+    zIndex: 1,
   },
   weatherIcon: {
     width: 50,

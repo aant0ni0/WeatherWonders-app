@@ -8,7 +8,8 @@ export const store = configureStore({
     city: cityReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }).concat(
-      weatherApi.middleware
-    ),
+    getDefaultMiddleware({
+      serializableCheck: false,
+      immutableCheck: false,
+    }).concat(weatherApi.middleware),
 });

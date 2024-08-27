@@ -5,6 +5,7 @@ import {
   useGetWeatherByCityQuery,
   useGetForecastByCityQuery,
 } from "../services/api";
+import { DayWeatherSummary } from "../types/weatherTypes";
 
 export const useWeatherData = (city: string, today?: boolean) => {
   const {
@@ -19,6 +20,7 @@ export const useWeatherData = (city: string, today?: boolean) => {
   } = useGetForecastByCityQuery(city);
 
   const oneHourInMilliseconds = 60 * 60 * 1000;
+  const oneDayInMilliseconds = 24 * oneHourInMilliseconds;
 
   const now = new Date();
   const todayMidnight = new Date(
@@ -241,6 +243,68 @@ export const useWeatherData = (city: string, today?: boolean) => {
     return { feelsLike, humidity, visibility, windSpeed, pressure };
   };
 
+  const filterWeatherDataForNextDays = () => {
+    if (!forecastData) return [];
+
+    const weatherDataForNextDays = [];
+
+    for (let i = 1; i <= 4; i++) {
+      const dayStart = new Date(
+        tomorrowMidnight.getTime() + (i - 1) * oneDayInMilliseconds
+      );
+      const dayEnd = new Date(dayStart.getTime() + oneDayInMilliseconds);
+
+      const dayData = forecastData.list.filter((item: ForecastItem) => {
+        const itemDate = new Date(item.dt * 1000);
+        return itemDate >= dayStart && itemDate < dayEnd;
+      });
+
+      weatherDataForNextDays.push(dayData);
+    }
+
+    return weatherDataForNextDays;
+  };
+
+  const weatherDataForNextFourDays = filterWeatherDataForNextDays();
+
+  const getDayWeatherSummary = (number: number): DayWeatherSummary => {
+    const dayData = weatherDataForNextFourDays[number];
+
+    if (!dayData || dayData.length === 0)
+      return { mainIcon: null, minTemp: null, maxTemp: null, date: null };
+
+    const firstItem = dayData[0];
+    const timestampInSeconds = firstItem.dt;
+    const date = new Date(timestampInSeconds * 1000);
+
+    let minTemp = Infinity;
+    let maxTemp = -Infinity;
+
+    const weatherCounts: Record<string, number> = {};
+
+    dayData.forEach((item: ForecastItem) => {
+      minTemp = Math.min(minTemp, item.main.temp_min);
+      maxTemp = Math.max(maxTemp, item.main.temp_max);
+
+      const weatherIcon = item.weather[0].icon;
+      weatherCounts[weatherIcon] = (weatherCounts[weatherIcon] || 0) + 1;
+    });
+
+    const mainIcon = Object.entries(weatherCounts).reduce(
+      (maxWeather, currentWeather) => {
+        return currentWeather[1] > maxWeather[1] ? currentWeather : maxWeather;
+      },
+      ["", 0]
+    )[0];
+
+    return {
+      date: date || null,
+      mainIcon: mainIcon || null,
+      minTemp: minTemp === Infinity ? null : minTemp,
+      maxTemp: maxTemp === -Infinity ? null : maxTemp,
+    };
+  };
+
   const weatherBackground = changeBackgroundImageDependsOnWeather();
   const feelsLikeDescription = getfeelsLikeDescription();
 
@@ -260,6 +324,7 @@ export const useWeatherData = (city: string, today?: boolean) => {
     weatherBackground,
     feelsLikeDescription,
     tomorrowMidnight,
+    getDayWeatherSummary,
     getForecast,
     getHourlyForecastForNext24Hours,
   };

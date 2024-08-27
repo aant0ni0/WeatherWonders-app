@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  ImageBackground,
-  Image,
-} from "react-native";
+import { View, StyleSheet, ImageBackground } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootTabsParamList } from "../types/navigation";
 import { useWeatherData } from "../hooks/useWeatherData";
@@ -27,14 +20,7 @@ import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
   useDerivedValue,
-  useAnimatedStyle,
   runOnJS,
-  FadeIn,
-  FadeOut,
-  SlideInDown,
-  SlideInUp,
-  SlideOutUp,
-  StretchOutY,
 } from "react-native-reanimated";
 import AnimatedHeader from "../components/header/AnimatedHeader";
 
@@ -53,13 +39,8 @@ const SingleDayScreen: React.FC<
     weatherData,
     weatherLoading,
     weatherError,
-    forecastData,
     forecastLoading,
     forecastError,
-    minTemp,
-    maxTemp,
-    mainWeather,
-    mainTemp,
     sunrise,
     sunset,
     weatherBackground,
@@ -120,9 +101,10 @@ const SingleDayScreen: React.FC<
       >
         <Header />
         <AnimatedHeader
-          isRunning={isAnimationRunning}
           today={today}
           city={city}
+          scrollY={scrollY}
+          headerHeight={200}
         />
         <View style={styles.widgetsContainer}>
           <HourlyForecast hourlyForecast={hourlyForecast} />
