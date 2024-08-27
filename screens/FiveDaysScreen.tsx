@@ -20,15 +20,13 @@ const FiveDaysScreen: React.FC<
   const {
     weatherLoading,
     weatherError,
-    forecastLoading,
-    forecastError,
     forecastData,
     minTemp,
     maxTemp,
     getDayWeatherSummary,
   } = useWeatherData(city, true);
 
-  if (weatherLoading || forecastLoading) {
+  if (weatherLoading) {
     return <Loader />;
   }
 
@@ -36,14 +34,6 @@ const FiveDaysScreen: React.FC<
     return (
       <ErrorMessage>
         Error fetching weather data: {weatherError as string}
-      </ErrorMessage>
-    );
-  }
-
-  if (forecastError) {
-    return (
-      <ErrorMessage>
-        Error fetching weather data: {forecastError as string}
       </ErrorMessage>
     );
   }
