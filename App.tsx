@@ -106,7 +106,13 @@ const App = () => {
         <Stack.Screen
           name="Radar"
           component={RadarScreen}
-          options={{ headerBackTitle: "Weather" }}
+          options={{
+            title: "Radar",
+            headerBackTitle: "Back",
+            headerBackTitleStyle: {
+              fontSize: 0,
+            },
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
