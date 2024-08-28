@@ -16,6 +16,8 @@ import Loader from "./components/Loader";
 import "./assets/unistyles";
 import AnimatedTabBar from "./components/AnimatedTabBar";
 import RadarScreen from "./screens/RadarScreen";
+import "./i18n";
+import { useTranslation } from "react-i18next";
 
 SplashScreen.preventAutoHideAsync()
   .then((result) =>
@@ -27,6 +29,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
 
 const BottomTabNavigator = () => {
+  const { t } = useTranslation(); // Używamy tłumaczeń
+
   return (
     <Tab.Navigator tabBar={(props) => <AnimatedTabBar {...props} />}>
       <Tab.Screen
@@ -34,7 +38,7 @@ const BottomTabNavigator = () => {
         component={SingleDayScreen}
         initialParams={{ today: true }}
         options={{
-          title: "Today",
+          title: t("today"), // Używamy przetłumaczonego tekstu
           headerShown: false,
         }}
       />
@@ -43,7 +47,7 @@ const BottomTabNavigator = () => {
         component={SingleDayScreen}
         initialParams={{ today: false }}
         options={{
-          title: "Tomorrow",
+          title: t("tomorrow"), // Używamy przetłumaczonego tekstu
           headerShown: false,
         }}
       />
@@ -51,7 +55,7 @@ const BottomTabNavigator = () => {
         name="FiveDays"
         component={FiveDaysScreen}
         options={{
-          title: "In five days",
+          title: t("inFiveDays"), // Używamy przetłumaczonego tekstu
           headerShown: false,
         }}
       />
@@ -62,6 +66,7 @@ const BottomTabNavigator = () => {
 const App = () => {
   const [isSelectedCity, setIsSelectedCity] = useState<boolean | null>(null);
   const dispatch = useDispatch();
+  const { t } = useTranslation(); // Używamy tłumaczeń
 
   useEffect(() => {
     const fetchSelectedCity = async () => {
@@ -107,8 +112,8 @@ const App = () => {
           name="Radar"
           component={RadarScreen}
           options={{
-            title: "Radar",
-            headerBackTitle: "Back",
+            title: t("radar"), // Używamy przetłumaczonego tekstu
+            headerBackTitle: t("back"), // Używamy przetłumaczonego tekstu
             headerBackTitleStyle: {
               fontSize: 0,
             },
