@@ -18,7 +18,6 @@ import {
 import { getAddress } from "../services/location";
 import { useState, useEffect } from "react";
 import { setCity } from "../slices/citySlice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/navigation";
 
@@ -28,24 +27,16 @@ const LocationSelectScreen = () => {
   const navigation: NavigationProp<RootStackParamList> = useNavigation();
   const [locationPermissionInformation, requestPermission] =
     useForegroundPermissions();
-  const [pickedLocation, setPickedLocation] = useState({ lat: 0, lng: 0 });
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchAddress = async () => {
-      if (pickedLocation.lat && pickedLocation.lng) {
-        const fetchedAddress = await getAddress(
-          pickedLocation.lat,
-          pickedLocation.lng
-        );
+  const fetchAddress = async (lat: number, lng: number) => {
+    if (lat && lng) {
+      const fetchedAddress = await getAddress(lat, lng);
 
-        dispatch(setCity(fetchedAddress));
-        navigation.navigate("Tabs");
-      }
-    };
-
-    fetchAddress();
-  }, [pickedLocation]);
+      dispatch(setCity(fetchedAddress));
+      navigation.navigate("Tabs");
+    }
+  };
 
   const verifyPermissions = async () => {
     console.log(locationPermissionInformation?.status);
@@ -59,7 +50,7 @@ const LocationSelectScreen = () => {
     return locationPermissionInformation?.status !== PermissionStatus.DENIED;
   };
 
-  const getLocationHandler = async () => {
+  const locationHandler = async () => {
     const hasPermission = await verifyPermissions();
     console.log(hasPermission);
     if (!hasPermission) {
@@ -75,15 +66,12 @@ const LocationSelectScreen = () => {
     }
     const location = await getCurrentPositionAsync();
     console.log("Location:", location);
-    setPickedLocation({
-      lat: location.coords.latitude,
-      lng: location.coords.longitude,
-    });
+    fetchAddress(location.coords.latitude, location.coords.longitude);
   };
 
   const onPressLocationButton = async () => {
     setIsLoading(true);
-    await getLocationHandler();
+    await locationHandler();
     setIsLoading(false);
   };
 

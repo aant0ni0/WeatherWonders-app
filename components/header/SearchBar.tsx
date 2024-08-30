@@ -12,7 +12,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setCity } from "../../slices/citySlice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackParamList } from "../../types/navigation";
 import { useLazySearchCityQuery } from "../../services/api";
 import { UnistylesRuntime, useStyles } from "react-native-unistyles";
@@ -26,7 +25,6 @@ interface GeoName {
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<GeoName[]>([]);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useDispatch();
 
@@ -38,20 +36,16 @@ const SearchBar = () => {
   const fetchCities = async (text: string) => {
     if (text.length > 2) {
       try {
-        const response = await triggerSearchCityQuery(text).unwrap();
-        setSuggestions(response.geonames || []);
+        await triggerSearchCityQuery(text);
       } catch (err) {
         console.error("Error fetching cities:", err);
-        setSuggestions([]);
       }
     } else {
-      setSuggestions([]);
+      return;
     }
   };
 
-  const debouncedFetchCities = useCallback(debounce(fetchCities, 400), [
-    debounce,
-  ]);
+  const debouncedFetchCities = useCallback(debounce(fetchCities, 400), []);
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -60,14 +54,8 @@ const SearchBar = () => {
 
   const handleCitySelection = async (cityName: string) => {
     setQuery("");
-    setSuggestions([]);
     dispatch(setCity(cityName));
     console.log(cityName);
-    try {
-      await AsyncStorage.setItem("selectedCity", cityName);
-    } catch (error) {
-      console.error("Error saving selected city:", error);
-    }
     navigation.navigate("Tabs");
   };
 
@@ -96,26 +84,29 @@ const SearchBar = () => {
           </Text>
         </View>
       )}
-      {suggestions.length > 0 && !isLoading && !error && (
-        <View style={styles.typeSuggestionsContainer}>
-          <FlatList
-            data={suggestions}
-            keyExtractor={(item) => item.geonameId.toString()}
-            scrollEnabled={false}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => handleCitySelection(item.name)}
-                style={styles.suggestionItem}
-              >
-                <Text>
-                  {item.name}, {item.countryName}
-                </Text>
-              </TouchableOpacity>
-            )}
-            contentContainerStyle={styles.suggestionsList}
-          />
-        </View>
-      )}
+      {query.length > 2 &&
+        data?.geonames?.length > 0 &&
+        !isLoading &&
+        !error && (
+          <View style={styles.typeSuggestionsContainer}>
+            <FlatList
+              data={data.geonames}
+              keyExtractor={(item) => item.geonameId.toString()}
+              scrollEnabled={false}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => handleCitySelection(item.name)}
+                  style={styles.suggestionItem}
+                >
+                  <Text>
+                    {item.name}, {item.countryName}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              contentContainerStyle={styles.suggestionsList}
+            />
+          </View>
+        )}
     </View>
   );
 };

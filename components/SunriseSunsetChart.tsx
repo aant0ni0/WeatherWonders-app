@@ -28,11 +28,11 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
     new Date(sunrise * 1000).getHours() * 60 +
     new Date(sunrise * 1000).getMinutes();
 
-  let sunsetMinutes =
+  const sunsetMinutes =
     new Date(sunset * 1000).getHours() * 60 +
     new Date(sunset * 1000).getMinutes();
 
-  let currentMinutes =
+  const currentMinutes =
     new Date(currentTime).getHours() * 60 + new Date(currentTime).getMinutes();
 
   const sunriseX = (sunriseMinutes / TOTAL_MINUTES_IN_DAY) * SVG_WIDTH;
