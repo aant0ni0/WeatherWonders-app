@@ -12,6 +12,8 @@ import {
 } from "react-native-unistyles";
 import { useWeatherData } from "../../hooks/useWeatherData";
 import { SharedValue } from "react-native-reanimated";
+import "../../i18n";
+import { useTranslation } from "react-i18next";
 
 const AnimatedHeader: React.FC<{
   city: string;
@@ -19,6 +21,7 @@ const AnimatedHeader: React.FC<{
   scrollY: SharedValue<number>;
   headerHeight: number;
 }> = ({ city, today, scrollY, headerHeight }) => {
+  const { t } = useTranslation();
   const { styles } = useStyles(stylesheet);
   const {
     minTemp,
@@ -57,14 +60,17 @@ const AnimatedHeader: React.FC<{
   const weatherIcon =
     today && forecastData ? forecastData.list[0].weather[0].icon : mainIcon;
 
+  const translateMainWeather = t(mainWeather);
+
   return (
     <>
       <Animated.View style={[styles.mainInfoBox, mainInfoBoxAnimatedStyle]}>
         <Text style={styles.city}>{city}</Text>
         <Text style={styles.mainTemp}>{mainTemp}</Text>
-        <Text style={styles.weatherDescription}>{mainWeather}</Text>
+        <Text style={styles.weatherDescription}>{translateMainWeather}</Text>
         <Text style={styles.minMax}>
-          from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
+          {t("from")} {minTemp?.toFixed() + "°"} {t("to")}{" "}
+          {maxTemp?.toFixed() + "°"}
         </Text>
       </Animated.View>
 

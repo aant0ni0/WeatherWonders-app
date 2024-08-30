@@ -2,6 +2,7 @@ import { Text } from "react-native";
 import { WeatherData } from "../../types/weatherSchema";
 import WeatherWidget from "./WeatherWidget";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
 
 interface PressureWidgetProps {
   pressure: number | null;
@@ -9,12 +10,11 @@ interface PressureWidgetProps {
 
 const PressureWidget: React.FC<PressureWidgetProps> = ({ pressure }) => {
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
   return (
-    <WeatherWidget title="Pressure">
+    <WeatherWidget title={t("Pressure")}>
       <Text style={styles.widgetContent}>{pressure?.toFixed() + " hPa"}</Text>
-      <Text style={styles.widgetDescription}>
-        Correct pressure is 1013,5 hPa
-      </Text>
+      <Text style={styles.widgetDescription}>{t("Pressure Description")}</Text>
     </WeatherWidget>
   );
 };

@@ -2,6 +2,7 @@ import { View, Text, Image } from "react-native";
 import { WeatherData } from "../../types/weatherSchema";
 import WeatherWidget from "./WeatherWidget";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
 
 interface WindWidgetProps {
   weatherData: WeatherData | null;
@@ -10,8 +11,9 @@ interface WindWidgetProps {
 
 const WindWidget: React.FC<WindWidgetProps> = ({ weatherData, windSpeed }) => {
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
   return (
-    <WeatherWidget title="Wind">
+    <WeatherWidget title={t("Wind")}>
       <Text style={styles.widgetContent}>
         {windSpeed?.toFixed(1)}
         <Text style={styles.speedUnit}> m/s</Text>

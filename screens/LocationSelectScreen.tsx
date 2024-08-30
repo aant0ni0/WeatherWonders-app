@@ -20,9 +20,11 @@ import { setCity } from "../slices/citySlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/navigation";
+import { useTranslation } from "react-i18next";
 
 const LocationSelectScreen = () => {
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigation: NavigationProp<RootStackParamList> = useNavigation();
   const [locationPermissionInformation, requestPermission] =
@@ -72,11 +74,9 @@ const LocationSelectScreen = () => {
     const hasPermission = await verifyPermissions();
     console.log(hasPermission);
     if (!hasPermission) {
-      Alert.alert(
-        "Permission Denied",
-        "Location permission is required to get your current position. Please enable it in your device settings.",
-        [{ text: "OK" }]
-      );
+      Alert.alert(t("Permission Denied"), t("Location Permission Error"), [
+        { text: "OK" },
+      ]);
       return;
     }
     const location = await getCurrentPositionAsync();
@@ -108,7 +108,7 @@ const LocationSelectScreen = () => {
         </View>
       </View>
       {isLoading && <ActivityIndicator size={"large"} />}
-      <Text style={styles.infoText}>Enter City Name</Text>
+      <Text style={styles.infoText}>{t("Enter City Name")}</Text>
     </View>
   );
 };

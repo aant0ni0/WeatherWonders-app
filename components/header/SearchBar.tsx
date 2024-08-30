@@ -16,7 +16,12 @@ import { setCity } from "../../slices/citySlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackParamList } from "../../types/navigation";
 const BASE_URL_GEONAMES = "https://secure.geonames.org/searchJSON";
-
+import { useTranslation } from "react-i18next";
+import {
+  GeoNamesData,
+  GeoNamesItem,
+  geoNamesItem,
+} from "../../types/geoNamesSchema";
 interface GeoName {
   geonameId: number;
   name: string;
@@ -25,11 +30,12 @@ interface GeoName {
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<GeoName[]>([]);
+  const [suggestions, setSuggestions] = useState<GeoNamesItem[]>([]);
   const { styles } = useStyles(stylesheet);
   const navigation: NavigationProp<RootStackParamList> = useNavigation();
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const debounce = (func: (text: string) => Promise<void>, delay: number) => {
     let timeoutId: ReturnType<typeof setTimeout>;
@@ -46,10 +52,22 @@ const SearchBar = () => {
   const fetchCities = async (text: string) => {
     if (text.length > 2) {
       try {
-        const response = await axios.get(
+        const response = await axios.get<GeoNamesData>(
           `${BASE_URL_GEONAMES}?name_startsWith=${text}&maxRows=5&username=${process.env.EXPO_PUBLIC_USERNAME}`
         );
-        setSuggestions(response.data.geonames);
+
+        const geonames = response.data.geonames;
+
+        const uniqueResponses = geonames.filter(
+          (value, index, self) =>
+            index ===
+            self.findIndex(
+              (t) =>
+                t.name === value.name && t.countryName === value.countryName
+            )
+        );
+
+        setSuggestions(uniqueResponses);
       } catch (error) {
         console.error("Error fetching cities:", JSON.stringify(error, null, 2));
         setSuggestions([]);
@@ -89,7 +107,7 @@ const SearchBar = () => {
         <View style={styles.searchBarContainer}>
           <TextInput
             style={styles.searchBar}
-            placeholder="Search city..."
+            placeholder={t("Search city")}
             value={query}
             onChangeText={(text) => handleSearch(text)}
           />

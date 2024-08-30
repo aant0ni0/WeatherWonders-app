@@ -1,14 +1,15 @@
 import { Text, StyleSheet } from "react-native";
 import { WeatherData } from "../../types/weatherSchema";
 import WeatherWidget from "./WeatherWidget";
-
+import { useTranslation } from "react-i18next";
 interface HumidityWidgetProps {
   humidity: number | null;
 }
 
 const HumidityWidget: React.FC<HumidityWidgetProps> = ({ humidity }) => {
+  const { t } = useTranslation();
   return (
-    <WeatherWidget title="Humidity">
+    <WeatherWidget title={t("Humidility")}>
       <Text style={styles.widgetContent}>{humidity?.toFixed() + "%"}</Text>
     </WeatherWidget>
   );

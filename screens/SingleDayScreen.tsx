@@ -23,6 +23,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import AnimatedHeader from "../components/header/AnimatedHeader";
+import { useTranslation } from "react-i18next";
 
 const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
@@ -30,6 +31,7 @@ const SingleDayScreen: React.FC<
   const city = useSelector((state: RootState) => state.city);
   const today = route.params["today"];
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
 
   const scrollY = useSharedValue(0);
   const borderWhereWeStartAnimation = 70;
@@ -72,15 +74,7 @@ const SingleDayScreen: React.FC<
   if (weatherError) {
     return (
       <ErrorMessage>
-        Error fetching weather data: {weatherError as string}
-      </ErrorMessage>
-    );
-  }
-
-  if (forecastError) {
-    return (
-      <ErrorMessage>
-        Error fetching weather data: {forecastError as string}
+        {t("Weather Error")} {weatherError as string}
       </ErrorMessage>
     );
   }

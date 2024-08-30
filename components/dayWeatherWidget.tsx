@@ -1,7 +1,7 @@
 import { weekdays } from "moment-timezone";
 import { View, Text, Image } from "react-native";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
-
+import { useTranslation } from "react-i18next";
 interface DayWeatherWidgetProps {
   date: Date | null;
   mainIcon: string | null;
@@ -18,8 +18,10 @@ const DayWeatherWidget: React.FC<DayWeatherWidgetProps> = ({
   today,
 }) => {
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
   const options: {} = { weekday: "long" };
   const dayName = today ? "Today" : date?.toLocaleDateString("en-US", options);
+  const weekday = dayName ? dayName : "unknown";
 
   const formattedDate = date?.toLocaleDateString("en-US", {
     month: "numeric",
@@ -30,7 +32,7 @@ const DayWeatherWidget: React.FC<DayWeatherWidgetProps> = ({
     <View style={styles.widgetContainer}>
       <View style={styles.dateBox}>
         <Text style={styles.date}>{formattedDate}</Text>
-        <Text style={styles.weekDay}>{dayName}</Text>
+        <Text style={styles.weekDay}>{t(weekday)}</Text>
       </View>
       <View style={styles.imageBox}>
         <Image
@@ -42,7 +44,8 @@ const DayWeatherWidget: React.FC<DayWeatherWidgetProps> = ({
       </View>
       <View style={styles.tempBox}>
         <Text style={styles.temp}>
-          from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
+          {t("from")} {minTemp?.toFixed() + "°"} {t("to")}{" "}
+          {maxTemp?.toFixed() + "°"}
         </Text>
       </View>
     </View>

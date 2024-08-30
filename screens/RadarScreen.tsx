@@ -1,50 +1,43 @@
 import React from "react";
-import MapView, { UrlTile, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { UrlTile } from "react-native-maps";
 import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "../types/navigation";
 import { useGetWeatherByCityQuery } from "../services/api";
+import RadarButton from "../components/header/RadarButton";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
+import Loader from "../components/Loader";
+import ErrorMessage from "../components/ErrorMessage";
+import { useTranslation } from "react-i18next";
 
 const RadarScreen = () => {
-  const cloudLayerUrl = `https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=3f6de936886f0b0bd368ed34bbd07eee`;
-  const rainLayerUrl = `https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=3f6de936886f0b0bd368ed34bbd07eee`;
+  const cloudLayerUrl = `https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${process.env.EXPO_PUBLIC_API_KEY}`;
+  const rainLayerUrl = `https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${process.env.EXPO_PUBLIC_API_KEY}`;
 
+  const { styles } = useStyles(stylesheet);
   const city = useSelector((state: RootState) => state.city);
   const { data, error, isLoading } = useGetWeatherByCityQuery(city);
+  const { t } = useTranslation();
 
   if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <Loader />;
   }
 
   if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text>Error loading data</Text>
-      </View>
-    );
+    return <ErrorMessage>{t("Error Loading Data")}</ErrorMessage>;
   }
 
-  console.log(data);
   const coord = data?.coord;
-
-  if (!coord) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text>Coordinates not available</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
+      <RadarButton
+        icon="partly-sunny-outline"
+        style={styles.radarButton}
+        isOnRadar
+      />
       <MapView
         style={styles.map}
-        provider={PROVIDER_GOOGLE}
         initialRegion={{
           latitude: coord.lat,
           longitude: coord.lon,
@@ -71,7 +64,7 @@ const RadarScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const stylesheet = createStyleSheet((theme, runtime) => ({
   container: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "flex-end",
@@ -90,6 +83,23 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-});
+  radarButton: {
+    position: "absolute",
+    top: runtime.insets.top + 10,
+    left: 20,
+    backgroundColor: theme.secondaryButton,
+    padding: 10,
+    borderRadius: 10,
+    width: 55,
+    height: 55,
+    zIndex: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+
+    elevation: 5,
+  },
+}));
 
 export default RadarScreen;

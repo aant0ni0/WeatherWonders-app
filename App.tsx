@@ -29,7 +29,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
 
 const BottomTabNavigator = () => {
-  const { t } = useTranslation(); // Używamy tłumaczeń
+  const { t } = useTranslation();
 
   return (
     <Tab.Navigator tabBar={(props) => <AnimatedTabBar {...props} />}>
@@ -38,7 +38,7 @@ const BottomTabNavigator = () => {
         component={SingleDayScreen}
         initialParams={{ today: true }}
         options={{
-          title: t("today"), // Używamy przetłumaczonego tekstu
+          title: t("Today"),
           headerShown: false,
         }}
       />
@@ -47,7 +47,7 @@ const BottomTabNavigator = () => {
         component={SingleDayScreen}
         initialParams={{ today: false }}
         options={{
-          title: t("tomorrow"), // Używamy przetłumaczonego tekstu
+          title: t("tomorrow"),
           headerShown: false,
         }}
       />
@@ -55,7 +55,7 @@ const BottomTabNavigator = () => {
         name="FiveDays"
         component={FiveDaysScreen}
         options={{
-          title: t("inFiveDays"), // Używamy przetłumaczonego tekstu
+          title: t("inFiveDays"),
           headerShown: false,
         }}
       />
@@ -66,7 +66,7 @@ const BottomTabNavigator = () => {
 const App = () => {
   const [isSelectedCity, setIsSelectedCity] = useState<boolean | null>(null);
   const dispatch = useDispatch();
-  const { t } = useTranslation(); // Używamy tłumaczeń
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchSelectedCity = async () => {
@@ -111,13 +111,7 @@ const App = () => {
         <Stack.Screen
           name="Radar"
           component={RadarScreen}
-          options={{
-            title: t("radar"), // Używamy przetłumaczonego tekstu
-            headerBackTitle: t("back"), // Używamy przetłumaczonego tekstu
-            headerBackTitleStyle: {
-              fontSize: 0,
-            },
-          }}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
