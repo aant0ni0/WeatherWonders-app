@@ -25,12 +25,12 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
   const { styles } = useStyles(stylesheet);
 
   let sunriseMinutes =
-    new Date(sunrise * 1000).getHours() * 60 +
-    new Date(sunrise * 1000).getMinutes();
+    new Date(sunrise * 1000).getUTCHours() * 60 +
+    new Date(sunrise * 1000).getUTCMinutes();
 
   const sunsetMinutes =
-    new Date(sunset * 1000).getHours() * 60 +
-    new Date(sunset * 1000).getMinutes();
+    new Date(sunset * 1000).getUTCHours() * 60 +
+    new Date(sunset * 1000).getUTCMinutes();
 
   const currentMinutes =
     new Date(currentTime).getHours() * 60 + new Date(currentTime).getMinutes();
@@ -60,6 +60,13 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
       t * t * BASELINE_Y
     );
   };
+
+  const sunriseDate = new Date(sunrise * 1000);
+  const sunriseUTCHours = sunriseDate.getUTCHours();
+  const sunriseUTCMinutes = sunriseDate.getUTCMinutes();
+  const sunsetDate = new Date(sunset * 1000);
+  const sunsetUTCHours = sunsetDate.getUTCHours();
+  const sunsetUTCMinutes = sunsetDate.getUTCMinutes();
 
   const currentY = calculateY(currentX);
 
@@ -103,18 +110,12 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
         }}
       >
         <Text style={styles.sunriseHour}>
-          {new Date(sunrise * 1000).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          })}
+          {sunriseUTCHours < 10 ? "0" + sunriseUTCHours : sunriseUTCHours}:
+          {sunriseUTCMinutes < 10 ? "0" + sunriseUTCMinutes : sunriseUTCMinutes}
         </Text>
         <Text style={styles.sunsetHour}>
-          {new Date(sunset * 1000).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          })}
+          {sunsetUTCHours < 10 ? "0" + sunsetUTCHours : sunsetUTCHours}:
+          {sunsetUTCMinutes < 10 ? "0" + sunsetUTCMinutes : sunsetUTCMinutes}
         </Text>
       </View>
     </View>

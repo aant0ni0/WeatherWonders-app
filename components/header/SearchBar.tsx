@@ -1,123 +1,32 @@
-import React, { useCallback, useState } from "react";
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  Text,
-  FlatList,
-  ActivityIndicator,
-  StyleSheet,
-} from "react-native";
+import { View, TextInput, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
-import { setCity } from "../../slices/citySlice";
-import { RootStackParamList } from "../../types/navigation";
-import { useLazySearchCityQuery } from "../../services/api";
-import { UnistylesRuntime, useStyles } from "react-native-unistyles";
-import { debounce } from "../../utils/debounce";
-
-interface GeoName {
-  geonameId: number;
-  name: string;
-  countryName: string;
+import { createStyleSheet, useStyles } from "react-native-unistyles";
+interface SearchBarProps {
+  onChangeText: (value: string) => void;
+  query: string;
 }
 
-const SearchBar = () => {
-  const [query, setQuery] = useState("");
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const dispatch = useDispatch();
+const SearchBar: React.FC<SearchBarProps> = ({ onChangeText, query }) => {
+  const { styles } = useStyles(stylesheet);
 
   const { theme } = useStyles();
 
-  const [triggerSearchCityQuery, { data, error, isLoading }] =
-    useLazySearchCityQuery();
-
-  const fetchCities = async (text: string) => {
-    if (text.length > 2) {
-      try {
-        await triggerSearchCityQuery(text);
-      } catch (err) {
-        console.error("Error fetching cities:", err);
-      }
-    } else {
-      return;
-    }
-  };
-
-  const debouncedFetchCities = useCallback(debounce(fetchCities, 400), []);
-
-  const handleSearch = (text: string) => {
-    setQuery(text);
-    debouncedFetchCities(text);
-  };
-
-  const handleCitySelection = async (cityName: string) => {
-    setQuery("");
-    dispatch(setCity(cityName));
-    console.log(cityName);
-    navigation.navigate("Tabs");
-  };
-
   return (
-    <View style={styles.container}>
-      <View style={styles.searchBarContainer}>
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search city..."
-          value={query}
-          onChangeText={handleSearch}
-        />
-        <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
-          <Ionicons name="search" size={20} color={theme.primaryText} />
-        </TouchableOpacity>
-      </View>
-      {isLoading && (
-        <View style={styles.loader}>
-          <ActivityIndicator size="large" color="white" />
-        </View>
-      )}
-      {error && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>
-            Error fetching cities. Please try again.
-          </Text>
-        </View>
-      )}
-      {query.length > 2 &&
-        data?.geonames?.length > 0 &&
-        !isLoading &&
-        !error && (
-          <View style={styles.typeSuggestionsContainer}>
-            <FlatList
-              data={data.geonames}
-              keyExtractor={(item) => item.geonameId.toString()}
-              scrollEnabled={false}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => handleCitySelection(item.name)}
-                  style={styles.suggestionItem}
-                >
-                  <Text>
-                    {item.name}, {item.countryName}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              contentContainerStyle={styles.suggestionsList}
-            />
-          </View>
-        )}
+    <View style={styles.searchBarContainer}>
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search city..."
+        value={query}
+        onChangeText={onChangeText}
+      />
+      <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
+        <Ionicons name="search" size={20} color={theme.primaryText} />
+      </TouchableOpacity>
     </View>
   );
 };
 
-const searchBarContainerHeight = (UnistylesRuntime.screen.height / 15) * 0.9;
-
-const styles = StyleSheet.create({
-  container: {
-    height: searchBarContainerHeight,
-    marginRight: 65,
-  },
+const stylesheet = createStyleSheet((theme) => ({
   searchBar: {
     paddingLeft: 10,
     fontSize: 16,
@@ -135,44 +44,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  suggestionsList: {
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
-    paddingTop: 10,
-  },
-  suggestionItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  typeSuggestionsContainer: {
-    position: "absolute",
-    top: searchBarContainerHeight - 5,
-    width: "90%",
-  },
-  loader: {
-    position: "absolute",
-    top: 80,
-    width: "90%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  errorContainer: {
-    position: "absolute",
-    top: 80,
-    width: "90%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  errorText: {
-    color: "red",
-  },
-});
+}));
 
 export default SearchBar;

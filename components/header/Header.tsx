@@ -1,11 +1,7 @@
 import { View } from "react-native";
-import {
-  createStyleSheet,
-  UnistylesRuntime,
-  useStyles,
-} from "react-native-unistyles";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 import RadarButton from "./RadarButton";
-import SearchBar from "./SearchBar";
+import LocationSearch from "./LocationSearch";
 
 const Header = () => {
   const { styles } = useStyles(stylesheet);
@@ -13,7 +9,7 @@ const Header = () => {
   return (
     <View style={styles.header}>
       <RadarButton />
-      <SearchBar />
+      <LocationSearch />
     </View>
   );
 };

@@ -15,21 +15,7 @@ const HourlyForecast: React.FC<HourlyForecastProps> = ({
   const { styles } = useStyles(stylesheet);
 
   const renderHourlyForecast = (item: ForecastItem) => {
-    // Poland's timezone offset (CET/CEST)
-    const POLAND_TIMEZONE_OFFSET = 3600; // CET (winter) = 1 hour (3600 seconds)
-    const POLAND_SUMMER_TIME_OFFSET = 7200; // CEST (summer) = 2 hours (7200 seconds)
-
-    // Check if `item.dt` is in Poland's summer time (CEST)
-    const isSummerTime = new Date(item.dt * 1000).getTimezoneOffset() === -120;
-    const polandTimezoneOffset = isSummerTime
-      ? POLAND_SUMMER_TIME_OFFSET
-      : POLAND_TIMEZONE_OFFSET;
-
-    // Convert `item.dt` to UTC by subtracting Poland's timezone offset
-    const utcTime = (item.dt - polandTimezoneOffset) * 1000;
-
-    // Add the target timezone offset to get the local time in the target timezone
-    const localTime = new Date(utcTime + timezone * 1000);
+    const localTime = new Date(item.dt * 1000 + timezone * 1000);
     const hours = localTime.getUTCHours();
 
     return (
