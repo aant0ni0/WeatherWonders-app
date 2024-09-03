@@ -1,4 +1,3 @@
-import { weekdays } from "moment-timezone";
 import { View, Text, Image } from "react-native";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";

@@ -2,7 +2,6 @@ import {
   View,
   TouchableOpacity,
   Text,
-  StyleSheet,
   useWindowDimensions,
 } from "react-native";
 import Animated, {
@@ -21,9 +20,12 @@ const AnimatedTabBar: React.FC<BottomTabBarProps> = ({
 }) => {
   const { styles } = useStyles(stylesheet);
   const windowWidth = useWindowDimensions().width;
-  const tabBarItemWidth = windowWidth / 3;
 
-  const translateX = useSharedValue(0);
+  const numberOfTabs = state.routes.length;
+  const sliderWidth = windowWidth / numberOfTabs;
+  const sliderLeftPosition = -numberOfTabs * 2;
+
+  const translateX = useSharedValue(sliderLeftPosition);
   const animatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -35,7 +37,7 @@ const AnimatedTabBar: React.FC<BottomTabBarProps> = ({
   });
   return (
     <View style={styles.tabBar}>
-      <Animated.View style={[styles.slider, animatedStyle]} />
+      <Animated.View style={[styles.slider(numberOfTabs), animatedStyle]} />
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         let label =
@@ -49,7 +51,8 @@ const AnimatedTabBar: React.FC<BottomTabBarProps> = ({
           const isFocused = state.index === index;
           if (!isFocused) {
             navigation.navigate(route.name);
-            translateX.value = index * tabBarItemWidth;
+            console.log(state.routes.length);
+            translateX.value = index * sliderWidth + sliderLeftPosition;
           }
         };
 
@@ -83,15 +86,15 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     fontSize: 16,
     color: "black",
   },
-  slider: {
+  slider: (numberOfTabs: number) => ({
     position: "absolute",
     height: 35,
-    width: 100,
+    width: 350 / numberOfTabs,
     backgroundColor: theme.secondary,
     borderRadius: 20,
     left: 15,
     top: 7.5,
-  },
+  }),
 }));
 
 export default AnimatedTabBar;

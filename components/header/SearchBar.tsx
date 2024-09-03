@@ -17,11 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackParamList } from "../../types/navigation";
 const BASE_URL_GEONAMES = "https://secure.geonames.org/searchJSON";
 import { useTranslation } from "react-i18next";
-import {
-  GeoNamesData,
-  GeoNamesItem,
-  geoNamesItem,
-} from "../../types/geoNamesSchema";
+import { GeoNamesData, GeoNamesItem } from "../../types/geoNamesSchema";
 interface GeoName {
   geonameId: number;
   name: string;
