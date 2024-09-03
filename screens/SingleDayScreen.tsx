@@ -19,8 +19,6 @@ import { RootState } from "../types/navigation";
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
-  useDerivedValue,
-  runOnJS,
 } from "react-native-reanimated";
 import AnimatedHeader from "../components/header/AnimatedHeader";
 import { useTranslation } from "react-i18next";
@@ -34,15 +32,12 @@ const SingleDayScreen: React.FC<
   const { t } = useTranslation();
 
   const scrollY = useSharedValue(0);
-  const borderWhereWeStartAnimation = 70;
-  const [isAnimationRunning, setIsAnimationRunning] = useState(false);
 
   const {
     weatherData,
     weatherLoading,
     weatherError,
     forecastLoading,
-    forecastError,
     sunrise,
     sunset,
     weatherBackground,
@@ -51,21 +46,9 @@ const SingleDayScreen: React.FC<
     getForecast,
   } = useWeatherData(city, today);
 
-  const setAnimationState = (isRunning: boolean) => {
-    setIsAnimationRunning(isRunning);
-  };
-
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
   });
-
-  useDerivedValue(() => {
-    if (scrollY.value > borderWhereWeStartAnimation) {
-      runOnJS(setAnimationState)(true);
-    } else {
-      runOnJS(setAnimationState)(false);
-    }
-  }, [scrollY]);
 
   if (weatherLoading || forecastLoading) {
     return <Loader />;
@@ -90,15 +73,15 @@ const SingleDayScreen: React.FC<
         style={styles.container}
         bounces={false}
         onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        stickyHeaderIndices={isAnimationRunning ? [1] : []}
+        scrollEventThrottle={1}
+        stickyHeaderIndices={[1]}
       >
         <Header />
         <AnimatedHeader
           today={today}
           city={city}
           scrollY={scrollY}
-          headerHeight={200}
+          headerHeight={300}
         />
         <View style={styles.widgetsContainer}>
           <HourlyForecast hourlyForecast={hourlyForecast} />
