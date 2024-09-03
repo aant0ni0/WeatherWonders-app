@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { View } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setCity } from "../../slices/citySlice";
@@ -7,11 +7,11 @@ import { RootStackParamList } from "../../types/navigation";
 import { useLazySearchCityQuery } from "../../services/api";
 import { debounce } from "../../utils/debounce";
 import TypeSuggestionsBox from "./TypeSuggestionsBox";
-import Loader from "../Loader";
 import ErrorMessage from "../ErrorMessage";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 import SearchBar from "./SearchBar";
-import { searchBarContainerHeight } from "../../constants";
+import { getSearchBarContainerHeight } from "../../utils/searchBarHeightCalculator";
+import { dataSchema } from "../../types/geoNamesSchema";
 
 const LocationSearch = () => {
   const [query, setQuery] = useState("");
@@ -26,12 +26,18 @@ const LocationSearch = () => {
   const fetchCities = async (text: string) => {
     if (text.length > 2) {
       try {
-        await triggerSearchCityQuery(text);
+        const result = await triggerSearchCityQuery(text).unwrap();
+
+        const parsedData = dataSchema.safeParse(result);
+
+        if (parsedData.success) {
+          return parsedData.data;
+        } else {
+          console.error("Invalid data format:", parsedData.error);
+        }
       } catch (err) {
         console.error("Error fetching cities:", err);
       }
-    } else {
-      return;
     }
   };
 
@@ -48,10 +54,15 @@ const LocationSearch = () => {
     console.log(cityName);
     navigation.navigate("Tabs");
   };
+
   return (
     <View style={styles.container}>
       <SearchBar onChangeText={handleSearch} query={query} />
-      {isLoading && <Loader />}
+      {isLoading && (
+        <View style={styles.loader}>
+          <ActivityIndicator size="large" color={"white"} />
+        </View>
+      )}
       {error && (
         <ErrorMessage>Error fetching cities. Please try again.</ErrorMessage>
       )}
@@ -59,16 +70,24 @@ const LocationSearch = () => {
         data?.geonames?.length > 0 &&
         !isLoading &&
         !error && (
-          <TypeSuggestionsBox data={data} onPress={handleCitySelection} />
+          <TypeSuggestionsBox
+            data={data.geonames}
+            onPress={handleCitySelection}
+          />
         )}
     </View>
   );
 };
 
-const stylesheet = createStyleSheet((theme) => ({
+const stylesheet = createStyleSheet((theme, runtime) => ({
   container: {
-    height: searchBarContainerHeight,
+    height: getSearchBarContainerHeight(runtime.screen.height),
     marginRight: 65,
+  },
+  loader: {
+    position: "absolute",
+    top: 80,
+    width: "90%",
   },
 }));
 

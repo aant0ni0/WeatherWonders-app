@@ -1,11 +1,16 @@
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
-import { GeoNamesData } from "../../types/geoNamesSchema";
-import { searchBarContainerHeight } from "../../constants";
+import { getSearchBarContainerHeight } from "../../utils/searchBarHeightCalculator";
+
+interface SuggestionItem {
+  geonameId: number | string;
+  name: string;
+  countryName: string;
+}
 
 interface TypeSuggestionsBoxProps {
-  data: GeoNamesData;
-  onPress: (cityName: string) => void;
+  data: SuggestionItem[];
+  onPress: (text: string) => void;
 }
 
 const TypeSuggestionsBox: React.FC<TypeSuggestionsBoxProps> = ({
@@ -17,7 +22,7 @@ const TypeSuggestionsBox: React.FC<TypeSuggestionsBoxProps> = ({
   return (
     <View style={styles.typeSuggestionsContainer}>
       <FlatList
-        data={data.geonames}
+        data={data}
         keyExtractor={(item) => item.geonameId.toString()}
         scrollEnabled={false}
         renderItem={({ item }) => (
@@ -36,10 +41,10 @@ const TypeSuggestionsBox: React.FC<TypeSuggestionsBoxProps> = ({
   );
 };
 
-const stylesheet = createStyleSheet((theme) => ({
+const stylesheet = createStyleSheet((theme, runtime) => ({
   typeSuggestionsContainer: {
     position: "absolute",
-    top: searchBarContainerHeight - 5,
+    top: getSearchBarContainerHeight(runtime.screen.height) - 5,
     width: "90%",
   },
   suggestionItem: {

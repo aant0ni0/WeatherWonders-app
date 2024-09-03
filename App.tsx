@@ -6,14 +6,13 @@ import LocationSelectScreen from "./screens/LocationSelectScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Provider, useDispatch } from "react-redux";
+import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "./store/store";
 import Loader from "./components/Loader";
 import "./assets/unistyles";
 import { useSelector } from "react-redux";
 import { RootState } from "./types/navigation";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();

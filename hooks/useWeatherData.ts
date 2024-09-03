@@ -171,6 +171,9 @@ export const useWeatherData = (city: string, today: boolean) => {
   const sunrise = weatherData?.sys.sunrise ?? 0;
   const sunset = weatherData?.sys.sunset ?? 0;
 
+  const adjustedSunrise = new Date(sunrise * 1000 + timezoneOffset * 1000);
+  const adjustedSunset = new Date(sunset * 1000 + timezoneOffset * 1000);
+
   console.log(
     new Date(sunrise * 1000).toTimeString(),
     new Date(sunrise * 1000 + timezoneOffset * 1000).toUTCString()
@@ -264,8 +267,8 @@ export const useWeatherData = (city: string, today: boolean) => {
     maxTemp,
     mainWeather,
     mainTemp,
-    sunrise,
-    sunset,
+    sunrise: adjustedSunrise,
+    sunset: adjustedSunset,
     weatherBackground,
     feelsLikeDescription,
     timezoneOffset,

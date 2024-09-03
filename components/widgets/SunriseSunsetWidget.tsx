@@ -3,8 +3,8 @@ import SunriseSunsetChart from "../SunriseSunsetChart";
 import WeatherWidget from "./WeatherWidget";
 
 interface SunriseSunsetWidgetProps {
-  sunrise: number;
-  sunset: number;
+  sunrise: Date;
+  sunset: Date;
   today: boolean;
   timezone: number;
 }
@@ -26,14 +26,11 @@ const SunriseSunsetWidget: React.FC<SunriseSunsetWidgetProps> = ({
     return () => clearInterval(intervalId);
   }, []);
 
-  const adjustedSunrise = new Date(sunrise * 1000 + timezone * 1000);
-  const adjustedSunset = new Date(sunset * 1000 + timezone * 1000);
-
   return (
     <WeatherWidget title="Sunrise and Sunset">
       <SunriseSunsetChart
-        sunrise={adjustedSunrise.getTime() / 1000}
-        sunset={adjustedSunset.getTime() / 1000}
+        sunrise={sunrise.getTime() / 1000}
+        sunset={sunset.getTime() / 1000}
         currentTime={currentTime + timezone * 1000}
         today={today}
       />
