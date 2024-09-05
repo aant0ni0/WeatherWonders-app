@@ -3,13 +3,13 @@ import { createStyleSheet, useStyles } from "react-native-unistyles";
 import { getSearchBarContainerHeight } from "../../utils/searchBarHeightCalculator";
 
 interface SuggestionItem {
-  geonameId: number | string;
-  name: string;
-  countryName: string;
+  id: number | string;
+  text: string;
+  additionalText?: string;
 }
 
 interface TypeSuggestionsBoxProps {
-  data: SuggestionItem[];
+  data: SuggestionItem[] | undefined;
   onPress: (text: string) => void;
 }
 
@@ -23,15 +23,15 @@ const TypeSuggestionsBox: React.FC<TypeSuggestionsBoxProps> = ({
     <View style={styles.typeSuggestionsContainer}>
       <FlatList
         data={data}
-        keyExtractor={(item) => item.geonameId.toString()}
+        keyExtractor={(item) => item.id.toString()}
         scrollEnabled={false}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => onPress(item.name)}
+            onPress={() => onPress(item.text)}
             style={styles.suggestionItem}
           >
             <Text>
-              {item.name}, {item.countryName}
+              {item.text}, {item.additionalText}
             </Text>
           </TouchableOpacity>
         )}

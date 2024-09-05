@@ -11,7 +11,6 @@ import ErrorMessage from "../ErrorMessage";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 import SearchBar from "./SearchBar";
 import { getSearchBarContainerHeight } from "../../utils/searchBarHeightCalculator";
-import { dataSchema } from "../../types/geoNamesSchema";
 
 const LocationSearch = () => {
   const [query, setQuery] = useState("");
@@ -26,15 +25,7 @@ const LocationSearch = () => {
   const fetchCities = async (text: string) => {
     if (text.length > 2) {
       try {
-        const result = await triggerSearchCityQuery(text).unwrap();
-
-        const parsedData = dataSchema.safeParse(result);
-
-        if (parsedData.success) {
-          return parsedData.data;
-        } else {
-          console.error("Invalid data format:", parsedData.error);
-        }
+        await triggerSearchCityQuery(text).unwrap();
       } catch (err) {
         console.error("Error fetching cities:", err);
       }
@@ -55,6 +46,16 @@ const LocationSearch = () => {
     navigation.navigate("Tabs");
   };
 
+  const geoData = data?.geonames;
+
+  const suggestionData = geoData?.map((item) => {
+    return {
+      id: item.geonameId,
+      text: item.name,
+      additionalText: item.countryName,
+    };
+  });
+
   return (
     <View style={styles.container}>
       <SearchBar onChangeText={handleSearch} query={query} />
@@ -67,11 +68,12 @@ const LocationSearch = () => {
         <ErrorMessage>Error fetching cities. Please try again.</ErrorMessage>
       )}
       {query.length > 2 &&
-        data?.geonames?.length > 0 &&
+        geoData &&
+        geoData.length > 0 &&
         !isLoading &&
         !error && (
           <TypeSuggestionsBox
-            data={data.geonames}
+            data={suggestionData}
             onPress={handleCitySelection}
           />
         )}

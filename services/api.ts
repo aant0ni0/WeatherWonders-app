@@ -1,4 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { dataSchema } from "../types/geoNamesSchema";
+import { WeatherSchema, ForecastDataSchema } from "../types/weatherSchema";
 
 const BASE_URL_WEATHER = "https://api.openweathermap.org/data/2.5";
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
@@ -9,9 +11,17 @@ export const weatherApi = createApi({
   endpoints: (builder) => ({
     getWeatherByCity: builder.query({
       query: (city) => `/weather?q=${city}&appid=${API_KEY}&units=metric`,
+      transformResponse: (data) => {
+        const parsedData = WeatherSchema.safeParse(data);
+        return parsedData.data;
+      },
     }),
     getForecastByCity: builder.query({
       query: (city) => `/forecast?q=${city}&appid=${API_KEY}&units=metric`,
+      transformResponse: (data) => {
+        const parsedData = ForecastDataSchema.safeParse(data);
+        return parsedData.data;
+      },
     }),
   }),
 });
@@ -28,6 +38,10 @@ export const geonamesApi = createApi({
     searchCity: builder.query({
       query: (text) =>
         `/searchJSON?name_startsWith=${text}&featureClass=P&maxRows=5&username=${process.env.EXPO_PUBLIC_USERNAME}`,
+      transformResponse: (data) => {
+        const parsedData = dataSchema.safeParse(data);
+        return parsedData.data;
+      },
     }),
   }),
 });

@@ -3,21 +3,21 @@ import { weatherBackgrounds } from "../types/weatherBackdroundTypes";
 import { WeatherTypes } from "../types/weatherBackdroundTypes";
 
 import {
-  useGetParsedForecastByCityQuery,
-  useGetParsedWeatherByCityQuery,
-} from "./useParsedWeatherData";
+  useGetForecastByCityQuery,
+  useGetWeatherByCityQuery,
+} from "../services/api";
 
 export const useWeatherData = (city: string, today: boolean) => {
   const {
     data: weatherData,
     error: weatherError,
     isLoading: weatherLoading,
-  } = useGetParsedWeatherByCityQuery(city);
+  } = useGetWeatherByCityQuery(city);
   const {
     data: forecastData,
     error: forecastError,
     isLoading: forecastLoading,
-  } = useGetParsedForecastByCityQuery(city);
+  } = useGetForecastByCityQuery(city);
 
   const isLoading = weatherLoading || forecastLoading;
   const error = weatherError || forecastError;
