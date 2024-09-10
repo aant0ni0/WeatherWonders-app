@@ -7,7 +7,6 @@ import {
   Linking,
 } from "react-native";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
-import SearchBar from "../components/header/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import {
@@ -16,10 +15,11 @@ import {
   PermissionStatus,
 } from "expo-location";
 import { getAddress } from "../services/location";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { setCity } from "../slices/citySlice";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/navigation";
+import LocationSearch from "../components/header/LocationSearch";
 
 const LocationSelectScreen = () => {
   const { styles } = useStyles(stylesheet);
@@ -60,7 +60,7 @@ const LocationSelectScreen = () => {
         [
           { text: "Cancel", style: "cancel" },
           { text: "Open Settings", onPress: () => Linking.openSettings() },
-        ]
+        ],
       );
       return;
     }
@@ -86,7 +86,7 @@ const LocationSelectScreen = () => {
         </TouchableOpacity>
 
         <View style={styles.searchContainer}>
-          <SearchBar />
+          <LocationSearch />
         </View>
       </View>
       {isLoading && <ActivityIndicator size={"large"} />}
@@ -116,6 +116,7 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     flexDirection: "row",
     height: runtime.screen.height / 16,
     marginTop: 30,
+    marginLeft: 5,
   },
   locateButton: {
     width: "10%",

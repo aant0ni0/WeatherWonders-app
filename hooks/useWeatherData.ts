@@ -28,10 +28,10 @@ export const useWeatherData = (city: string, today: boolean) => {
   const todayMidnight = new Date(
     now.getFullYear(),
     now.getMonth(),
-    now.getDate()
+    now.getDate(),
   );
   const tomorrowMidnight = new Date(
-    new Date(todayMidnight).setHours(24, 0, 0, 0)
+    new Date(todayMidnight).setHours(24, 0, 0, 0),
   );
   const date = today
     ? now
@@ -85,7 +85,7 @@ export const useWeatherData = (city: string, today: boolean) => {
         itemDate <=
           new Date(tomorrowMidnight.getTime() + 21 * oneHourInMilliseconds)
       );
-    }
+    },
   );
 
   const chooseMainWeatherforTomorrow = (): string | null => {
@@ -104,7 +104,7 @@ export const useWeatherData = (city: string, today: boolean) => {
       (maxWeather, currentWeather) => {
         return currentWeather[1] > maxWeather[1] ? currentWeather : maxWeather;
       },
-      ["", 0]
+      ["", 0],
     )[0];
 
     return weatherType || null;
@@ -124,28 +124,28 @@ export const useWeatherData = (city: string, today: boolean) => {
 
     const maxFeelsLike = Math.max(
       ...weatherDataForTomorrow.map(
-        (item: ForecastItem) => item.main.feels_like
-      )
+        (item: ForecastItem) => item.main.feels_like,
+      ),
     );
     const avgHumidity =
       weatherDataForTomorrow.reduce(
         (sum: number, item: ForecastItem) => sum + item.main.humidity,
-        0
+        0,
       ) / weatherDataForTomorrow.length;
     const avgVisibility =
       weatherDataForTomorrow.reduce(
         (sum: number, item: ForecastItem) => sum + item.visibility,
-        0
+        0,
       ) / weatherDataForTomorrow.length;
     const avgWindSpeed =
       weatherDataForTomorrow.reduce(
         (sum: number, item: ForecastItem) => sum + item.wind.speed,
-        0
+        0,
       ) / weatherDataForTomorrow.length;
     const avgPressure =
       weatherDataForTomorrow.reduce(
         (sum: number, item: ForecastItem) => sum + item.main.pressure,
-        0
+        0,
       ) / weatherDataForTomorrow.length;
     return {
       maxFeelsLike,
@@ -176,7 +176,7 @@ export const useWeatherData = (city: string, today: boolean) => {
 
   console.log(
     new Date(sunrise * 1000).toTimeString(),
-    new Date(sunrise * 1000 + timezoneOffset * 1000).toUTCString()
+    new Date(sunrise * 1000 + timezoneOffset * 1000).toUTCString(),
   );
 
   const { maxFeelsLike } = getForecastForTomorrow();
@@ -213,13 +213,13 @@ export const useWeatherData = (city: string, today: boolean) => {
       if (!weatherData) return;
       const weatherType = weatherData.weather[0].description.replace(
         /\s/g,
-        ""
+        "",
       ) as WeatherTypes;
       return weatherBackgrounds[weatherType];
     } else {
       const weatherType = chooseMainWeatherforTomorrow()?.replace(
         /\s/g,
-        ""
+        "",
       ) as WeatherTypes;
       return weatherBackgrounds[weatherType];
     }

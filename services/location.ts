@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function getAddress(lat: number, lng: number) {
   const response = await axios.get(
-    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
   );
 
   if (!response.data) {

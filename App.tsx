@@ -13,9 +13,12 @@ import Loader from "./components/Loader";
 import "./assets/unistyles";
 import { useSelector } from "react-redux";
 import { RootState } from "./types/navigation";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
+
+AsyncStorage.clear();
 
 const BottomTabNavigator = () => {
   return (

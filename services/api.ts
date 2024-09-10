@@ -13,6 +13,10 @@ export const weatherApi = createApi({
       query: (city) => `/weather?q=${city}&appid=${API_KEY}&units=metric`,
       transformResponse: (data) => {
         const parsedData = WeatherSchema.safeParse(data);
+        if (!parsedData.success) {
+          console.error("Failed to parse weather data:", parsedData.error);
+          throw new Error("Failed to parse weather data");
+        }
         return parsedData.data;
       },
     }),
@@ -20,6 +24,10 @@ export const weatherApi = createApi({
       query: (city) => `/forecast?q=${city}&appid=${API_KEY}&units=metric`,
       transformResponse: (data) => {
         const parsedData = ForecastDataSchema.safeParse(data);
+        if (!parsedData.success) {
+          console.error("Failed to parse forecast data:", parsedData.error);
+          throw new Error("Failed to parse forecast data");
+        }
         return parsedData.data;
       },
     }),
@@ -40,6 +48,10 @@ export const geonamesApi = createApi({
         `/searchJSON?name_startsWith=${text}&featureClass=P&maxRows=5&username=${process.env.EXPO_PUBLIC_USERNAME}`,
       transformResponse: (data) => {
         const parsedData = dataSchema.safeParse(data);
+        if (!parsedData.success) {
+          console.error("Failed to parse geonames data:", parsedData.error);
+          throw new Error("Failed to parse geonames data");
+        }
         return parsedData.data;
       },
     }),

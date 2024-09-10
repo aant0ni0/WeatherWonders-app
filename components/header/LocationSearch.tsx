@@ -32,6 +32,7 @@ const LocationSearch = () => {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFetchCities = useCallback(debounce(fetchCities, 400), []);
 
   const handleSearch = (text: string) => {
