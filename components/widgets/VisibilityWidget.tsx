@@ -1,6 +1,5 @@
 import React from "react";
 import { Text } from "react-native";
-import { WeatherData } from "../../types/weatherSchema";
 import WeatherWidget from "./WeatherWidget";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";

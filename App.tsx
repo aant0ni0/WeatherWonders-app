@@ -19,11 +19,7 @@ import RadarScreen from "./screens/RadarScreen";
 import "./i18n";
 import { useTranslation } from "react-i18next";
 
-SplashScreen.preventAutoHideAsync()
-  .then((result) =>
-    console.log(`SplashScreen.preventAutoHideAsync() succeeded: ${result}`)
-  )
-  .catch(console.warn);
+
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();

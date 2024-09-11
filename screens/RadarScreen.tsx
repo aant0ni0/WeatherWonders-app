@@ -1,6 +1,6 @@
 import React from "react";
 import MapView, { UrlTile } from "react-native-maps";
-import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { RootState } from "../types/navigation";
 import { useGetWeatherByCityQuery } from "../services/api";

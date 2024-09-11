@@ -1,5 +1,4 @@
 import { Text, StyleSheet } from "react-native";
-import { WeatherData } from "../../types/weatherSchema";
 import WeatherWidget from "./WeatherWidget";
 import { useTranslation } from "react-i18next";
 interface HumidityWidgetProps {

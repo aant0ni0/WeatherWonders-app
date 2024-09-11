@@ -1,5 +1,4 @@
 import { View, Text, ScrollView } from "react-native";
-import { ForecastItem } from "../types/weatherSchema";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootTabsParamList } from "../types/navigation";
 import { createStyleSheet, useStyles } from "react-native-unistyles";

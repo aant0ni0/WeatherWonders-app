@@ -15,14 +15,9 @@ import { useDispatch } from "react-redux";
 import { setCity } from "../../slices/citySlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RootStackParamList } from "../../types/navigation";
-const BASE_URL_GEONAMES = "https://secure.geonames.org/searchJSON";
 import { useTranslation } from "react-i18next";
 import { GeoNamesData, GeoNamesItem } from "../../types/geoNamesSchema";
-interface GeoName {
-  geonameId: number;
-  name: string;
-  countryName: string;
-}
+const BASE_URL_GEONAMES = "https://secure.geonames.org/searchJSON";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
