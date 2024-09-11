@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 import Svg, { Line, Circle, Path } from "react-native-svg";
+import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 interface SunriseSunsetChartProps {
   sunrise: number;
@@ -21,13 +22,15 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
   currentTime,
   today,
 }) => {
-  const sunriseMinutes =
-    new Date(sunrise * 1000).getHours() * 60 +
-    new Date(sunrise * 1000).getMinutes();
+  const { styles } = useStyles(stylesheet);
+
+  let sunriseMinutes =
+    new Date(sunrise * 1000).getUTCHours() * 60 +
+    new Date(sunrise * 1000).getUTCMinutes();
 
   const sunsetMinutes =
-    new Date(sunset * 1000).getHours() * 60 +
-    new Date(sunset * 1000).getMinutes();
+    new Date(sunset * 1000).getUTCHours() * 60 +
+    new Date(sunset * 1000).getUTCMinutes();
 
   const currentMinutes =
     new Date(currentTime).getHours() * 60 + new Date(currentTime).getMinutes();
@@ -57,6 +60,13 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
       t * t * BASELINE_Y
     );
   };
+
+  const sunriseDate = new Date(sunrise * 1000);
+  const sunriseUTCHours = sunriseDate.getUTCHours();
+  const sunriseUTCMinutes = sunriseDate.getUTCMinutes();
+  const sunsetDate = new Date(sunset * 1000);
+  const sunsetUTCHours = sunsetDate.getUTCHours();
+  const sunsetUTCMinutes = sunsetDate.getUTCMinutes();
 
   const currentY = calculateY(currentX);
 
@@ -99,31 +109,13 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
           width: SVG_WIDTH - 35,
         }}
       >
-        <Text
-          style={{
-            fontSize: 12,
-            fontWeight: "500",
-            left: 10,
-          }}
-        >
-          {new Date(sunrise * 1000).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          })}
+        <Text style={styles.sunriseHour}>
+          {sunriseUTCHours < 10 ? "0" + sunriseUTCHours : sunriseUTCHours}:
+          {sunriseUTCMinutes < 10 ? "0" + sunriseUTCMinutes : sunriseUTCMinutes}
         </Text>
-        <Text
-          style={{
-            fontSize: 12,
-            fontWeight: "500",
-            right: 10,
-          }}
-        >
-          {new Date(sunset * 1000).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          })}
+        <Text style={styles.sunsetHour}>
+          {sunsetUTCHours < 10 ? "0" + sunsetUTCHours : sunsetUTCHours}:
+          {sunsetUTCMinutes < 10 ? "0" + sunsetUTCMinutes : sunsetUTCMinutes}
         </Text>
       </View>
     </View>
@@ -131,3 +123,16 @@ const SunriseSunsetChart: React.FC<SunriseSunsetChartProps> = ({
 };
 
 export default SunriseSunsetChart;
+
+const stylesheet = createStyleSheet({
+  sunriseHour: {
+    fontSize: 12,
+    fontWeight: "500",
+    left: 10,
+  },
+  sunsetHour: {
+    fontSize: 12,
+    fontWeight: "500",
+    right: 10,
+  },
+});

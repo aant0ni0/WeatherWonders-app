@@ -20,105 +20,89 @@ import WindWidget from "../components/widgets/WindWidget";
 import VisibilityWidget from "../components/widgets/VisibilityWidget";
 import PressureWidget from "../components/widgets/PressureWidget";
 import SunriseSunsetWidget from "../components/widgets/SunriseSunsetWidget";
+import { useSelector } from "react-redux";
+import { RootState } from "../types/navigation";
 
 const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
 > = ({ route }) => {
-  const city = "Krakow";
+  const city = useSelector((state: RootState) => state.city);
+  console.log(city);
+
   const today = route.params["today"];
   const { styles } = useStyles(stylesheet);
 
   const {
     weatherData,
-    loading,
+    isLoading,
     error,
-    getHourlyForecastForNext24Hours,
-    getMinMaxTemp,
-    chooseMainWeatherforTomorrow,
-    getForecastForTomorrow,
-    mainTempToday,
-    mainTempTomorrow,
+    minTemp,
+    maxTemp,
+    mainWeather,
+    mainTemp,
     sunrise,
     sunset,
-    changeBackgroundImageDependsOnWeather,
-    getfeelsLikeDescription,
+    weatherBackground,
+    feelsLikeDescription,
+    timezoneOffset,
+    getHourlyForecastForNext24Hours,
+    getForecast,
   } = useWeatherData(city, today);
 
-  if (loading) {
+  if (isLoading) {
     return <Loader />;
   }
 
   if (error) {
-    return <ErrorMessage>Error fetching weather data: {error}</ErrorMessage>;
+    return (
+      <ErrorMessage>
+        Error fetching weather data:{" "}
+        {typeof error === "string" ? error : JSON.stringify(error)}
+      </ErrorMessage>
+    );
   }
 
   const hourlyForecast = getHourlyForecastForNext24Hours();
-  const { minTemp, maxTemp } = getMinMaxTemp();
-  const {
-    maxFeelsLike,
-    avgHumidity,
-    avgVisibility,
-    avgWindSpeed,
-    avgPressure,
-  } = getForecastForTomorrow();
+  const { feelsLike, humidity, visibility, windSpeed, pressure } =
+    getForecast();
 
   return (
-    <ImageBackground
-      source={changeBackgroundImageDependsOnWeather()}
-      style={styles.background}
-    >
+    <ImageBackground source={weatherBackground} style={styles.background}>
       <View style={styles.overlay} />
       <ScrollView style={[styles.container]} bounces={false}>
         <Header />
         <View style={styles.mainInfoBox}>
           <Text style={styles.city}>{city}</Text>
-          <Text style={styles.mainTemp}>
-            {today ? mainTempToday : mainTempTomorrow}
-          </Text>
-          <Text style={styles.weatherDescription}>
-            {today
-              ? weatherData?.weather[0].description
-              : chooseMainWeatherforTomorrow()}
-          </Text>
+          <Text style={styles.mainTemp}>{mainTemp}</Text>
+          <Text style={styles.weatherDescription}>{mainWeather}</Text>
           <Text style={styles.minMax}>
             from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
           </Text>
         </View>
         <View style={styles.widgetsContainer}>
-          <HourlyForecast hourlyForecast={hourlyForecast} />
+          <HourlyForecast
+            hourlyForecast={hourlyForecast}
+            timezone={timezoneOffset}
+          />
           <View style={styles.smallerWidgetsContainer}>
-            <HumidityWidget
-              today={today}
-              avgHumidity={avgHumidity}
-              weatherData={weatherData}
-            />
+            <HumidityWidget humidity={humidity} />
             <FeelsLikeWidget
-              today={today}
-              weatherData={weatherData}
-              getfeelsLikeDescription={getfeelsLikeDescription}
-              maxFeelsLike={maxFeelsLike}
+              feelsLikeDescription={feelsLikeDescription}
+              feelsLike={feelsLike}
             />
             <WindWidget
-              today={today}
-              weatherData={weatherData}
-              avgWindSpeed={avgWindSpeed}
+              direction={weatherData?.wind.deg}
+              windSpeed={windSpeed}
             />
-            <VisibilityWidget
-              today={today}
-              weatherData={weatherData}
-              avgVisibility={avgVisibility}
-            />
+            <VisibilityWidget visibility={visibility} />
 
-            <PressureWidget
-              today={today}
-              weatherData={weatherData}
-              avgPressure={avgPressure}
-            />
+            <PressureWidget pressure={pressure} />
 
             <SunriseSunsetWidget
               sunrise={sunrise}
               sunset={sunset}
               today={today}
+              timezone={timezoneOffset}
             />
           </View>
         </View>
@@ -146,6 +130,7 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     width: "100%",
     alignItems: "center",
     padding: 20,
+    zIndex: -1,
   },
   mainTemp: {
     fontSize: 75,

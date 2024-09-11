@@ -5,18 +5,23 @@ import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 interface HourlyForecastProps {
   hourlyForecast: ForecastItem[];
+  timezone: number;
 }
 
-const HourlyForecast: React.FC<HourlyForecastProps> = ({ hourlyForecast }) => {
+const HourlyForecast: React.FC<HourlyForecastProps> = ({
+  hourlyForecast,
+  timezone,
+}) => {
   const { styles } = useStyles(stylesheet);
 
   const renderHourlyForecast = (item: ForecastItem) => {
+    const localTime = new Date(item.dt * 1000 + timezone * 1000);
+    const hours = localTime.getUTCHours();
+
     return (
       <View style={styles.hourlyWeatherColumns}>
         <View style={styles.weatherInfoContainer}>
-          <Text style={styles.hourText}>
-            {new Date(item.dt_txt).getHours()}:00
-          </Text>
+          <Text style={styles.hourText}>{hours}:00</Text>
         </View>
         <Image
           source={{

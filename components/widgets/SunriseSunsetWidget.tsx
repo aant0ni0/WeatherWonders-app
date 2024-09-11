@@ -3,15 +3,17 @@ import SunriseSunsetChart from "../SunriseSunsetChart";
 import WeatherWidget from "./WeatherWidget";
 
 interface SunriseSunsetWidgetProps {
-  sunrise: number;
-  sunset: number;
+  sunrise: Date;
+  sunset: Date;
   today: boolean;
+  timezone: number;
 }
 
 const SunriseSunsetWidget: React.FC<SunriseSunsetWidgetProps> = ({
   sunrise,
   sunset,
   today,
+  timezone,
 }) => {
   const [currentTime, setCurrentTime] = useState<number>(new Date().getTime());
   const INTERVAL_TIME = 150000;
@@ -27,9 +29,9 @@ const SunriseSunsetWidget: React.FC<SunriseSunsetWidgetProps> = ({
   return (
     <WeatherWidget title="Sunrise and Sunset">
       <SunriseSunsetChart
-        sunrise={sunrise}
-        sunset={sunset}
-        currentTime={currentTime}
+        sunrise={sunrise.getTime() / 1000}
+        sunset={sunset.getTime() / 1000}
+        currentTime={currentTime + timezone * 1000}
         today={today}
       />
     </WeatherWidget>

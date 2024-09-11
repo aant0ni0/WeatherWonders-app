@@ -1,18 +1,26 @@
-import { useState, useEffect } from "react";
-import {
-  WeatherData,
-  ForecastData,
-  ForecastItem,
-} from "../types/weatherSchema";
-import { getWeatherByCity, getForecastByCity } from "../services/api";
+import { ForecastItem } from "../types/weatherSchema";
 import { weatherBackgrounds } from "../types/weatherBackdroundTypes";
 import { WeatherTypes } from "../types/weatherBackdroundTypes";
 
+import {
+  useGetForecastByCityQuery,
+  useGetWeatherByCityQuery,
+} from "../services/api";
+
 export const useWeatherData = (city: string, today: boolean) => {
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-  const [forecastData, setForecastData] = useState<ForecastData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    data: weatherData,
+    error: weatherError,
+    isLoading: weatherLoading,
+  } = useGetWeatherByCityQuery(city);
+  const {
+    data: forecastData,
+    error: forecastError,
+    isLoading: forecastLoading,
+  } = useGetForecastByCityQuery(city);
+
+  const isLoading = weatherLoading || forecastLoading;
+  const error = weatherError || forecastError;
 
   const oneHourInMilliseconds = 60 * 60 * 1000;
 
@@ -20,34 +28,14 @@ export const useWeatherData = (city: string, today: boolean) => {
   const todayMidnight = new Date(
     now.getFullYear(),
     now.getMonth(),
-    now.getDate()
+    now.getDate(),
   );
   const tomorrowMidnight = new Date(
-    todayMidnight.getTime() + 24 * oneHourInMilliseconds
+    new Date(todayMidnight).setHours(24, 0, 0, 0),
   );
   const date = today
     ? now
     : new Date(tomorrowMidnight.getTime() + 6 * oneHourInMilliseconds);
-
-  useEffect(() => {
-    const fetchWeatherData = async () => {
-      try {
-        const [weather, forecast] = await Promise.all([
-          getWeatherByCity(city),
-          getForecastByCity(city),
-        ]);
-        setWeatherData(weather);
-        setForecastData(forecast);
-      } catch (err) {
-        console.log(err);
-        setError("Error fetching weather data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWeatherData();
-  }, [city]);
 
   const getHourlyForecastForNext24Hours = (): ForecastItem[] => {
     if (!forecastData) return [];
@@ -74,11 +62,11 @@ export const useWeatherData = (city: string, today: boolean) => {
     }
 
     const temps = forecastData.list
-      .filter((item) => {
+      .filter((item: ForecastItem) => {
         const itemDate = new Date(item.dt * 1000);
         return itemDate >= start && itemDate < end;
       })
-      .map((item) => item.main.temp);
+      .map((item: ForecastItem) => item.main.temp);
 
     if (temps.length === 0) return { minTemp: null, maxTemp: null };
 
@@ -97,7 +85,7 @@ export const useWeatherData = (city: string, today: boolean) => {
         itemDate <=
           new Date(tomorrowMidnight.getTime() + 21 * oneHourInMilliseconds)
       );
-    }
+    },
   );
 
   const chooseMainWeatherforTomorrow = (): string | null => {
@@ -116,7 +104,7 @@ export const useWeatherData = (city: string, today: boolean) => {
       (maxWeather, currentWeather) => {
         return currentWeather[1] > maxWeather[1] ? currentWeather : maxWeather;
       },
-      ["", 0]
+      ["", 0],
     )[0];
 
     return weatherType || null;
@@ -135,25 +123,30 @@ export const useWeatherData = (city: string, today: boolean) => {
       };
 
     const maxFeelsLike = Math.max(
-      ...weatherDataForTomorrow.map((item) => item.main.feels_like)
+      ...weatherDataForTomorrow.map(
+        (item: ForecastItem) => item.main.feels_like,
+      ),
     );
     const avgHumidity =
       weatherDataForTomorrow.reduce(
-        (sum, item) => sum + item.main.humidity,
-        0
+        (sum: number, item: ForecastItem) => sum + item.main.humidity,
+        0,
       ) / weatherDataForTomorrow.length;
     const avgVisibility =
-      weatherDataForTomorrow.reduce((sum, item) => sum + item.visibility, 0) /
-      weatherDataForTomorrow.length;
+      weatherDataForTomorrow.reduce(
+        (sum: number, item: ForecastItem) => sum + item.visibility,
+        0,
+      ) / weatherDataForTomorrow.length;
     const avgWindSpeed =
-      weatherDataForTomorrow.reduce((sum, item) => sum + item.wind.speed, 0) /
-      weatherDataForTomorrow.length;
+      weatherDataForTomorrow.reduce(
+        (sum: number, item: ForecastItem) => sum + item.wind.speed,
+        0,
+      ) / weatherDataForTomorrow.length;
     const avgPressure =
       weatherDataForTomorrow.reduce(
-        (sum, item) => sum + item.main.pressure,
-        0
+        (sum: number, item: ForecastItem) => sum + item.main.pressure,
+        0,
       ) / weatherDataForTomorrow.length;
-
     return {
       maxFeelsLike,
       avgHumidity,
@@ -163,18 +156,28 @@ export const useWeatherData = (city: string, today: boolean) => {
     };
   };
 
-  const { maxTemp } = getMinMaxTemp();
+  const { minTemp, maxTemp } = getMinMaxTemp();
 
   const mainTempToday = weatherData
-    ? Math.ceil(weatherData.main.temp) + "°C"
+    ? weatherData.main.temp.toFixed() + "°C"
     : "cannot fetch weather data";
 
   const mainTempTomorrow = maxTemp
-    ? Math.ceil(maxTemp) + "°C"
+    ? maxTemp.toFixed() + "°C"
     : "cannot fetch weather data";
+
+  const timezoneOffset = weatherData?.timezone ?? 0;
 
   const sunrise = weatherData?.sys.sunrise ?? 0;
   const sunset = weatherData?.sys.sunset ?? 0;
+
+  const adjustedSunrise = new Date(sunrise * 1000 + timezoneOffset * 1000);
+  const adjustedSunset = new Date(sunset * 1000 + timezoneOffset * 1000);
+
+  console.log(
+    new Date(sunrise * 1000).toTimeString(),
+    new Date(sunrise * 1000 + timezoneOffset * 1000).toUTCString(),
+  );
 
   const { maxFeelsLike } = getForecastForTomorrow();
 
@@ -210,36 +213,66 @@ export const useWeatherData = (city: string, today: boolean) => {
       if (!weatherData) return;
       const weatherType = weatherData.weather[0].description.replace(
         /\s/g,
-        ""
+        "",
       ) as WeatherTypes;
       return weatherBackgrounds[weatherType];
     } else {
       const weatherType = chooseMainWeatherforTomorrow()?.replace(
         /\s/g,
-        ""
+        "",
       ) as WeatherTypes;
       return weatherBackgrounds[weatherType];
     }
   };
 
+  const mainTemp = today ? mainTempToday : mainTempTomorrow;
+  const mainWeather = today
+    ? weatherData?.weather[0].description
+    : chooseMainWeatherforTomorrow();
+
+  const getForecast = () => {
+    let feelsLike: number | null = null;
+    let humidity: number | null = null;
+    let visibility: number | null = null;
+    let windSpeed: number | null = null;
+    let pressure: number | null = null;
+
+    if (today) {
+      const forecast = getForecastForTomorrow();
+      feelsLike = forecast.maxFeelsLike;
+      humidity = forecast.avgHumidity;
+      visibility = forecast.avgVisibility;
+      windSpeed = forecast.avgWindSpeed;
+      pressure = forecast.avgPressure;
+    } else {
+      feelsLike = weatherData?.main.feels_like ?? null;
+      humidity = weatherData?.main.humidity ?? null;
+      visibility = weatherData?.visibility ?? null;
+      windSpeed = weatherData?.wind.speed ?? null;
+      pressure = weatherData?.main.pressure ?? null;
+    }
+
+    return { feelsLike, humidity, visibility, windSpeed, pressure };
+  };
+
+  const weatherBackground = changeBackgroundImageDependsOnWeather();
+  const feelsLikeDescription = getfeelsLikeDescription();
+
   return {
-    weatherData,
-    forecastData,
-    loading,
+    weatherData: weatherData,
+    forecastData: forecastData,
+    isLoading,
     error,
-    date,
-    todayMidnight,
-    tomorrowMidnight,
+    minTemp,
+    maxTemp,
+    mainWeather,
+    mainTemp,
+    sunrise: adjustedSunrise,
+    sunset: adjustedSunset,
+    weatherBackground,
+    feelsLikeDescription,
+    timezoneOffset,
+    getForecast,
     getHourlyForecastForNext24Hours,
-    getMinMaxTemp,
-    weatherDataForTomorrow,
-    chooseMainWeatherforTomorrow,
-    getForecastForTomorrow,
-    mainTempToday,
-    mainTempTomorrow,
-    sunrise,
-    sunset,
-    changeBackgroundImageDependsOnWeather,
-    getfeelsLikeDescription,
   };
 };

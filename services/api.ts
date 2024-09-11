@@ -1,34 +1,61 @@
-import axios from "axios";
-import { WeatherData } from "../types/weatherSchema";
-import { ForecastData } from "../types/weatherSchema";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { dataSchema } from "../types/geoNamesSchema";
+import { WeatherSchema, ForecastDataSchema } from "../types/weatherSchema";
 
+const BASE_URL_WEATHER = "https://api.openweathermap.org/data/2.5";
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
-const BASE_URL_WEATHER = "https://api.openweathermap.org/data/2.5/weather";
-const BASE_URL_FORECAST = "https://api.openweathermap.org/data/2.5/forecast";
 
-export const getWeatherByCity = async (city: string): Promise<WeatherData> => {
-  try {
-    const weatherResponse = await axios.get(
-      `${BASE_URL_WEATHER}?q=${city}&appid=${API_KEY}&units=metric`
-    );
-    return weatherResponse.data;
-  } catch (error) {
-    console.error("Error fetching weather data:", error);
-    throw error;
-  }
-};
+export const weatherApi = createApi({
+  reducerPath: "WeatherApi",
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL_WEATHER }),
+  endpoints: (builder) => ({
+    getWeatherByCity: builder.query({
+      query: (city) => `/weather?q=${city}&appid=${API_KEY}&units=metric`,
+      transformResponse: (data) => {
+        const parsedData = WeatherSchema.safeParse(data);
+        if (!parsedData.success) {
+          console.error("Failed to parse weather data:", parsedData.error);
+          throw new Error("Failed to parse weather data");
+        }
+        return parsedData.data;
+      },
+    }),
+    getForecastByCity: builder.query({
+      query: (city) => `/forecast?q=${city}&appid=${API_KEY}&units=metric`,
+      transformResponse: (data) => {
+        const parsedData = ForecastDataSchema.safeParse(data);
+        if (!parsedData.success) {
+          console.error("Failed to parse forecast data:", parsedData.error);
+          throw new Error("Failed to parse forecast data");
+        }
+        return parsedData.data;
+      },
+    }),
+  }),
+});
 
-export const getForecastByCity = async (
-  city: string
-): Promise<ForecastData> => {
-  try {
-    const forecastResponse = await axios.get(
-      `${BASE_URL_FORECAST}?q=${city}&appid=${API_KEY}&units=metric`
-    );
+export const { useGetWeatherByCityQuery, useGetForecastByCityQuery } =
+  weatherApi;
 
-    return forecastResponse.data;
-  } catch (error) {
-    console.error("Error fetching forecast data:", error);
-    throw error;
-  }
-};
+const BASE_URL_GEONAMES = "https://secure.geonames.org";
+
+export const geonamesApi = createApi({
+  reducerPath: "geonamesApi",
+  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL_GEONAMES }),
+  endpoints: (builder) => ({
+    searchCity: builder.query({
+      query: (text) =>
+        `/searchJSON?name_startsWith=${text}&featureClass=P&maxRows=5&username=${process.env.EXPO_PUBLIC_USERNAME}`,
+      transformResponse: (data) => {
+        const parsedData = dataSchema.safeParse(data);
+        if (!parsedData.success) {
+          console.error("Failed to parse geonames data:", parsedData.error);
+          throw new Error("Failed to parse geonames data");
+        }
+        return parsedData.data;
+      },
+    }),
+  }),
+});
+
+export const { useLazySearchCityQuery } = geonamesApi;

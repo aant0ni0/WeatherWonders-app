@@ -1,14 +1,20 @@
 import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import { RootStackParamList, RootTabsParamList } from "./types/navigation";
 import SingleDayScreen from "./screens/SingleDayScreen";
+import LocationSelectScreen from "./screens/LocationSelectScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import FiveDaysScreen from "./screens/FiveDaysScreen";
-import { createStyleSheet } from "react-native-unistyles";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./store/store";
+import Loader from "./components/Loader";
 import "./assets/unistyles";
+import { useSelector } from "react-redux";
+import { RootState } from "./types/navigation";
 
-const Stack = createStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
 
 const BottomTabNavigator = () => {
@@ -16,7 +22,10 @@ const BottomTabNavigator = () => {
     <Tab.Navigator
       screenOptions={{
         tabBarIcon: () => null,
-        tabBarLabelStyle: styles.tabBarLabelStyle,
+        tabBarLabelStyle: {
+          fontSize: 18,
+          position: "absolute",
+        },
         tabBarActiveBackgroundColor: "#3498DB",
         tabBarInactiveBackgroundColor: "#2C3E50",
         tabBarActiveTintColor: "black",
@@ -59,25 +68,36 @@ const BottomTabNavigator = () => {
   );
 };
 
-export default function App() {
+const App = () => {
+  const city = useSelector((state: RootState) => state.city);
+  console.log(city);
+
+  const initialRouteName = city ? "Tabs" : "LocationSelect";
+
   return (
-    <>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Tabs"
-            component={BottomTabNavigator}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName={initialRouteName}>
+        <Stack.Screen
+          name="LocationSelect"
+          component={LocationSelectScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Tabs"
+          component={BottomTabNavigator}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default function RootApp() {
+  return (
+    <Provider store={store}>
+      <PersistGate loading={<Loader />} persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
   );
 }
-
-const styles = createStyleSheet({
-  tabBarLabelStyle: {
-    fontSize: 18,
-    position: "absolute",
-  },
-});

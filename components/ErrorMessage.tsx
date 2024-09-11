@@ -9,8 +9,8 @@ interface ErrorMessageProps {
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ children }) => {
   const { styles } = useStyles(stylesheet);
   return (
-    <View>
-      <Text>{children}</Text>
+    <View style={styles.container}>
+      <Text style={styles.text}>{children}</Text>
     </View>
   );
 };

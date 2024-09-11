@@ -28,12 +28,13 @@ const SysSchema = z.object({
   sunset: z.number(),
 });
 
-const WeatherSchema = z.object({
+export const WeatherSchema = z.object({
   visibility: z.number(),
   wind: WindSchema,
   main: MainSchema,
   weather: z.array(WeatherDescriptionSchema),
   sys: SysSchema,
+  timezone: z.number(),
 });
 
 const CloudsSchema = z.object({

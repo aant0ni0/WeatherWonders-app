@@ -4,6 +4,7 @@ import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 const RadarButton = () => {
   const { styles } = useStyles(stylesheet);
+
   return (
     <TouchableOpacity style={styles.radarButton}>
       <Ionicons name="radio-outline" size={35} color="white" />
@@ -13,8 +14,8 @@ const RadarButton = () => {
 
 const stylesheet = createStyleSheet((theme) => ({
   radarButton: {
-    width: "12%",
-    height: "80%",
+    aspectRatio: 1,
+    height: "91%",
     backgroundColor: theme.secondaryButton,
     borderRadius: 5,
     marginRight: 20,

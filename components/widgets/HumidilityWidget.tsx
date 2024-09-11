@@ -1,25 +1,14 @@
 import { Text, StyleSheet } from "react-native";
-import { WeatherData } from "../../types/weatherSchema";
 import WeatherWidget from "./WeatherWidget";
 
 interface HumidityWidgetProps {
-  today: boolean;
-  weatherData: WeatherData | null;
-  avgHumidity: number | null;
+  humidity: number | null;
 }
 
-const HumidityWidget: React.FC<HumidityWidgetProps> = ({
-  today,
-  weatherData,
-  avgHumidity,
-}) => {
+const HumidityWidget: React.FC<HumidityWidgetProps> = ({ humidity }) => {
   return (
     <WeatherWidget title="Humidity">
-      <Text style={styles.widgetContent}>
-        {today
-          ? weatherData?.main.humidity + "%"
-          : avgHumidity?.toFixed() + "%"}
-      </Text>
+      <Text style={styles.widgetContent}>{humidity?.toFixed() + "%"}</Text>
     </WeatherWidget>
   );
 };
