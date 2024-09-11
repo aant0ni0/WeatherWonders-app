@@ -90,7 +90,10 @@ const SingleDayScreen: React.FC<
               feelsLikeDescription={feelsLikeDescription}
               feelsLike={feelsLike}
             />
-            <WindWidget weatherData={weatherData} windSpeed={windSpeed} />
+            <WindWidget
+              direction={weatherData?.wind.deg}
+              windSpeed={windSpeed}
+            />
             <VisibilityWidget visibility={visibility} />
 
             <PressureWidget pressure={pressure} />
