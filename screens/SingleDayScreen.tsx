@@ -28,6 +28,8 @@ const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
 > = ({ route }) => {
   const city = useSelector((state: RootState) => state.city);
+  console.log(city);
+
   const today = route.params["today"];
   const { styles } = useStyles(stylesheet);
 
@@ -37,14 +39,13 @@ const SingleDayScreen: React.FC<
 
   const {
     weatherData,
-    weatherLoading,
-    weatherError,
-    forecastLoading,
-    forecastError,
+    isLoading,
+    error,
     sunrise,
     sunset,
     weatherBackground,
     feelsLikeDescription,
+    timezoneOffset,
     getHourlyForecastForNext24Hours,
     getForecast,
   } = useWeatherData(city, today);
@@ -65,22 +66,15 @@ const SingleDayScreen: React.FC<
     }
   }, [scrollY]);
 
-  if (weatherLoading || forecastLoading) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  if (weatherError) {
+  if (error) {
     return (
       <ErrorMessage>
-        Error fetching weather data: {weatherError as string}
-      </ErrorMessage>
-    );
-  }
-
-  if (forecastError) {
-    return (
-      <ErrorMessage>
-        Error fetching weather data: {forecastError as string}
+        Error fetching weather data:{" "}
+        {typeof error === "string" ? error : JSON.stringify(error)}
       </ErrorMessage>
     );
   }
@@ -107,20 +101,27 @@ const SingleDayScreen: React.FC<
           headerHeight={200}
         />
         <View style={styles.widgetsContainer}>
-          <HourlyForecast hourlyForecast={hourlyForecast} />
+          <HourlyForecast
+            hourlyForecast={hourlyForecast}
+            timezone={timezoneOffset}
+          />
           <View style={styles.smallerWidgetsContainer}>
             <HumidityWidget humidity={humidity} />
             <FeelsLikeWidget
               feelsLikeDescription={feelsLikeDescription}
               feelsLike={feelsLike}
             />
-            <WindWidget weatherData={weatherData} windSpeed={windSpeed} />
+            <WindWidget
+              direction={weatherData?.wind.deg}
+              windSpeed={windSpeed}
+            />
             <VisibilityWidget visibility={visibility} />
             <PressureWidget pressure={pressure} />
             <SunriseSunsetWidget
               sunrise={sunrise}
               sunset={sunset}
               today={today}
+              timezone={timezoneOffset}
             />
           </View>
         </View>

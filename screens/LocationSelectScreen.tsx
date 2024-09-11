@@ -4,9 +4,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Linking,
 } from "react-native";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
-import SearchBar from "../components/header/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import {
@@ -15,11 +15,11 @@ import {
   PermissionStatus,
 } from "expo-location";
 import { getAddress } from "../services/location";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { setCity } from "../slices/citySlice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/navigation";
+import LocationSearch from "../components/header/LocationSearch";
 
 const LocationSelectScreen = () => {
   const { styles } = useStyles(stylesheet);
@@ -27,31 +27,16 @@ const LocationSelectScreen = () => {
   const navigation: NavigationProp<RootStackParamList> = useNavigation();
   const [locationPermissionInformation, requestPermission] =
     useForegroundPermissions();
-  const [pickedLocation, setPickedLocation] = useState({ lat: 0, lng: 0 });
-  const [address, setAddress] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchAddress = async () => {
-      if (pickedLocation.lat && pickedLocation.lng) {
-        const fetchedAddress = await getAddress(
-          pickedLocation.lat,
-          pickedLocation.lng
-        );
-        setAddress(fetchedAddress);
+  const fetchAddress = async (lat: number, lng: number) => {
+    if (lat && lng) {
+      const fetchedAddress = await getAddress(lat, lng);
 
-        dispatch(setCity(fetchedAddress));
-        try {
-          await AsyncStorage.setItem("selectedCity", fetchedAddress);
-        } catch (error) {
-          console.error(error);
-        }
-        navigation.navigate("Tabs");
-      }
-    };
-
-    fetchAddress();
-  }, [pickedLocation]);
+      dispatch(setCity(fetchedAddress));
+      navigation.navigate("Tabs");
+    }
+  };
 
   const verifyPermissions = async () => {
     console.log(locationPermissionInformation?.status);
@@ -62,34 +47,31 @@ const LocationSelectScreen = () => {
 
       return permissionResponse.granted;
     }
-    if (locationPermissionInformation?.status === PermissionStatus.DENIED) {
-      return false;
-    }
-    return true;
+    return locationPermissionInformation?.status !== PermissionStatus.DENIED;
   };
 
-  const getLocationHandler = async () => {
+  const locationHandler = async () => {
     const hasPermission = await verifyPermissions();
     console.log(hasPermission);
     if (!hasPermission) {
       Alert.alert(
         "Permission Denied",
         "Location permission is required to get your current position. Please enable it in your device settings.",
-        [{ text: "OK" }]
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Open Settings", onPress: () => Linking.openSettings() },
+        ],
       );
       return;
     }
     const location = await getCurrentPositionAsync();
     console.log("Location:", location);
-    setPickedLocation({
-      lat: location.coords.latitude,
-      lng: location.coords.longitude,
-    });
+    fetchAddress(location.coords.latitude, location.coords.longitude);
   };
 
   const onPressLocationButton = async () => {
     setIsLoading(true);
-    await getLocationHandler();
+    await locationHandler();
     setIsLoading(false);
   };
 
@@ -104,7 +86,7 @@ const LocationSelectScreen = () => {
         </TouchableOpacity>
 
         <View style={styles.searchContainer}>
-          <SearchBar />
+          <LocationSearch />
         </View>
       </View>
       {isLoading && <ActivityIndicator size={"large"} />}
@@ -134,11 +116,12 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     flexDirection: "row",
     height: runtime.screen.height / 16,
     marginTop: 30,
+    marginLeft: 5,
   },
   locateButton: {
     width: "10%",
     height: "100%",
-    marginLeft: 10,
+    marginLeft: 25,
     marginRight: 5,
     alignItems: "center",
     justifyContent: "center",

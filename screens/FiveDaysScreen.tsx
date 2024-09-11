@@ -1,5 +1,4 @@
 import { View, Text, ScrollView } from "react-native";
-import { ForecastItem } from "../types/weatherSchema";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootTabsParamList } from "../types/navigation";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
@@ -18,22 +17,22 @@ const FiveDaysScreen: React.FC<
   const city = useSelector((state: RootState) => state.city);
 
   const {
-    weatherLoading,
-    weatherError,
+    isLoading,
+    error,
     forecastData,
     minTemp,
     maxTemp,
     getDayWeatherSummary,
   } = useWeatherData(city, true);
 
-  if (weatherLoading) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  if (weatherError) {
+  if (error) {
     return (
       <ErrorMessage>
-        Error fetching weather data: {weatherError as string}
+        Error fetching weather data: {error as string}
       </ErrorMessage>
     );
   }
