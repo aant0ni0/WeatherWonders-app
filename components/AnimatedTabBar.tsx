@@ -2,7 +2,6 @@ import {
   View,
   TouchableOpacity,
   Text,
-  StyleSheet,
   useWindowDimensions,
 } from "react-native";
 import Animated, {
@@ -42,8 +41,8 @@ const AnimatedTabBar: React.FC<BottomTabBarProps> = ({
           options.tabBarLabel !== undefined
             ? options.tabBarLabel.toString()
             : options.title !== undefined
-            ? options.title
-            : route.name.toString();
+              ? options.title
+              : route.name.toString();
 
         const onPress = () => {
           const isFocused = state.index === index;

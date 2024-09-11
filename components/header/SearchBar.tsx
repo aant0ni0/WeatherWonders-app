@@ -39,6 +39,7 @@ const stylesheet = createStyleSheet((theme) => ({
     borderRadius: 5,
     backgroundColor: "white",
     width: "100%",
+    paddingRight: 5,
   },
   searchButton: {
     paddingVertical: 5,

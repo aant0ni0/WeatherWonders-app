@@ -35,7 +35,7 @@ const AnimatedHeader: React.FC<{
       scrollY.value,
       [0, headerHeight],
       [-headerHeight, -insets.top],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
 
     return {
@@ -48,7 +48,7 @@ const AnimatedHeader: React.FC<{
       scrollY.value,
       [0, headerHeight / 2],
       [1, 0],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
     return { opacity };
   });
@@ -80,7 +80,7 @@ const AnimatedHeader: React.FC<{
                 source={{
                   uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
                 }}
-                style={styles.weatherIcon}
+                style={[styles.weatherIcon, styles.shadow]}
               />
             </View>
           </View>
@@ -160,6 +160,13 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
   animatedCityBox: {
     width: "70%",
     paddingLeft: 20,
+  },
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.9,
+    shadowRadius: 3,
+    elevation: 8,
   },
 }));
 

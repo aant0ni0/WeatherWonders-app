@@ -1,4 +1,4 @@
-import { Platform, View, Text } from "react-native";
+import { View, Text } from "react-native";
 import React from "react";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 import { StyleProp, ViewStyle, TextStyle } from "react-native";

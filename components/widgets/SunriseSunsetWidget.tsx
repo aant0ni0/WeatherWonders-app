@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { View } from "react-native";
 import SunriseSunsetChart from "../SunriseSunsetChart";
 import WeatherWidget from "./WeatherWidget";
 

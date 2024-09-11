@@ -1,10 +1,9 @@
-import { weekdays } from "moment-timezone";
 import { View, Text, Image } from "react-native";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 
 interface DayWeatherWidgetProps {
   date: Date | null;
-  mainIcon: string | null;
+  mainIcon: string | undefined | null;
   minTemp: number | null;
   maxTemp: number | null;
   today?: boolean;
@@ -37,7 +36,7 @@ const DayWeatherWidget: React.FC<DayWeatherWidgetProps> = ({
           source={{
             uri: `https://openweathermap.org/img/wn/${mainIcon}@2x.png`,
           }}
-          style={styles.weatherIcon}
+          style={[styles.weatherIcon, styles.shadow]}
         />
       </View>
       <View style={styles.tempBox}>
@@ -97,6 +96,13 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
   },
   temp: {
     fontSize: 16,
+  },
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.7,
+    shadowRadius: 2,
+    elevation: 8,
   },
 }));
 export default DayWeatherWidget;

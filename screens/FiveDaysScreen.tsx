@@ -75,7 +75,7 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
   cityTitle: {
     fontSize: 35,
     color: theme.primaryText,
-    padding: 15,
+    paddingTop: 30,
     fontWeight: "bold",
     textAlign: "center",
     zIndex: -1,
