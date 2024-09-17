@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text } from "react-native";
 import Animated, {
   useAnimatedStyle,
   interpolate,
@@ -12,6 +12,7 @@ import {
 } from "react-native-unistyles";
 import { useWeatherData } from "../../hooks/useWeatherData";
 import { SharedValue } from "react-native-reanimated";
+import WeatherIcon from "../WeatherIcon";
 
 const AnimatedHeader: React.FC<{
   city: string;
@@ -26,7 +27,7 @@ const AnimatedHeader: React.FC<{
     mainWeather,
     mainTemp,
     forecastData,
-    getDayWeatherSummary,
+    getWeatherSummaryForDay,
   } = useWeatherData(city, today);
   const insets = UnistylesRuntime.insets;
 
@@ -53,7 +54,7 @@ const AnimatedHeader: React.FC<{
     return { opacity };
   });
 
-  const { mainIcon } = getDayWeatherSummary(0);
+  const { mainIcon } = getWeatherSummaryForDay(0);
   const weatherIcon =
     today && forecastData ? forecastData.list[0].weather[0].icon : mainIcon;
 
@@ -76,12 +77,7 @@ const AnimatedHeader: React.FC<{
             </View>
             <View style={styles.animatedMainWeatherBox}>
               <Text style={styles.animatedMainTemp}>{mainTemp}</Text>
-              <Image
-                source={{
-                  uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
-                }}
-                style={[styles.weatherIcon, styles.shadow]}
-              />
+              <WeatherIcon weatherIcon={weatherIcon} shadow />
             </View>
           </View>
         </View>

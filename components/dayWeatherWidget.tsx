@@ -1,5 +1,6 @@
-import { View, Text, Image } from "react-native";
+import { View, Text } from "react-native";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
+import WeatherIcon from "./WeatherIcon";
 
 interface DayWeatherWidgetProps {
   date: Date | null;
@@ -32,16 +33,13 @@ const DayWeatherWidget: React.FC<DayWeatherWidgetProps> = ({
         <Text style={styles.weekDay}>{dayName}</Text>
       </View>
       <View style={styles.imageBox}>
-        <Image
-          source={{
-            uri: `https://openweathermap.org/img/wn/${mainIcon}@2x.png`,
-          }}
-          style={[styles.weatherIcon, styles.shadow]}
-        />
+        <WeatherIcon weatherIcon={mainIcon} shadow />
       </View>
       <View style={styles.tempBox}>
         <Text style={styles.temp}>
-          from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
+          {minTemp && maxTemp
+            ? "from " + minTemp.toFixed() + "° to " + maxTemp.toFixed() + "°"
+            : "No temperature data available"}
         </Text>
       </View>
     </View>

@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, FlatList, Image } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import { ForecastItem } from "../types/weatherSchema";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
+import WeatherIcon from "./WeatherIcon";
 
 interface HourlyForecastProps {
   hourlyForecast: ForecastItem[];
@@ -23,12 +24,7 @@ const HourlyForecast: React.FC<HourlyForecastProps> = ({
         <View style={styles.weatherInfoContainer}>
           <Text style={styles.hourText}>{hours}:00</Text>
         </View>
-        <Image
-          source={{
-            uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
-          }}
-          style={styles.weatherIcon}
-        />
+        <WeatherIcon weatherIcon={item.weather[0].icon} shadow={false} />
 
         <Text style={styles.hourTemp}>{item.main.temp.toFixed() + "°"}</Text>
       </View>

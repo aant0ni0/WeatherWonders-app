@@ -184,54 +184,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     flexWrap: "wrap",
     marginBottom: 25,
   },
-  animatedMainInfoBox: {
-    width: "100%",
-    alignItems: "center",
-    textAlign: "center",
-    zIndex: 1,
-    backgroundColor: "white",
-    opacity: 0.95,
-    position: "absolute",
-    top: -runtime.insets.top - 70,
-    paddingTop: runtime.insets.top + 70,
-  },
-  animatedWeatherInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  animatedMainTemp: {
-    fontSize: 25,
-    color: theme.primaryText,
-    fontWeight: "500",
-  },
-  animatedCity: {
-    fontSize: 25,
-    color: theme.primaryText,
-    fontWeight: "bold",
-  },
-  animatedWeatherDescription: {
-    fontSize: 20,
-    color: theme.primaryText,
-    marginBottom: 5,
-  },
-  animationBox: {
-    width: "100%",
-    height: 230,
-  },
-  weatherIcon: {
-    width: 50,
-    height: 50,
-  },
-  animatedMainWeatherBox: {
-    flexDirection: "row",
-    width: "30%",
-    alignItems: "center",
-    paddingRight: 20,
-  },
-  animatedCityBox: {
-    width: "70%",
-    paddingLeft: 20,
-  },
 }));
 
 export default SingleDayScreen;

@@ -90,26 +90,65 @@ export const useWeatherData = (city: string, today?: boolean) => {
     },
   );
 
+  const analyzeDayWeather = (dayData: ForecastItem[]) => {
+    if (!dayData || dayData.length === 0)
+      return {
+        mainIcon: null,
+        mainDescription: null,
+        minTemp: null,
+        maxTemp: null,
+      };
+
+    let minTemp = Infinity;
+    let maxTemp = -Infinity;
+
+    const weatherCounts: Record<
+      string,
+      { count: number; description: string }
+    > = {};
+
+    dayData.forEach((item: ForecastItem) => {
+      minTemp = Math.min(minTemp, item.main.temp_min);
+      maxTemp = Math.max(maxTemp, item.main.temp_max);
+
+      const weatherIcon = item.weather[0].icon;
+      const weatherDescription = item.weather[0].description;
+
+      if (weatherCounts[weatherIcon]) {
+        weatherCounts[weatherIcon].count += 1;
+      } else {
+        weatherCounts[weatherIcon] = {
+          count: 1,
+          description: weatherDescription,
+        };
+      }
+    });
+
+    const mainWeather = Object.entries(weatherCounts).reduce(
+      (maxWeather, currentWeather) => {
+        return currentWeather[1].count > maxWeather[1].count
+          ? currentWeather
+          : maxWeather;
+      },
+      ["", { count: 0, description: "" }],
+    )[1];
+
+    return {
+      mainIcon: mainWeather.description || null,
+      mainDescription: mainWeather.description || null,
+      minTemp: minTemp === Infinity ? null : minTemp,
+      maxTemp: maxTemp === -Infinity ? null : maxTemp,
+    };
+  };
+
   const chooseMainWeatherforTomorrow = (): string | null => {
     if (!weatherDataForTomorrow || weatherDataForTomorrow.length === 0) {
       return null;
     }
 
-    const weatherCounts: Record<string, number> = {};
+    const { mainDescription } = analyzeDayWeather(weatherDataForTomorrow);
 
-    weatherDataForTomorrow.forEach((item: ForecastItem) => {
-      const weatherType = item.weather[0].description;
-      weatherCounts[weatherType] = (weatherCounts[weatherType] || 0) + 1;
-    });
-
-    const weatherType = Object.entries(weatherCounts).reduce(
-      (maxWeather, currentWeather) => {
-        return currentWeather[1] > maxWeather[1] ? currentWeather : maxWeather;
-      },
-      ["", 0],
-    )[0];
-
-    return weatherType || null;
+    return mainDescription || null;
   };
 
   const getForecastForTomorrow = (): {
@@ -276,41 +315,25 @@ export const useWeatherData = (city: string, today?: boolean) => {
 
   const weatherDataForNextFourDays = filterWeatherDataForNextDays();
 
-  const getDayWeatherSummary = (number: number): DayWeatherSummary => {
-    const dayData = weatherDataForNextFourDays[number];
+  const getWeatherSummaryForDay = (
+    daysFromTommorow: number,
+  ): DayWeatherSummary => {
+    const dayData = weatherDataForNextFourDays[daysFromTommorow];
 
     if (!dayData || dayData.length === 0)
       return { mainIcon: null, minTemp: null, maxTemp: null, date: null };
+
+    const { mainIcon, minTemp, maxTemp } = analyzeDayWeather(dayData);
 
     const firstItem = dayData[0];
     const timestampInSeconds = firstItem.dt;
     const date = new Date(timestampInSeconds * 1000);
 
-    let minTemp = Infinity;
-    let maxTemp = -Infinity;
-
-    const weatherCounts: Record<string, number> = {};
-
-    dayData.forEach((item: ForecastItem) => {
-      minTemp = Math.min(minTemp, item.main.temp_min);
-      maxTemp = Math.max(maxTemp, item.main.temp_max);
-
-      const weatherIcon = item.weather[0].icon;
-      weatherCounts[weatherIcon] = (weatherCounts[weatherIcon] || 0) + 1;
-    });
-
-    const mainIcon = Object.entries(weatherCounts).reduce(
-      (maxWeather, currentWeather) => {
-        return currentWeather[1] > maxWeather[1] ? currentWeather : maxWeather;
-      },
-      ["", 0],
-    )[0];
-
     return {
       date: date || null,
       mainIcon: mainIcon || null,
-      minTemp: minTemp === Infinity ? null : minTemp,
-      maxTemp: maxTemp === -Infinity ? null : maxTemp,
+      minTemp: minTemp,
+      maxTemp: maxTemp,
     };
   };
 
@@ -331,7 +354,7 @@ export const useWeatherData = (city: string, today?: boolean) => {
     weatherBackground,
     feelsLikeDescription,
     tomorrowMidnight,
-    getDayWeatherSummary,
+    getWeatherSummaryForDay,
     timezoneOffset,
     getForecast,
     getHourlyForecastForNext24Hours,
