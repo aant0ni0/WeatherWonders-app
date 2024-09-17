@@ -114,15 +114,19 @@ export const useWeatherData = (city: string, today?: boolean) => {
       const weatherIcon = item.weather[0].icon;
       const weatherDescription = item.weather[0].description;
 
-      if (weatherCounts[weatherIcon]) {
-        weatherCounts[weatherIcon].count += 1;
-      } else {
-        weatherCounts[weatherIcon] = {
-          count: 1,
-          description: weatherDescription,
-        };
+      if (!weatherIcon.endsWith("n")) {
+        if (weatherCounts[weatherIcon]) {
+          weatherCounts[weatherIcon].count += 1;
+        } else {
+          weatherCounts[weatherIcon] = {
+            count: 1,
+            description: weatherDescription,
+          };
+        }
       }
     });
+
+    console.log(Object.entries(weatherCounts));
 
     const mainWeather = Object.entries(weatherCounts).reduce(
       (maxWeather, currentWeather) => {
@@ -134,7 +138,10 @@ export const useWeatherData = (city: string, today?: boolean) => {
     )[1];
 
     return {
-      mainIcon: mainWeather.description || null,
+      mainIcon:
+        Object.keys(weatherCounts).find(
+          (key) => weatherCounts[key].description === mainWeather.description,
+        ) || null,
       mainDescription: mainWeather.description || null,
       minTemp: minTemp === Infinity ? null : minTemp,
       maxTemp: maxTemp === -Infinity ? null : maxTemp,

@@ -26,7 +26,7 @@ const AnimatedHeader: React.FC<{
     maxTemp,
     mainWeather,
     mainTemp,
-    forecastData,
+    weatherData,
     getWeatherSummaryForDay,
   } = useWeatherData(city, today);
   const insets = UnistylesRuntime.insets;
@@ -56,7 +56,7 @@ const AnimatedHeader: React.FC<{
 
   const { mainIcon } = getWeatherSummaryForDay(0);
   const weatherIcon =
-    today && forecastData ? forecastData.list[0].weather[0].icon : mainIcon;
+    today && weatherData ? weatherData.weather[0].icon : mainIcon;
 
   return (
     <>
