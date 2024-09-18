@@ -1,4 +1,8 @@
-import { ForecastItem, ForecastData } from "../types/weatherSchema";
+import {
+  ForecastItem,
+  ForecastData,
+  WeatherData,
+} from "../types/weatherSchema";
 import { weatherBackgrounds } from "../types/weatherBackdroundTypes";
 import { WeatherTypes } from "../types/weatherBackdroundTypes";
 import { DayWeatherSummary } from "../types/weatherTypes";
@@ -119,7 +123,7 @@ export const chooseMainWeatherForTomorrow = (
 };
 
 export const getForecastForTomorrow = (
-  forecastData: any,
+  forecastData: ForecastData | undefined,
   weatherDataForTomorrow: ForecastItem[],
 ): {
   [key: string]: number | null;
@@ -186,7 +190,7 @@ export const getFeelsLikeDescription = (
 
 export const changeBackgroundImageDependsOnWeather = (
   today: boolean,
-  weatherData: any,
+  weatherData: WeatherData | undefined,
   weatherDataForTomorrow: ForecastItem[],
 ) => {
   if (today) {
@@ -206,7 +210,7 @@ export const changeBackgroundImageDependsOnWeather = (
 
 export const getForecast = (
   today: boolean,
-  weatherData: any,
+  weatherData: WeatherData | undefined,
   forecastForTomorrow: { [key: string]: number | null },
 ) => {
   let feelsLike: number | null = null;
@@ -233,7 +237,7 @@ export const getForecast = (
 };
 
 export const filterWeatherDataForNextDays = (
-  forecastData: any,
+  forecastData: ForecastData | undefined,
   tomorrowMidnight: Date,
   oneDayInMilliseconds: number,
 ) => {
