@@ -1,11 +1,5 @@
-import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  ImageBackground,
-} from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, ImageBackground } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootTabsParamList } from "../types/navigation";
 import { useWeatherData } from "../hooks/useWeatherData";
@@ -22,6 +16,13 @@ import PressureWidget from "../components/widgets/PressureWidget";
 import SunriseSunsetWidget from "../components/widgets/SunriseSunsetWidget";
 import { useSelector } from "react-redux";
 import { RootState } from "../types/navigation";
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useDerivedValue,
+  runOnJS,
+} from "react-native-reanimated";
+import AnimatedHeader from "../components/header/AnimatedHeader";
 
 const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
@@ -32,14 +33,14 @@ const SingleDayScreen: React.FC<
   const today = route.params["today"];
   const { styles } = useStyles(stylesheet);
 
+  const scrollY = useSharedValue(0);
+  const borderWhereWeStartAnimation = 70;
+  const [isAnimationRunning, setIsAnimationRunning] = useState(false);
+
   const {
     weatherData,
     isLoading,
     error,
-    minTemp,
-    maxTemp,
-    mainWeather,
-    mainTemp,
     sunrise,
     sunset,
     weatherBackground,
@@ -48,6 +49,22 @@ const SingleDayScreen: React.FC<
     getHourlyForecastForNext24Hours,
     getForecast,
   } = useWeatherData(city, today);
+
+  const setAnimationState = (isRunning: boolean) => {
+    setIsAnimationRunning(isRunning);
+  };
+
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    scrollY.value = event.contentOffset.y;
+  });
+
+  useDerivedValue(() => {
+    if (scrollY.value > borderWhereWeStartAnimation) {
+      runOnJS(setAnimationState)(true);
+    } else {
+      runOnJS(setAnimationState)(false);
+    }
+  }, [scrollY]);
 
   if (isLoading) {
     return <Loader />;
@@ -69,16 +86,20 @@ const SingleDayScreen: React.FC<
   return (
     <ImageBackground source={weatherBackground} style={styles.background}>
       <View style={styles.overlay} />
-      <ScrollView style={[styles.container]} bounces={false}>
+      <Animated.ScrollView
+        style={styles.container}
+        bounces={false}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
+        stickyHeaderIndices={isAnimationRunning ? [1] : []}
+      >
         <Header />
-        <View style={styles.mainInfoBox}>
-          <Text style={styles.city}>{city}</Text>
-          <Text style={styles.mainTemp}>{mainTemp}</Text>
-          <Text style={styles.weatherDescription}>{mainWeather}</Text>
-          <Text style={styles.minMax}>
-            from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
-          </Text>
-        </View>
+        <AnimatedHeader
+          today={today}
+          city={city}
+          scrollY={scrollY}
+          headerHeight={200}
+        />
         <View style={styles.widgetsContainer}>
           <HourlyForecast
             hourlyForecast={hourlyForecast}
@@ -95,9 +116,7 @@ const SingleDayScreen: React.FC<
               windSpeed={windSpeed}
             />
             <VisibilityWidget visibility={visibility} />
-
             <PressureWidget pressure={pressure} />
-
             <SunriseSunsetWidget
               sunrise={sunrise}
               sunset={sunset}
@@ -106,7 +125,7 @@ const SingleDayScreen: React.FC<
             />
           </View>
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </ImageBackground>
   );
 };
@@ -125,7 +144,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(255,255,255,0.15)",
   },
-
   mainInfoBox: {
     width: "100%",
     alignItems: "center",
@@ -153,10 +171,11 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
   },
   widgetsContainer: {
     width: "100%",
-    padding: 30,
+    padding: 25,
     paddingTop: 15,
     justifyContent: "center",
     marginBottom: 20,
+    zIndex: -1,
   },
   smallerWidgetsContainer: {
     width: "100%",

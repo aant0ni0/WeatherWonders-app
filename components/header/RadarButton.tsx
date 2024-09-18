@@ -15,11 +15,10 @@ const RadarButton = () => {
 const stylesheet = createStyleSheet((theme) => ({
   radarButton: {
     aspectRatio: 1,
-    height: "91%",
+    height: "90%",
     backgroundColor: theme.secondaryButton,
     borderRadius: 5,
-    marginRight: 20,
-    marginLeft: 10,
+    marginHorizontal: 15,
     alignItems: "center",
     justifyContent: "center",
   },
