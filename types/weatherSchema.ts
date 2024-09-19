@@ -38,6 +38,7 @@ export const WeatherSchema = z.object({
   weather: z.array(WeatherDescriptionSchema),
   sys: SysSchema,
   timezone: z.number(),
+  coord: coordSchema,
 });
 
 const CloudsSchema = z.object({

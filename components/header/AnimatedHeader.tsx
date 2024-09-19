@@ -39,7 +39,7 @@ const AnimatedHeader: React.FC<{
       scrollY.value,
       [0, headerHeight],
       [-headerHeight, -insets.top],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
 
     return {
@@ -52,7 +52,7 @@ const AnimatedHeader: React.FC<{
       scrollY.value,
       [0, headerHeight / 2],
       [1, 0],
-      Extrapolation.CLAMP
+      Extrapolation.CLAMP,
     );
     return { opacity };
   });
@@ -61,7 +61,9 @@ const AnimatedHeader: React.FC<{
   const weatherIcon =
     today && weatherData ? weatherData.weather[0].icon : mainIcon;
 
-  const translateMainWeather = t(mainWeather);
+  const translateMainWeather = mainWeather
+    ? t(mainWeather)
+    : "No weather data available";
 
   return (
     <>

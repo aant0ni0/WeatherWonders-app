@@ -29,6 +29,10 @@ const RadarScreen = () => {
 
   const coord = data?.coord;
 
+  if (!coord) {
+    return <ErrorMessage>Error Loading Coordinates</ErrorMessage>;
+  }
+
   return (
     <View style={styles.container}>
       <RadarButton

@@ -21,7 +21,11 @@ const RadarButton: React.FC<RadarButtonProps> = ({
   const { styles } = useStyles(stylesheet);
 
   const navigateToRadarScreen = () => {
-    !isOnRadar ? navigation.navigate("Radar") : navigation.navigate("Tabs");
+    if (!isOnRadar) {
+      navigation.navigate("Radar");
+    } else {
+      navigation.navigate("Tabs");
+    }
   };
 
   return (

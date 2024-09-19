@@ -9,14 +9,12 @@ import { useWeatherData } from "../hooks/useWeatherData";
 import ErrorMessage from "../components/ErrorMessage";
 import Loader from "../components/Loader";
 import DayWeatherWidget from "../components/DayWeatherWidget";
-import { useTranslation } from "react-i18next";
 
 const FiveDaysScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "FiveDays">
 > = () => {
   const { styles } = useStyles(stylesheet);
   const city = useSelector((state: RootState) => state.city);
-  const { t } = useTranslation();
 
   const {
     isLoading,

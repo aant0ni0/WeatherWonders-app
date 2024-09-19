@@ -62,7 +62,7 @@ const LocationSelectScreen = () => {
         [
           { text: "Cancel", style: "cancel" },
           { text: "Open Settings", onPress: () => Linking.openSettings() },
-        ]
+        ],
       );
       return;
     }
