@@ -40,12 +40,16 @@ const AnimatedTabBar: React.FC<BottomTabBarProps> = ({
       <Animated.View style={[styles.slider(numberOfTabs), animatedStyle]} />
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
-        let label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel.toString()
-            : options.title !== undefined
-            ? options.title
-            : route.name.toString();
+        if (typeof options.tabBarLabel === "function") {
+          throw new Error(
+            `Expected tabBarLabel to be a string or undefined, but got a function for route: ${route.name}`,
+          );
+        }
+
+        const label =
+          options.tabBarLabel?.toString() ??
+          options.title ??
+          route.name.toString();
 
         const onPress = () => {
           const isFocused = state.index === index;

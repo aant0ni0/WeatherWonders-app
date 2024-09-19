@@ -15,8 +15,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.aant0ni0.WeatherWonders",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Twoja aplikacja wymaga dostępu do lokalizacji, aby zapewnić lepsze wrażenia użytkownika.",
-        "NSLocationAlwaysUsageDescription": "Twoja aplikacja wymaga dostępu do lokalizacji, aby działać poprawnie w tle."
+        "NSLocationWhenInUseUsageDescription": "Your app requires location access to provide a better user experience.",
+        "NSLocationAlwaysUsageDescription": "Your app requires location access to run properly in the background."
       }
     },
     "android": {

@@ -1,15 +1,14 @@
 import { View, Text, Image } from "react-native";
-import { WeatherData } from "../../types/weatherSchema";
 import WeatherWidget from "./WeatherWidget";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
 
 interface WindWidgetProps {
-  weatherData: WeatherData | null;
+  direction: number | undefined;
   windSpeed: number | null;
 }
 
-const WindWidget: React.FC<WindWidgetProps> = ({ weatherData, windSpeed }) => {
+const WindWidget: React.FC<WindWidgetProps> = ({ direction, windSpeed }) => {
   const { styles } = useStyles(stylesheet);
   const { t } = useTranslation();
   return (
@@ -27,7 +26,7 @@ const WindWidget: React.FC<WindWidgetProps> = ({ weatherData, windSpeed }) => {
           source={require("../../assets/images/compasNeedle.png")}
           style={[
             styles.compassNeedle,
-            { transform: [{ rotate: `${weatherData?.wind.deg}deg` }] },
+            { transform: [{ rotate: `${direction}deg` }] },
           ]}
         />
       </View>

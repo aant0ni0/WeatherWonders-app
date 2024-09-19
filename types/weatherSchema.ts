@@ -31,13 +31,13 @@ const coordSchema = z.object({
   lon: z.number(),
   lat: z.number(),
 });
-const WeatherSchema = z.object({
-  coord: coordSchema,
+export const WeatherSchema = z.object({
   visibility: z.number(),
   wind: WindSchema,
   main: MainSchema,
   weather: z.array(WeatherDescriptionSchema),
   sys: SysSchema,
+  timezone: z.number(),
 });
 
 const CloudsSchema = z.object({

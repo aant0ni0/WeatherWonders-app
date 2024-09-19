@@ -19,22 +19,22 @@ const FiveDaysScreen: React.FC<
   const { t } = useTranslation();
 
   const {
-    weatherLoading,
-    weatherError,
+    isLoading,
+    error,
     forecastData,
     minTemp,
     maxTemp,
-    getDayWeatherSummary,
+    getWeatherSummaryForDay,
   } = useWeatherData(city, true);
 
-  if (weatherLoading) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  if (weatherError) {
+  if (error) {
     return (
       <ErrorMessage>
-        {t("Weather Error")} {weatherError as string}
+        Error fetching weather data: {error as string}
       </ErrorMessage>
     );
   }
@@ -45,10 +45,10 @@ const FiveDaysScreen: React.FC<
     minTemp: minTemp,
     maxTemp: maxTemp,
   };
-  const tommorow = getDayWeatherSummary(0);
-  const day3 = getDayWeatherSummary(1);
-  const day4 = getDayWeatherSummary(2);
-  const day5 = getDayWeatherSummary(3);
+  const tommorow = getWeatherSummaryForDay(0);
+  const day3 = getWeatherSummaryForDay(1);
+  const day4 = getWeatherSummaryForDay(2);
+  const day5 = getWeatherSummaryForDay(3);
 
   return (
     <View style={styles.container}>
@@ -77,7 +77,7 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
   cityTitle: {
     fontSize: 35,
     color: theme.primaryText,
-    padding: 15,
+    paddingTop: 30,
     fontWeight: "bold",
     textAlign: "center",
     zIndex: -1,

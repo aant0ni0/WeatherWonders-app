@@ -37,6 +37,8 @@ const RadarButton: React.FC<RadarButtonProps> = ({
 const stylesheet = createStyleSheet((theme, runtime) => ({
   button: {
     backgroundColor: theme.secondaryButton,
+    borderRadius: 5,
+    marginHorizontal: 15,
     alignItems: "center",
     justifyContent: "center",
   },

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text } from "react-native";
 import Animated, {
   useAnimatedStyle,
   interpolate,
@@ -14,6 +14,7 @@ import { useWeatherData } from "../../hooks/useWeatherData";
 import { SharedValue } from "react-native-reanimated";
 import "../../i18n";
 import { useTranslation } from "react-i18next";
+import WeatherIcon from "../WeatherIcon";
 
 const AnimatedHeader: React.FC<{
   city: string;
@@ -28,8 +29,8 @@ const AnimatedHeader: React.FC<{
     maxTemp,
     mainWeather,
     mainTemp,
-    forecastData,
-    getDayWeatherSummary,
+    weatherData,
+    getWeatherSummaryForDay,
   } = useWeatherData(city, today);
   const insets = UnistylesRuntime.insets;
 
@@ -56,9 +57,9 @@ const AnimatedHeader: React.FC<{
     return { opacity };
   });
 
-  const { mainIcon } = getDayWeatherSummary(0);
+  const { mainIcon } = getWeatherSummaryForDay(0);
   const weatherIcon =
-    today && forecastData ? forecastData.list[0].weather[0].icon : mainIcon;
+    today && weatherData ? weatherData.weather[0].icon : mainIcon;
 
   const translateMainWeather = t(mainWeather);
 
@@ -82,12 +83,7 @@ const AnimatedHeader: React.FC<{
             </View>
             <View style={styles.animatedMainWeatherBox}>
               <Text style={styles.animatedMainTemp}>{mainTemp}</Text>
-              <Image
-                source={{
-                  uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
-                }}
-                style={styles.weatherIcon}
-              />
+              <WeatherIcon weatherIcon={weatherIcon} shadow />
             </View>
           </View>
         </View>
@@ -166,6 +162,13 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
   animatedCityBox: {
     width: "70%",
     paddingLeft: 20,
+  },
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.9,
+    shadowRadius: 3,
+    elevation: 8,
   },
 }));
 

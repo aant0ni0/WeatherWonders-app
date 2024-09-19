@@ -27,6 +27,8 @@ const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
 > = ({ route }) => {
   const city = useSelector((state: RootState) => state.city);
+  console.log(city);
+
   const today = route.params["today"];
   const { styles } = useStyles(stylesheet);
   const { t } = useTranslation();
@@ -35,13 +37,13 @@ const SingleDayScreen: React.FC<
 
   const {
     weatherData,
-    weatherLoading,
-    weatherError,
-    forecastLoading,
+    isLoading,
+    error,
     sunrise,
     sunset,
     weatherBackground,
     feelsLikeDescription,
+    timezoneOffset,
     getHourlyForecastForNext24Hours,
     getForecast,
   } = useWeatherData(city, today);
@@ -50,14 +52,14 @@ const SingleDayScreen: React.FC<
     scrollY.value = event.contentOffset.y;
   });
 
-  if (weatherLoading || forecastLoading) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  if (weatherError) {
+  if (error) {
     return (
       <ErrorMessage>
-        {t("Weather Error")} {weatherError as string}
+        {t("Weather Error")} {error as string}
       </ErrorMessage>
     );
   }
@@ -84,20 +86,27 @@ const SingleDayScreen: React.FC<
           headerHeight={300}
         />
         <View style={styles.widgetsContainer}>
-          <HourlyForecast hourlyForecast={hourlyForecast} />
+          <HourlyForecast
+            hourlyForecast={hourlyForecast}
+            timezone={timezoneOffset}
+          />
           <View style={styles.smallerWidgetsContainer}>
             <HumidityWidget humidity={humidity} />
             <FeelsLikeWidget
               feelsLikeDescription={feelsLikeDescription}
               feelsLike={feelsLike}
             />
-            <WindWidget weatherData={weatherData} windSpeed={windSpeed} />
+            <WindWidget
+              direction={weatherData?.wind.deg}
+              windSpeed={windSpeed}
+            />
             <VisibilityWidget visibility={visibility} />
             <PressureWidget pressure={pressure} />
             <SunriseSunsetWidget
               sunrise={sunrise}
               sunset={sunset}
               today={today}
+              timezone={timezoneOffset}
             />
           </View>
         </View>
@@ -159,54 +168,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     justifyContent: "space-between",
     flexWrap: "wrap",
     marginBottom: 25,
-  },
-  animatedMainInfoBox: {
-    width: "100%",
-    alignItems: "center",
-    textAlign: "center",
-    zIndex: 1,
-    backgroundColor: "white",
-    opacity: 0.95,
-    position: "absolute",
-    top: -runtime.insets.top - 70,
-    paddingTop: runtime.insets.top + 70,
-  },
-  animatedWeatherInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  animatedMainTemp: {
-    fontSize: 25,
-    color: theme.primaryText,
-    fontWeight: "500",
-  },
-  animatedCity: {
-    fontSize: 25,
-    color: theme.primaryText,
-    fontWeight: "bold",
-  },
-  animatedWeatherDescription: {
-    fontSize: 20,
-    color: theme.primaryText,
-    marginBottom: 5,
-  },
-  animationBox: {
-    width: "100%",
-    height: 230,
-  },
-  weatherIcon: {
-    width: 50,
-    height: 50,
-  },
-  animatedMainWeatherBox: {
-    flexDirection: "row",
-    width: "30%",
-    alignItems: "center",
-    paddingRight: 20,
-  },
-  animatedCityBox: {
-    width: "70%",
-    paddingLeft: 20,
   },
 }));
 

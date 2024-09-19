@@ -1,30 +1,32 @@
 import React from "react";
-import { View, Text, FlatList, Image } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import { ForecastItem } from "../types/weatherSchema";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
 import { useTranslation } from "react-i18next";
+import WeatherIcon from "./WeatherIcon";
+
 interface HourlyForecastProps {
   hourlyForecast: ForecastItem[];
+  timezone: number;
 }
 
-const HourlyForecast: React.FC<HourlyForecastProps> = ({ hourlyForecast }) => {
+const HourlyForecast: React.FC<HourlyForecastProps> = ({
+  hourlyForecast,
+  timezone,
+}) => {
   const { styles } = useStyles(stylesheet);
   const { t } = useTranslation();
 
   const renderHourlyForecast = (item: ForecastItem) => {
+    const localTime = new Date(item.dt * 1000 + timezone * 1000);
+    const hours = localTime.getUTCHours();
+
     return (
       <View style={styles.hourlyWeatherColumns}>
         <View style={styles.weatherInfoContainer}>
-          <Text style={styles.hourText}>
-            {new Date(item.dt_txt).getHours()}:00
-          </Text>
+          <Text style={styles.hourText}>{hours}:00</Text>
         </View>
-        <Image
-          source={{
-            uri: `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`,
-          }}
-          style={styles.weatherIcon}
-        />
+        <WeatherIcon weatherIcon={item.weather[0].icon} shadow={false} />
 
         <Text style={styles.hourTemp}>{item.main.temp.toFixed() + "°"}</Text>
       </View>
