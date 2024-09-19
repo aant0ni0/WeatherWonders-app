@@ -5,8 +5,8 @@ export const geoNamesItem = z.object({
   name: z.string(),
   countryName: z.string(),
   countryCode: z.string(),
-  lat: z.number(),
-  lng: z.number(),
+  lat: z.string(),
+  lng: z.string(),
 });
 
 export const dataSchema = z.object({

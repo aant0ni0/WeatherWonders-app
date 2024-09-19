@@ -118,7 +118,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     flexDirection: "row",
     height: runtime.screen.height / 16,
     marginTop: 30,
-    marginLeft: 5,
   },
   locateButton: {
     width: "10%",

@@ -27,7 +27,6 @@ const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
 > = ({ route }) => {
   const city = useSelector((state: RootState) => state.city);
-  console.log(city);
 
   const today = route.params["today"];
   const { styles } = useStyles(stylesheet);
@@ -71,14 +70,16 @@ const SingleDayScreen: React.FC<
   return (
     <ImageBackground source={weatherBackground} style={styles.background}>
       <View style={styles.overlay} />
+      <View style={styles.headerContainer}>
+        <Header />
+      </View>
       <Animated.ScrollView
         style={styles.container}
         bounces={false}
         onScroll={scrollHandler}
         scrollEventThrottle={1}
-        stickyHeaderIndices={[1]}
+        stickyHeaderIndices={[0]}
       >
-        <Header />
         <AnimatedHeader
           today={today}
           city={city}
@@ -118,7 +119,7 @@ const SingleDayScreen: React.FC<
 const stylesheet = createStyleSheet((theme, runtime) => ({
   container: {
     flex: 1,
-    paddingTop: runtime.insets.top,
+    paddingTop: runtime.insets.top + runtime.screen.height / 15 + 10,
   },
   background: {
     width: "100%",
@@ -129,30 +130,11 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(255,255,255,0.15)",
   },
-  mainInfoBox: {
+  headerContainer: {
+    position: "absolute",
+    top: runtime.insets.top,
     width: "100%",
-    alignItems: "center",
-    padding: 20,
-    zIndex: -1,
-  },
-  mainTemp: {
-    fontSize: 75,
-    color: theme.primaryText,
-    fontWeight: "bold",
-  },
-  city: {
-    fontSize: 30,
-    color: theme.primaryText,
-    fontWeight: "bold",
-  },
-  weatherDescription: {
-    fontSize: 30,
-    color: theme.primaryText,
-    marginBottom: 10,
-  },
-  minMax: {
-    fontSize: 20,
-    color: theme.primaryText,
+    zIndex: 10,
   },
   widgetsContainer: {
     width: "100%",

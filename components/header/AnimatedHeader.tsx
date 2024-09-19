@@ -76,7 +76,6 @@ const AnimatedHeader: React.FC<{
           {maxTemp?.toFixed() + "°"}
         </Text>
       </Animated.View>
-
       <Animated.View style={[styles.animationBox, animatedStyle]}>
         <View style={styles.animatedMainInfoBox}>
           <View style={styles.animatedWeatherInfo}>
@@ -99,7 +98,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     width: "100%",
     alignItems: "center",
     padding: 20,
-    zIndex: -1,
     top: 0,
   },
   mainTemp: {
@@ -125,7 +123,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     width: "100%",
     alignItems: "center",
     textAlign: "center",
-    zIndex: 1,
     backgroundColor: "white",
     opacity: 0.95,
     paddingTop: runtime.insets.top + 5,
@@ -149,7 +146,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     width: "100%",
     position: "absolute",
     top: 0,
-    zIndex: 1,
   },
   weatherIcon: {
     width: 50,
