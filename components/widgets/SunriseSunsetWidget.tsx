@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import SunriseSunsetChart from "../SunriseSunsetChart";
 import WeatherWidget from "./WeatherWidget";
+import { useTranslation } from "react-i18next";
 
 interface SunriseSunsetWidgetProps {
   sunrise: Date;
@@ -15,6 +16,7 @@ const SunriseSunsetWidget: React.FC<SunriseSunsetWidgetProps> = ({
   today,
   timezone,
 }) => {
+  const { t } = useTranslation();
   const [currentTime, setCurrentTime] = useState<number>(new Date().getTime());
   const INTERVAL_TIME = 150000;
 
@@ -27,7 +29,7 @@ const SunriseSunsetWidget: React.FC<SunriseSunsetWidgetProps> = ({
   }, []);
 
   return (
-    <WeatherWidget title="Sunrise and Sunset">
+    <WeatherWidget title={t("Sunrise and Sunset")}>
       <SunriseSunsetChart
         sunrise={sunrise.getTime() / 1000}
         sunset={sunset.getTime() / 1000}

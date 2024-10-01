@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, FlatList } from "react-native";
 import { ForecastItem } from "../types/weatherSchema";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
 import WeatherIcon from "./WeatherIcon";
 
 interface HourlyForecastProps {
@@ -14,6 +15,7 @@ const HourlyForecast: React.FC<HourlyForecastProps> = ({
   timezone,
 }) => {
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
 
   const renderHourlyForecast = (item: ForecastItem) => {
     const localTime = new Date(item.dt * 1000 + timezone * 1000);
@@ -33,7 +35,7 @@ const HourlyForecast: React.FC<HourlyForecastProps> = ({
 
   return (
     <View style={styles.hourlyWeather}>
-      <Text style={styles.hourlyWeatherTitle}>Hourly Weather</Text>
+      <Text style={styles.hourlyWeatherTitle}>{t("Hourly Weather")}</Text>
       <FlatList
         data={hourlyForecast}
         horizontal={true}

@@ -12,6 +12,9 @@ import { store, persistor } from "./store/store";
 import Loader from "./components/Loader";
 import "./assets/unistyles";
 import AnimatedTabBar from "./components/AnimatedTabBar";
+import RadarScreen from "./screens/RadarScreen";
+import "./i18n";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { RootState } from "./types/navigation";
 
@@ -19,6 +22,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootTabsParamList>();
 
 const BottomTabNavigator = () => {
+  const { t } = useTranslation();
+
   return (
     <Tab.Navigator tabBar={(props) => <AnimatedTabBar {...props} />}>
       <Tab.Screen
@@ -26,7 +31,7 @@ const BottomTabNavigator = () => {
         component={SingleDayScreen}
         initialParams={{ today: true }}
         options={{
-          title: "Today",
+          title: t("Today"),
           headerShown: false,
         }}
       />
@@ -35,7 +40,7 @@ const BottomTabNavigator = () => {
         component={SingleDayScreen}
         initialParams={{ today: false }}
         options={{
-          title: "Tomorrow",
+          title: t("tomorrow"),
           headerShown: false,
         }}
       />
@@ -43,7 +48,7 @@ const BottomTabNavigator = () => {
         name="FiveDays"
         component={FiveDaysScreen}
         options={{
-          title: "In five days",
+          title: t("inFiveDays"),
           headerShown: false,
         }}
       />
@@ -68,6 +73,11 @@ const App = () => {
         <Stack.Screen
           name="Tabs"
           component={BottomTabNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Radar"
+          component={RadarScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
