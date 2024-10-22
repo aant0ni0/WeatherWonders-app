@@ -19,10 +19,12 @@ import { useState } from "react";
 import { setCity } from "../slices/citySlice";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../types/navigation";
+import { useTranslation } from "react-i18next";
 import LocationSearch from "../components/header/LocationSearch";
 
 const LocationSelectScreen = () => {
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigation: NavigationProp<RootStackParamList> = useNavigation();
   const [locationPermissionInformation, requestPermission] =
@@ -90,7 +92,7 @@ const LocationSelectScreen = () => {
         </View>
       </View>
       {isLoading && <ActivityIndicator size={"large"} />}
-      <Text style={styles.infoText}>Enter City Name</Text>
+      <Text style={styles.infoText}>{t("Enter City Name")}</Text>
     </View>
   );
 };
@@ -116,7 +118,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     flexDirection: "row",
     height: runtime.screen.height / 16,
     marginTop: 30,
-    marginLeft: 5,
   },
   locateButton: {
     width: "10%",

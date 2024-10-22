@@ -27,7 +27,10 @@ const SysSchema = z.object({
   sunrise: z.number(),
   sunset: z.number(),
 });
-
+const coordSchema = z.object({
+  lon: z.number(),
+  lat: z.number(),
+});
 export const WeatherSchema = z.object({
   visibility: z.number(),
   wind: WindSchema,
@@ -35,6 +38,7 @@ export const WeatherSchema = z.object({
   weather: z.array(WeatherDescriptionSchema),
   sys: SysSchema,
   timezone: z.number(),
+  coord: coordSchema,
 });
 
 const CloudsSchema = z.object({

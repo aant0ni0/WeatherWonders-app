@@ -1,5 +1,6 @@
 import { View, Text } from "react-native";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
 import WeatherIcon from "./WeatherIcon";
 
 interface DayWeatherWidgetProps {
@@ -18,8 +19,10 @@ const DayWeatherWidget: React.FC<DayWeatherWidgetProps> = ({
   today,
 }) => {
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
   const options: {} = { weekday: "long" };
   const dayName = today ? "Today" : date?.toLocaleDateString("en-US", options);
+  const weekday = dayName ? dayName : "unknown";
 
   const formattedDate = date?.toLocaleDateString("en-US", {
     month: "numeric",
@@ -30,7 +33,7 @@ const DayWeatherWidget: React.FC<DayWeatherWidgetProps> = ({
     <View style={styles.widgetContainer}>
       <View style={styles.dateBox}>
         <Text style={styles.date}>{formattedDate}</Text>
-        <Text style={styles.weekDay}>{dayName}</Text>
+        <Text style={styles.weekDay}>{t(weekday)}</Text>
       </View>
       <View style={styles.imageBox}>
         <WeatherIcon weatherIcon={mainIcon} shadow />
@@ -38,7 +41,13 @@ const DayWeatherWidget: React.FC<DayWeatherWidgetProps> = ({
       <View style={styles.tempBox}>
         <Text style={styles.temp}>
           {minTemp && maxTemp
-            ? "from " + minTemp.toFixed() + "° to " + maxTemp.toFixed() + "°"
+            ? t("from") +
+              minTemp?.toFixed() +
+              "°" +
+              t("to") +
+              " " +
+              maxTemp?.toFixed() +
+              "°"
             : "No temperature data available"}
         </Text>
       </View>

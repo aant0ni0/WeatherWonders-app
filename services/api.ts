@@ -47,6 +47,7 @@ export const geonamesApi = createApi({
       query: (text) =>
         `/searchJSON?name_startsWith=${text}&featureClass=P&maxRows=5&username=${process.env.EXPO_PUBLIC_USERNAME}`,
       transformResponse: (data) => {
+        console.log("Geonames API Response:", data);
         const parsedData = dataSchema.safeParse(data);
         if (!parsedData.success) {
           console.error("Failed to parse geonames data:", parsedData.error);

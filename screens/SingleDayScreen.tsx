@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet, ImageBackground } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootTabsParamList } from "../types/navigation";
@@ -19,23 +19,20 @@ import { RootState } from "../types/navigation";
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
-  useDerivedValue,
-  runOnJS,
 } from "react-native-reanimated";
 import AnimatedHeader from "../components/header/AnimatedHeader";
+import { useTranslation } from "react-i18next";
 
 const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
 > = ({ route }) => {
   const city = useSelector((state: RootState) => state.city);
-  console.log(city);
 
   const today = route.params["today"];
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
 
   const scrollY = useSharedValue(0);
-  const borderWhereWeStartAnimation = 70;
-  const [isAnimationRunning, setIsAnimationRunning] = useState(false);
 
   const {
     weatherData,
@@ -50,21 +47,9 @@ const SingleDayScreen: React.FC<
     getForecast,
   } = useWeatherData(city, today);
 
-  const setAnimationState = (isRunning: boolean) => {
-    setIsAnimationRunning(isRunning);
-  };
-
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollY.value = event.contentOffset.y;
   });
-
-  useDerivedValue(() => {
-    if (scrollY.value > borderWhereWeStartAnimation) {
-      runOnJS(setAnimationState)(true);
-    } else {
-      runOnJS(setAnimationState)(false);
-    }
-  }, [scrollY]);
 
   if (isLoading) {
     return <Loader />;
@@ -73,8 +58,7 @@ const SingleDayScreen: React.FC<
   if (error) {
     return (
       <ErrorMessage>
-        Error fetching weather data:{" "}
-        {typeof error === "string" ? error : JSON.stringify(error)}
+        {t("Weather Error")} {error as string}
       </ErrorMessage>
     );
   }
@@ -86,19 +70,21 @@ const SingleDayScreen: React.FC<
   return (
     <ImageBackground source={weatherBackground} style={styles.background}>
       <View style={styles.overlay} />
+      <View style={styles.headerContainer}>
+        <Header />
+      </View>
       <Animated.ScrollView
         style={styles.container}
         bounces={false}
         onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        stickyHeaderIndices={isAnimationRunning ? [1] : []}
+        scrollEventThrottle={1}
+        stickyHeaderIndices={[0]}
       >
-        <Header />
         <AnimatedHeader
           today={today}
           city={city}
           scrollY={scrollY}
-          headerHeight={200}
+          headerHeight={300}
         />
         <View style={styles.widgetsContainer}>
           <HourlyForecast
@@ -133,7 +119,7 @@ const SingleDayScreen: React.FC<
 const stylesheet = createStyleSheet((theme, runtime) => ({
   container: {
     flex: 1,
-    paddingTop: runtime.insets.top,
+    paddingTop: runtime.insets.top + runtime.screen.height / 15 + 10,
   },
   background: {
     width: "100%",
@@ -144,30 +130,11 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(255,255,255,0.15)",
   },
-  mainInfoBox: {
+  headerContainer: {
+    position: "absolute",
+    top: runtime.insets.top,
     width: "100%",
-    alignItems: "center",
-    padding: 20,
-    zIndex: -1,
-  },
-  mainTemp: {
-    fontSize: 75,
-    color: theme.primaryText,
-    fontWeight: "bold",
-  },
-  city: {
-    fontSize: 30,
-    color: theme.primaryText,
-    fontWeight: "bold",
-  },
-  weatherDescription: {
-    fontSize: 30,
-    color: theme.primaryText,
-    marginBottom: 10,
-  },
-  minMax: {
-    fontSize: 20,
-    color: theme.primaryText,
+    zIndex: 10,
   },
   widgetsContainer: {
     width: "100%",

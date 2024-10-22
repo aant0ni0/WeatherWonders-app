@@ -12,6 +12,8 @@ import {
 } from "react-native-unistyles";
 import { useWeatherData } from "../../hooks/useWeatherData";
 import { SharedValue } from "react-native-reanimated";
+import "../../i18n";
+import { useTranslation } from "react-i18next";
 import WeatherIcon from "../WeatherIcon";
 
 const AnimatedHeader: React.FC<{
@@ -20,6 +22,7 @@ const AnimatedHeader: React.FC<{
   scrollY: SharedValue<number>;
   headerHeight: number;
 }> = ({ city, today, scrollY, headerHeight }) => {
+  const { t } = useTranslation();
   const { styles } = useStyles(stylesheet);
   const {
     minTemp,
@@ -58,17 +61,21 @@ const AnimatedHeader: React.FC<{
   const weatherIcon =
     today && weatherData ? weatherData.weather[0].icon : mainIcon;
 
+  const translateMainWeather = mainWeather
+    ? t(mainWeather)
+    : "No weather data available";
+
   return (
     <>
       <Animated.View style={[styles.mainInfoBox, mainInfoBoxAnimatedStyle]}>
         <Text style={styles.city}>{city}</Text>
         <Text style={styles.mainTemp}>{mainTemp}</Text>
-        <Text style={styles.weatherDescription}>{mainWeather}</Text>
+        <Text style={styles.weatherDescription}>{translateMainWeather}</Text>
         <Text style={styles.minMax}>
-          from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
+          {t("from")} {minTemp?.toFixed() + "°"} {t("to")}{" "}
+          {maxTemp?.toFixed() + "°"}
         </Text>
       </Animated.View>
-
       <Animated.View style={[styles.animationBox, animatedStyle]}>
         <View style={styles.animatedMainInfoBox}>
           <View style={styles.animatedWeatherInfo}>
@@ -91,7 +98,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     width: "100%",
     alignItems: "center",
     padding: 20,
-    zIndex: -1,
     top: 0,
   },
   mainTemp: {
@@ -117,7 +123,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     width: "100%",
     alignItems: "center",
     textAlign: "center",
-    zIndex: 1,
     backgroundColor: "white",
     opacity: 0.95,
     paddingTop: runtime.insets.top + 5,
@@ -141,7 +146,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     width: "100%",
     position: "absolute",
     top: 0,
-    zIndex: 1,
   },
   weatherIcon: {
     width: 50,
