@@ -31,7 +31,7 @@ const stylesheet = createStyleSheet((theme) => ({
   searchBar: {
     paddingLeft: 10,
     fontSize: 16,
-    width: "88%",
+    width: "90%",
   },
   searchBarContainer: {
     flex: 1,
@@ -39,6 +39,7 @@ const stylesheet = createStyleSheet((theme) => ({
     borderRadius: 5,
     backgroundColor: "white",
     width: "100%",
+    paddingRight: 5,
   },
   searchButton: {
     paddingVertical: 5,

@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  ImageBackground,
-} from "react-native";
+import { View, StyleSheet, ImageBackground } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootTabsParamList } from "../types/navigation";
 import { useWeatherData } from "../hooks/useWeatherData";
@@ -22,24 +16,28 @@ import PressureWidget from "../components/widgets/PressureWidget";
 import SunriseSunsetWidget from "../components/widgets/SunriseSunsetWidget";
 import { useSelector } from "react-redux";
 import { RootState } from "../types/navigation";
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+} from "react-native-reanimated";
+import AnimatedHeader from "../components/header/AnimatedHeader";
+import { useTranslation } from "react-i18next";
 
 const SingleDayScreen: React.FC<
   NativeStackScreenProps<RootTabsParamList, "TodayScreen" | "TomorrowScreen">
 > = ({ route }) => {
   const city = useSelector((state: RootState) => state.city);
-  console.log(city);
 
   const today = route.params["today"];
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
+
+  const scrollY = useSharedValue(0);
 
   const {
     weatherData,
     isLoading,
     error,
-    minTemp,
-    maxTemp,
-    mainWeather,
-    mainTemp,
     sunrise,
     sunset,
     weatherBackground,
@@ -49,6 +47,10 @@ const SingleDayScreen: React.FC<
     getForecast,
   } = useWeatherData(city, today);
 
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    scrollY.value = event.contentOffset.y;
+  });
+
   if (isLoading) {
     return <Loader />;
   }
@@ -56,8 +58,7 @@ const SingleDayScreen: React.FC<
   if (error) {
     return (
       <ErrorMessage>
-        Error fetching weather data:{" "}
-        {typeof error === "string" ? error : JSON.stringify(error)}
+        {t("Weather Error")} {error as string}
       </ErrorMessage>
     );
   }
@@ -69,16 +70,22 @@ const SingleDayScreen: React.FC<
   return (
     <ImageBackground source={weatherBackground} style={styles.background}>
       <View style={styles.overlay} />
-      <ScrollView style={[styles.container]} bounces={false}>
+      <View style={styles.headerContainer}>
         <Header />
-        <View style={styles.mainInfoBox}>
-          <Text style={styles.city}>{city}</Text>
-          <Text style={styles.mainTemp}>{mainTemp}</Text>
-          <Text style={styles.weatherDescription}>{mainWeather}</Text>
-          <Text style={styles.minMax}>
-            from {minTemp?.toFixed() + "°"} to {maxTemp?.toFixed() + "°"}
-          </Text>
-        </View>
+      </View>
+      <Animated.ScrollView
+        style={styles.container}
+        bounces={false}
+        onScroll={scrollHandler}
+        scrollEventThrottle={1}
+        stickyHeaderIndices={[0]}
+      >
+        <AnimatedHeader
+          today={today}
+          city={city}
+          scrollY={scrollY}
+          headerHeight={300}
+        />
         <View style={styles.widgetsContainer}>
           <HourlyForecast
             hourlyForecast={hourlyForecast}
@@ -95,9 +102,7 @@ const SingleDayScreen: React.FC<
               windSpeed={windSpeed}
             />
             <VisibilityWidget visibility={visibility} />
-
             <PressureWidget pressure={pressure} />
-
             <SunriseSunsetWidget
               sunrise={sunrise}
               sunset={sunset}
@@ -106,7 +111,7 @@ const SingleDayScreen: React.FC<
             />
           </View>
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </ImageBackground>
   );
 };
@@ -114,7 +119,7 @@ const SingleDayScreen: React.FC<
 const stylesheet = createStyleSheet((theme, runtime) => ({
   container: {
     flex: 1,
-    paddingTop: runtime.insets.top,
+    paddingTop: runtime.insets.top + runtime.screen.height / 15 + 10,
   },
   background: {
     width: "100%",
@@ -125,38 +130,19 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(255,255,255,0.15)",
   },
-
-  mainInfoBox: {
+  headerContainer: {
+    position: "absolute",
+    top: runtime.insets.top,
     width: "100%",
-    alignItems: "center",
-    padding: 20,
-    zIndex: -1,
-  },
-  mainTemp: {
-    fontSize: 75,
-    color: theme.primaryText,
-    fontWeight: "bold",
-  },
-  city: {
-    fontSize: 30,
-    color: theme.primaryText,
-    fontWeight: "bold",
-  },
-  weatherDescription: {
-    fontSize: 30,
-    color: theme.primaryText,
-    marginBottom: 10,
-  },
-  minMax: {
-    fontSize: 20,
-    color: theme.primaryText,
+    zIndex: 10,
   },
   widgetsContainer: {
     width: "100%",
-    padding: 30,
+    padding: 25,
     paddingTop: 15,
     justifyContent: "center",
     marginBottom: 20,
+    zIndex: -1,
   },
   smallerWidgetsContainer: {
     width: "100%",

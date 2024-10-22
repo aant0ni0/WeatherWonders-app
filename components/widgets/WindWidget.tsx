@@ -1,6 +1,7 @@
 import { View, Text, Image } from "react-native";
 import WeatherWidget from "./WeatherWidget";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
 
 interface WindWidgetProps {
   direction: number | undefined;
@@ -9,8 +10,9 @@ interface WindWidgetProps {
 
 const WindWidget: React.FC<WindWidgetProps> = ({ direction, windSpeed }) => {
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
   return (
-    <WeatherWidget title="Wind">
+    <WeatherWidget title={t("Wind")}>
       <Text style={styles.widgetContent}>
         {windSpeed?.toFixed(1)}
         <Text style={styles.speedUnit}> m/s</Text>
@@ -51,7 +53,6 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     width: runtime.screen.width / 2.5,
     height: runtime.screen.height / 5,
     resizeMode: "contain",
-    right: 4,
   },
   compassNeedle: {
     position: "absolute",

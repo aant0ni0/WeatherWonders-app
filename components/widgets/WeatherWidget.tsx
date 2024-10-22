@@ -12,28 +12,35 @@ interface WeatherWidgetProps {
 
 const WeatherWidget: React.FC<WeatherWidgetProps> = (props) => {
   const { styles } = useStyles(stylesheet);
+
   return (
-    <View style={styles.widget}>
-      <Text style={styles.widgetTitle}>{props.title}</Text>
-      {props.children}
+    <View style={styles.shadowContainer}>
+      <View style={styles.widget}>
+        <Text style={styles.widgetTitle}>{props.title}</Text>
+        {props.children}
+      </View>
     </View>
   );
 };
 
 const stylesheet = createStyleSheet((theme, runtime) => ({
-  widget: {
+  shadowContainer: {
     width: "47%",
-    backgroundColor: theme.primaryWidget,
-    height: runtime.screen.width / 3,
     marginVertical: 15,
     borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    elevation: 0.8,
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+  },
+  widget: {
+    width: "100%",
+    height: runtime.screen.width / 3,
+    borderRadius: 5,
     overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
   },
   widgetTitle: {
     position: "absolute",

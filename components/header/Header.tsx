@@ -8,7 +8,7 @@ const Header = () => {
 
   return (
     <View style={styles.header}>
-      <RadarButton />
+      <RadarButton icon="radio-outline" style={styles.radarButton} />
       <LocationSearch />
     </View>
   );
@@ -21,6 +21,13 @@ const stylesheet = createStyleSheet((theme, runtime) => ({
     flexDirection: "row",
     marginTop: 10,
     paddingRight: 25,
+  },
+  radarButton: {
+    aspectRatio: 1,
+    height: "90%",
+    borderRadius: 5,
+    marginRight: 20,
+    marginLeft: 10,
   },
 }));
 export default Header;

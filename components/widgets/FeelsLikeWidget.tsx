@@ -2,6 +2,7 @@ import React from "react";
 import { Text } from "react-native";
 import WeatherWidget from "./WeatherWidget";
 import { createStyleSheet, useStyles } from "react-native-unistyles";
+import { useTranslation } from "react-i18next";
 
 interface FeelsLikeWidgetProps {
   feelsLike: number | null;
@@ -13,10 +14,11 @@ const FeelsLikeWidget: React.FC<FeelsLikeWidgetProps> = ({
   feelsLikeDescription,
 }) => {
   const { styles } = useStyles(stylesheet);
+  const { t } = useTranslation();
   return (
-    <WeatherWidget title="Feels like">
+    <WeatherWidget title={t("Feels Like")}>
       <Text style={styles.widgetContent}>{feelsLike?.toFixed() + "°C"}</Text>
-      <Text style={styles.widgetDescription}>{feelsLikeDescription}</Text>
+      <Text style={styles.widgetDescription}>{t(feelsLikeDescription)}</Text>
     </WeatherWidget>
   );
 };
